@@ -591,6 +591,12 @@ class BoseHubbard(SpecialHamiltonian):
         self._J -= other.J
         self._V -= other.V
 
+    @property
+    def max_conn_size(self) -> int:
+        """The maximum number of non zero ⟨x|O|x'⟩ for every x."""
+        # 1 diagonal element + 2 for every coupling
+        return 1 + 2 * len(self._edges)
+
     def get_conn(self, x):
         r"""Finds the connected elements of the Operator. Starting
         from a given quantum number x, it finds all other quantum numbers x' such
