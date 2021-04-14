@@ -16,8 +16,9 @@ import itertools
 from dataclasses import dataclass
 from functools import partial
 from typing import Callable, List, Sequence, Tuple, Union
+from plum import dispatch
 
-from netket.utils.semigroup import Element, Identity, dispatch
+from netket.utils.semigroup import Element, Identity
 
 
 from .symmetry import SymmGroup
@@ -77,7 +78,7 @@ class Reflection(Element):
         return f"Ref(axis={self.axis})"
 
 
-@dispatch(Translation, Translation)
+@dispatch
 def product(a: Translation, b: Translation):
     if not a.dims == b.dims:
         raise ValueError("Incompatible translations")

@@ -13,11 +13,12 @@
 # limitations under the License.
 
 import abc
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Union
 
 import numpy as np
 import jax.numpy as jnp
 from netket.utils.types import DType
+from plum import dispatch
 
 from scipy.sparse import csr_matrix as _csr_matrix
 from numba import jit
@@ -34,6 +35,20 @@ def compute_row_indices(rows, sections):
         res[sections[i - 1] : sections[i]] = rows[i - 1]
 
     return res
+
+
+def check_same_hilbert(A, B):
+    if A.hilbert != B.hilbert:
+        raise NotImplementedError(
+            "Cannot operate on operators on different hilbert spaces"
+        )
+
+
+def check_can_cast(A, B):
+    if not np.can_cast(dtype(B), dtype(A), casting="same_kind"):
+        raise ValueError(
+            f"Cannot add inplace operator with dtype {dtype(b)} to operator with dtype {dtype(A)}"
+        )
 
 
 class AbstractOperator(abc.ABC):
@@ -310,37 +325,88 @@ class AbstractOperator(abc.ABC):
     def __repr__(self):
         return f"{type(self).__name__}(hilbert={self.hilbert})"
 
+    def __add__(self, x):
+        from netket.utils.multipledispatch import add
+
+        return add(self, x)
+
+    def __iadd__(self, x):
+        from netket.utils.multipledispatch import iadd
+
+        return iadd(self, x)
+
+    def __radd__(self, x):
+        from netket.utils.multipledispatch import radd
+
+        return add(x, self)
+
+    def __neg__(self):
+        return -1 * self
+
+    def __mul__(self, other):
+        return mul(self, other)
+
+    def __imul__(self, other):
+        return imul(self, other)
+
+    def __rmul__(self, other):
+        return mul(other, self)
+
     def __matmul__(self, other):
-        if isinstance(other, np.ndarray) or isinstance(other, jnp.ndarray):
-            return self.apply(other)
-        elif isinstance(other, AbstractOperator):
-            if self == other and self.is_hermitian:
-                from ._lazy import Squared
+        return matmul(self, other)
 
-                return Squared(self)
-            else:
-                return self._op__matmul__(other)
-        else:
-            return NotImplemented
-
-    def _op__matmul__(self, other):
-        "Implementation on subclasses of __matmul__"
-        return NotImplemented
+    def __imatmul__(self, other):
+        return imatmul(self, other)
 
     def __rmatmul__(self, other):
-        if isinstance(other, np.ndarray) or isinstance(other, jnp.ndarray):
-            # return self.apply(other)
-            return NotImplemented
-        elif isinstance(other, AbstractOperator):
-            if self == other and self.is_hermitian:
-                from ._lazy import Squared
+        return matmul(other, self)
 
-                return Squared(self)
-            else:
-                return self._op__rmatmul__(other)
-        else:
-            return NotImplemented
 
-    def _op__rmatmul__(self, other):
-        "Implementation on subclasses of __matmul__"
-        return NotImplemented
+@dispatch
+def dtype(A: AbstractOperator):
+    return A.dtype
+
+
+@dispatch
+def mul(A: AbstractOperator, B: AbstractOperator):
+    return matmul(A, B)
+
+
+@dispatch
+def imul(A: AbstractOperator, B: AbstractOperator):
+    return imatmul(A, B)
+
+
+@dispatch
+def matmul(O: AbstractOperator, v):
+    return NotImplemented
+
+
+@dispatch
+def matmul(O: AbstractOperator, v: Union[np.ndarray, jnp.ndarray]):
+    return O.apply(other)
+
+
+@dispatch
+def matmul(A: AbstractOperator, B: AbstractOperator):
+    if A == B and A.is_hermitian:
+        from ._lazy import Squared
+
+        return Squared(self)
+    else:
+        return opmul(A, B)
+
+
+@dispatch
+def imatmul(A: AbstractOperator, B: AbstractOperator):
+    return iopmul(A, B)
+
+
+@dispatch
+def opmul(A, B):
+    return NotImplemented
+
+
+@dispatch
+def iopmul(A, B):
+    return NotImplemented

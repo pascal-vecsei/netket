@@ -13,6 +13,8 @@
 # limitations under the License.
 
 from ._abstract_operator import AbstractOperator
+from numbers import Number
+from plum import dispatch
 
 
 class WrappedOperator(AbstractOperator):
@@ -21,9 +23,6 @@ class WrappedOperator(AbstractOperator):
 
     def __add__(self, other):
         return self.collect() + other
-
-    def __radd__(self, other):
-        return other + self.collect()
 
     def __sub__(self, other):
         return self.collect() - other
@@ -78,6 +77,14 @@ class Transpose(WrappedOperator):
     @property
     def H(self):
         return self.parent.conjugate()
+
+    @dispatch
+    def __add__(self, c: Number):
+        return Transpose(self.parent + c)
+
+    @dispatch
+    def __iadd__(self, c: Number):
+        return self.parent.__iadd__(c)
 
     def __repr__(self):
         return "Transpose({})".format(self.parent)
@@ -166,7 +173,7 @@ class Squared(WrappedOperator):
         return self.parent.dtype
 
     def collect(self):
-        return self.parent.H.collect()._concrete_matmul_(self.parent)
+        return opmul(self.parent.H.collect(), self.parent)
 
     @property
     def T(self):

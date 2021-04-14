@@ -17,12 +17,11 @@ import inspect
 import itertools
 from typing import Any, Callable, List, Optional, Tuple
 
+from plum import dispatch
+
 import numpy as np
-import plum
 
 from netket.utils.types import Array
-
-dispatch = plum.Dispatcher()
 
 
 class ElementBase(Callable):
@@ -43,17 +42,17 @@ class Identity(ElementBase):
         return "Id()"
 
 
-@dispatch(Identity, Identity)
+@dispatch
 def product(a: Identity, _: Identity):
     return a
 
 
-@dispatch(Identity, Element)
+@dispatch
 def product(_: Identity, b: Element):
     return b
 
 
-@dispatch(Element, Identity)
+@dispatch
 def product(a: Element, _: Identity):
     return a
 
@@ -70,12 +69,12 @@ class Composite(Element):
         return f"{self.left} @ {self.right}"
 
 
-@dispatch(Element, Element)
+@dispatch
 def product(a: Element, b: Element):
     return Composite(a, b)
 
 
-@dispatch(Composite, Element)
+@dispatch
 def product(ab: Composite, c: Element):
     bc = product(ab.right, c)
     if isinstance(bc, Composite):
@@ -84,7 +83,7 @@ def product(ab: Composite, c: Element):
         return Composite(ab.left, bc)
 
 
-@dispatch(Element, Composite)
+@dispatch
 def product(a: Element, bc: Composite):
     ab = product(a, bc.left)
     if isinstance(ab, Composite):
@@ -93,7 +92,7 @@ def product(a: Element, bc: Composite):
         return Composite(ab, bc.right)
 
 
-@dispatch(Composite, Composite)
+@dispatch
 def product(ab: Composite, cd: Composite):
     bc = product(ab.right, cd.left)
     if isinstance(bc, Composite):
@@ -136,7 +135,7 @@ class Permutation(Element):
         return f"Permutation({self.permutation})"
 
 
-@dispatch(Permutation, Permutation)
+@dispatch
 def product(p: Permutation, q: Permutation):
     return Permutation(p(q.permutation))
 

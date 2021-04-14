@@ -16,6 +16,8 @@ import numbers
 from typing import Union, Tuple, List, Optional
 from netket.utils.types import DType, Array
 
+from plum import dispatch
+
 import numpy as np
 from numba import jit
 
@@ -24,7 +26,12 @@ import jax.numpy as jnp
 
 from netket.hilbert import AbstractHilbert, Fock
 
-from ._abstract_operator import AbstractOperator
+from ._abstract_operator import (
+    AbstractOperator,
+    check_same_hilbert,
+    check_can_cast,
+    dtype,
+)
 from ._lazy import Transpose, Adjoint, Squared
 
 
@@ -47,17 +54,6 @@ def _number_to_state(number, hilbert_size_per_site, local_states_per_site, out):
 
 def is_hermitian(a: np.ndarray, rtol=1e-05, atol=1e-08) -> bool:
     return np.allclose(a, a.T.conj(), rtol=rtol, atol=atol)
-
-
-def _dtype(obj: Union[numbers.Number, Array, "LocalOperator"]) -> DType:
-    if isinstance(obj, numbers.Number):
-        return type(obj)
-    elif isinstance(obj, AbstractOperator):
-        return obj.dtype
-    elif isinstance(obj, np.ndarray):
-        return obj.dtype
-    else:
-        raise TypeError(f"cannot deduce dtype of object type {type(obj)}: {obj}")
 
 
 def resize(
@@ -272,153 +268,11 @@ class LocalOperator(AbstractOperator):
     def n_operators(self) -> int:
         return self._n_operators
 
-    def __add__(self, other: Union["LocalOperator", numbers.Number]):
-        op = self.copy(dtype=np.promote_types(self.dtype, _dtype(other)))
-        op = op.__iadd__(other)
-        return op
-
-    def __radd__(self, other):
-        return self.__add__(other)
-
-    def __iadd__(self, other):
-        if isinstance(other, LocalOperator):
-            if self.hilbert != other.hilbert:
-                return NotImplemented
-
-            if not np.can_cast(other.dtype, self.dtype, casting="same_kind"):
-                raise ValueError(
-                    f"Cannot add inplace operator with dtype {other.dtype} to operator with dtype {self.dtype}"
-                )
-
-            assert other.mel_cutoff == self.mel_cutoff
-
-            for i in range(other._n_operators):
-                acting_on = other._acting_on[i, : other._acting_size[i]]
-                operator = other._operators[i]
-                self._add_operator(operator, acting_on)
-
-            self._constant += other.constant
-
-            return self
-        if isinstance(other, numbers.Number):
-
-            if not np.can_cast(type(other), self.dtype, casting="same_kind"):
-                raise ValueError(
-                    f"Cannot add inplace operator with dtype {type(other)} to operator with dtype {self.dtype}"
-                )
-
-            self._constant += other
-            return self
-
-        return NotImplemented
-
-    def __sub__(self, other):
-        return self + (-other)
-
-    def __rsub__(self, other):
-        return other + (-self)
-
-    def __isub__(self, other):
-        return self.__iadd__(-other)
-
-    def __neg__(self):
-        return -1 * self
-
-    def __mul__(self, other):
-        if isinstance(other, AbstractOperator):
-            op = self.copy(dtype=np.promote_types(self.dtype, _dtype(other)))
-            return op.__imatmul__(other)
-        elif not isinstance(other, numbers.Number):
-            return NotImplemented
-
-        op = self.copy(dtype=np.promote_types(self.dtype, _dtype(other)))
-
-        op._diag_mels *= other
-        op._mels *= other
-        op._constant *= other
-
-        for _op in op._operators:
-            _op *= other
-
-        return op
-
-    def __imul__(self, other):
-        if isinstance(other, AbstractOperator):
-            return self.__imatmul__(other)
-        elif not isinstance(other, numbers.Number):
-            return NotImplemented
-
-        if not np.can_cast(type(other), self.dtype, casting="same_kind"):
-            raise ValueError(
-                f"Cannot add inplace operator with dtype {type(other)} to operator with dtype {self.dtype}"
-            )
-
-        self._diag_mels *= other
-        self._mels *= other
-        self._constant *= other
-
-        for _op in self._operators:
-            _op *= other
-
-        return self
-
-    def __imatmul__(self, other):
-        if not isinstance(other, LocalOperator):
-            return NotImplemented
-
-        if not np.can_cast(other.dtype, self.dtype, casting="same_kind"):
-            raise ValueError(
-                f"Cannot add inplace operator with dtype {type(other)} to operator with dtype {self.dtype}"
-            )
-
-        return self._concrete_imatmul_(other)
-
-    def _op__matmul__(self, other):
-        return self._concrete_matmul_(other)
-
-    def _concrete_matmul_(self, other: "LocalOperator") -> "LocalOperator":
-        if not isinstance(other, LocalOperator):
-            return NotImplemented
-        op = self.copy(dtype=np.promote_types(self.dtype, _dtype(other)))
-        op @= other
-        return op
-
-    def _concrete_imatmul_(self, other: "LocalOperator") -> "LocalOperator":
-        if not isinstance(other, LocalOperator):
-            return NotImplemented
-
-        tot_operators = []
-        tot_act = []
-        for i in range(other._n_operators):
-            act_i = other._acting_on[i, : other._acting_size[i]].tolist()
-            ops, act = self._multiply_operator(other._operators[i], act_i)
-            tot_operators += ops
-            tot_act += act
-
-        prod = LocalOperator(self.hilbert, tot_operators, tot_act, dtype=self.dtype)
-        self_constant = self._constant
-        if np.abs(other._constant) > self.mel_cutoff:
-            self *= other._constant
-            self += prod
-            self._constant = 0.0
-        else:
-            self = prod
-
-        if np.abs(self_constant) > self.mel_cutoff:
-            self += other * self_constant
-
-        return self
-
-    def __truediv__(self, other):
-        if not isinstance(other, numbers.Number):
-            raise TypeError("Only divison by a scalar number is supported.")
-
+    @dispatch
+    def __truediv__(self, other: numbers.Number):
         if other == 0:
             raise ValueError("Dividing by 0")
         return self.__mul__(1.0 / other)
-
-    def __rmul__(self, other):
-        return self.__mul__(other)
 
     def _init_zero(self):
         self._operators = []
@@ -1066,3 +920,90 @@ class LocalOperator(AbstractOperator):
         if len(acting_str) > 55:
             acting_str = f"#acting_on={len(ao)} locations"
         return f"{type(self).__name__}(dim={self.hilbert.size}, {acting_str}, constant={self.constant}, dtype={self.dtype})"
+
+
+##
+
+
+@dispatch
+def add(A: LocalOperator, B: Union[LocalOperator, numbers.Number]):
+    A = A.copy(dtype=np.promote_types(A.dtype, dtype(B)))
+    return iadd(A, B)
+
+
+@dispatch
+def iadd(A: LocalOperator, c: numbers.Number):
+    if not np.can_cast(type(c), A.dtype, casting="same_kind"):
+        raise ValueError(
+            f"Cannot add inplace operator with dtype {type(c)} to operator with dtype {A.dtype}"
+        )
+
+    A._constant += c
+    return A
+
+
+@dispatch
+def iadd(A: LocalOperator, B: LocalOperator):
+    check_same_hilbert(A, B)
+    check_can_cast(A, B)
+
+    assert B.mel_cutoff == A.mel_cutoff
+
+    for i in range(B._n_operators):
+        acting_on = B._acting_on[i, : B._acting_size[i]]
+        operator = B._operators[i]
+        A._add_operator(operator, acting_on)
+
+    A._constant += B.constant
+
+    return A
+
+
+@dispatch
+def mul(A: LocalOperator, b: numbers.Number):
+    A = A.copy(dtype=np.promote_types(A.dtype, dtype(b)))
+    return imatmul(A, b)
+
+
+@dispatch
+def opmul(A: LocalOperator, B: AbstractOperator):
+    A = A.copy(dtype=np.promote_types(A.dtype, dtype(B)))
+    return iopmul(A, B)
+
+
+def imul(A: LocalOperator, b: numbers.Number):
+    check_can_cast(A, b)
+
+    A._diag_mels *= b
+    A._mels *= b
+    A._constant *= b
+
+    for _op in A._operators:
+        _op *= b
+
+    return A
+
+
+def iopmul(A: LocalOperator, B: LocalOperator):
+    check_can_cast(A, B)
+    tot_operators = []
+    tot_act = []
+    for i in range(B._n_operators):
+        act_i = B._acting_on[i, : B._acting_size[i]].tolist()
+        ops, act = A._multiply_operator(B._operators[i], act_i)
+        tot_operators += ops
+        tot_act += act
+
+    prod = LocalOperator(A.hilbert, tot_operators, tot_act, dtype=A.dtype)
+    A_constant = A._constant
+    if np.abs(B._constant) > A.mel_cutoff:
+        A *= B._constant
+        A += prod
+        A._constant = 0.0
+    else:
+        A = prod
+
+    if np.abs(A_constant) > A.mel_cutoff:
+        A += B * A_constant
+
+    return A

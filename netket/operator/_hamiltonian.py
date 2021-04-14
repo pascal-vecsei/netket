@@ -12,19 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from numba import jit
-
-import numpy as np
 import math
+import numbers
+
+from plum import dispatch
+
+from numba import jit
+import numpy as np
 
 from netket.graph import AbstractGraph, Graph
 from netket.hilbert import AbstractHilbert, Fock
 from netket.utils.types import DType
 
 from . import spin, boson
+from ._abstract_operator import AbstractOperator, check_same_hilbert
 from ._local_operator import LocalOperator
 from ._graph_operator import GraphOperator
-from ._abstract_operator import AbstractOperator
 from ._lazy import Transpose, Adjoint, Squared
 
 
@@ -37,69 +40,43 @@ class SpecialHamiltonian(AbstractOperator):
     def conjugate(self, *, concrete: bool = True):
         return self.to_local_operator().conjugate(concrete=concrete)
 
-    def __add__(self, other):
-        if type(self) is type(other):
-            res = self.copy()
-            res += other
-            return res
 
-        return self.to_local_operator().__add__(other)
+@dispatch
+def add(A: SpecialHamiltonian, B: SpecialHamiltonian):
+    if type(A) == type(B):
+        A = A.copy()
+        return iadd(A, B)
+    else:
+        return add(A.to_local_operator(), B)
 
-    def __sub__(self, other):
-        if type(self) is type(other):
-            res = self.copy()
-            res -= other
-            return res
 
-        return self.to_local_operator().__sub__(other)
+@dispatch
+def sub(A: SpecialHamiltonian, B: SpecialHamiltonian):
+    if type(A) == type(B):
+        A = A.copy()
+        return isub(A, B)
+    else:
+        return sub(A.to_local_operator(), B)
 
-    def __radd__(self, other):
-        if type(self) is type(other):
-            res = self.copy()
-            res += other
-            return res
 
-        return self.to_local_operator().__radd__(other)
+@dispatch
+def opmul(A: SpecialHamiltonian, B: AbstractOperator):
+    return opmul(A.to_local_operator(), B)
 
-    def __rsub__(self, other):
-        if type(self) is type(other):
-            res = self.copy()
-            res -= other
-            return res
 
-        return self.to_local_operator().__rsub__(other)
+@dispatch
+def opmul(A: AbstractOperator, B: SpecialHamiltonian):
+    return opmul(A, B.to_local_operator())
 
-    def __iadd__(self, other):
-        if type(self) is type(other):
-            self._iadd_same_hamiltonian(other)
-            return self
 
-        return NotImplemented
+@dispatch
+def opmul(A: SpecialHamiltonian, B: SpecialHamiltonian):
+    return opmul(A.to_local_operator(), B.to_local_operator())
 
-    def __isub__(self, other):
-        if type(self) is type(other):
-            self._isub_same_hamiltonian(other)
-            return self
 
-        return NotImplemented
-
-    def __mul__(self, other):
-        return self.to_local_operator().__mul__(other)
-
-    def __rmul__(self, other):
-        return self.to_local_operator().__rmul__(other)
-
-    def _op__matmul__(self, other):
-        return self.to_local_operator().__matmul__(other)
-
-    def _op__rmatmul__(self, other):
-        if self == other and self.is_hermitian:
-            return Squared(self)
-
-        return self.to_local_operator().__matmul__(other)
-
-    def _concrete_matmul_(self, other):
-        return self.to_local_operator() @ other
+@dispatch
+def mul(A: SpecialHamiltonian, B: numbers.Number):
+    return imul(A.copy(), B)
 
 
 class Ising(SpecialHamiltonian):
@@ -227,24 +204,6 @@ class Ising(SpecialHamiltonian):
 
         return ha
 
-    def _iadd_same_hamiltonian(self, other):
-        if self.hilbert != other.hilbert:
-            raise NotImplementedError(
-                "Cannot add hamiltonians on different hilbert spaces"
-            )
-
-        self._h += other.h
-        self._J += other.J
-
-    def _isub_same_hamiltonian(self, other):
-        if self.hilbert != other.hilbert:
-            raise NotImplementedError(
-                "Cannot add hamiltonians on different hilbert spaces"
-            )
-
-        self._h -= other.h
-        self._J -= other.J
-
     @staticmethod
     @jit(nopython=True)
     def _flattened_kernel(
@@ -352,6 +311,20 @@ class Ising(SpecialHamiltonian):
 
     def __repr__(self):
         return f"Ising(J={self._J}, h={self._h}; dim={self.hilbert.size})"
+
+
+@dispatch
+def iadd(A: Ising, B: Ising):
+    check_same_hilbert(A, B)
+    A._h += B.h
+    A._J += B.J
+
+
+@dispatch
+def isub(A: Ising, B: Ising):
+    check_same_hilbert(A, B)
+    A._h -= B.h
+    A._J -= B.J
 
 
 class Heisenberg(GraphOperator):
@@ -569,28 +542,6 @@ class BoseHubbard(SpecialHamiltonian):
 
         return ha
 
-    def _iadd_same_hamiltonian(self, other):
-        if self.hilbert != other.hilbert:
-            raise NotImplementedError(
-                "Cannot add hamiltonians on different hilbert spaces"
-            )
-
-        self._mu += other.mu
-        self._U += other.U
-        self._J += other.J
-        self._V += other.V
-
-    def _isub_same_hamiltonian(self, other):
-        if self.hilbert != other.hilbert:
-            raise NotImplementedError(
-                "Cannot add hamiltonians on different hilbert spaces"
-            )
-
-        self._mu -= other.mu
-        self._U -= other.U
-        self._J -= other.J
-        self._V -= other.V
-
     @property
     def max_conn_size(self) -> int:
         """The maximum number of non zero ⟨x|O|x'⟩ for every x."""
@@ -785,3 +736,32 @@ class BoseHubbard(SpecialHamiltonian):
             )
 
         return jit(nopython=True)(gccf_fun)
+
+
+@dispatch
+def iadd(A: BoseHubbard, B: BoseHubbard):
+    check_same_hilbert(A, B)
+    A._mu += B.mu
+    A._U += B.U
+    A._J += B.J
+    A._V += B.V
+    return A
+
+
+@dispatch
+def isub(A: BoseHubbard, B: BoseHubbard):
+    check_same_hilbert(A, B)
+    A._mu -= B.mu
+    A._U -= B.U
+    A._J -= B.J
+    A._V -= B.V
+    return A
+
+
+@dispatch
+def imul(A: BoseHubbard, b: numbers.Number):
+    A._mu *= b
+    A._U *= b
+    A._J *= b
+    A._V *= b
+    return A
