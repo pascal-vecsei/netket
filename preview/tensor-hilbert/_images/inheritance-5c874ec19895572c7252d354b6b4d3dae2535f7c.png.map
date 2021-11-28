@@ -1,0 +1,6 @@
+<map id="inheritancebef4ac1362" name="inheritancebef4ac1362">
+<area shape="rect" id="node1" title="Abstract class for quantum Operators. This class prototypes the methods" alt="" coords="4,4,182,21"/>
+<area shape="rect" id="node2" title="This class is the base class for operators defined on a" alt="" coords="215,4,393,21"/>
+<area shape="rect" id="node4" title="A custom local operator. This is a sum of an arbitrary number of operators" alt="" coords="426,4,575,21"/>
+<area shape="rect" id="node3" title="A graph&#45;based quantum operator. In its simplest terms, this is the sum of" alt="" coords="608,4,764,21"/>
+</map>

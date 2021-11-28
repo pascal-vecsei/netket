@@ -1,0 +1,30 @@
+﻿netket.callbacks.EarlyStopping
+==============================
+
+.. currentmodule:: netket.callbacks
+
+.. autoclass:: EarlyStopping
+   :show-inheritance:
+
+   
+
+   .. rst-class:: class-dl-groups
+
+   Inheritance
+      .. inheritance-diagram:: netket.callbacks.EarlyStopping
+         :parts: 2
+
+
+   
+      
+   .. rst-class:: class-dl-groups
+
+   Attributes
+      .. autoattribute:: EarlyStopping.baseline
+      .. autoattribute:: EarlyStopping.min_delta
+      .. autoattribute:: EarlyStopping.monitor
+      .. autoattribute:: EarlyStopping.patience
+   
+      
+
+   
