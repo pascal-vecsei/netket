@@ -1,0 +1,5 @@
+<map id="inheritance611ed4b2b6" name="inheritance611ed4b2b6">
+<area shape="rect" id="node1" title="Abstract class for quantum Operators. This class prototypes the methods" alt="" coords="5,5,249,29"/>
+<area shape="rect" id="node2" title="This class is the base class for operators defined on a" alt="" coords="294,5,537,29"/>
+<area shape="rect" id="node3" title="A Hamiltonian consisiting of the sum of products of Pauli operators." alt="" coords="582,5,763,29"/>
+</map>
