@@ -553,10 +553,9 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>learning_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Learning rate <span class="math notranslate nohighlight">\(\eta\)</span>.</p></li>
-<li><p><strong>b1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – </p></li>
-<li><p><strong>b2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – </p></li>
-<li><p><strong>epscut</strong> – Small cutoff value.</p></li>
-<li><p><strong>initial_accumulator_value</strong> – initial value of the accumulator</p></li>
+<li><p><strong>b1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Decay rate for the exponentially weighted average of grads.</p></li>
+<li><p><strong>b2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Decay rate for the exponentially weighted average of squared norm of grads.</p></li>
+<li><p><strong>eps</strong> – Term added to the denominator to improve numerical stability.</p></li>
 </ul>
 </dd>
 </dl>
