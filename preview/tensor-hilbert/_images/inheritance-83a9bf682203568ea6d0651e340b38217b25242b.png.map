@@ -1,6 +1,0 @@
-<map id="inheritanceb9d6e37a38" name="inheritanceb9d6e37a38">
-<area shape="rect" id="node1" title="Abstract class for quantum Operators. This class prototypes the methods" alt="" coords="4,4,193,22"/>
-<area shape="rect" id="node2" title="This class is the base class for operators defined on a" alt="" coords="228,4,416,22"/>
-<area shape="rect" id="node3" title="The Transverse&#45;Field Ising Hamiltonian :math:`&#45;hsum_i sigma_i^{(x)} +Jsum_{
-angle i,jangle} sigma_i^{(z)}sigma_j^{(z)}`." alt="" coords="660,4,764,22"/>
-</map>
