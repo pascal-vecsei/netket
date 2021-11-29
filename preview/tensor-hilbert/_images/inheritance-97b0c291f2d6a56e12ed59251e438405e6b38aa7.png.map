@@ -1,0 +1,7 @@
+<map id="inheritance0a1e90a55c" name="inheritance0a1e90a55c">
+<area shape="rect" id="node1" title="Abstract class for quantum Operators. This class prototypes the methods" alt="" coords="3,3,151,17"/>
+<area shape="rect" id="node2" title="This class is the base class for operators defined on a" alt="" coords="178,3,325,17"/>
+<area shape="rect" id="node4" title="A custom local operator. This is a sum of an arbitrary number of operators" alt="" coords="352,3,475,17"/>
+<area shape="rect" id="node3" title="A graph&#45;based quantum operator. In its simplest terms, this is the sum of" alt="" coords="503,3,632,17"/>
+<area shape="rect" id="node5" title="The Heisenberg hamiltonian on a lattice." alt="" coords="659,3,765,17"/>
+</map>

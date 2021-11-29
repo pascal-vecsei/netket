@@ -1,0 +1,23 @@
+﻿netket.graph.lattice.LatticeSite
+================================
+
+.. currentmodule:: netket.graph.lattice
+
+.. autoclass:: LatticeSite
+   :show-inheritance:
+
+   
+
+   .. rst-class:: class-dl-groups
+
+   Inheritance
+      .. inheritance-diagram:: netket.graph.lattice.LatticeSite
+         :parts: 2
+
+
+   
+      
+   
+      
+
+   
