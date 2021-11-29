@@ -23,7 +23,7 @@
     <link rel="author" title="About these documents" href="../../../about.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="netket.sampler.MetropolisLocal" href="netket.sampler.MetropolisLocal.html" />
+    <link rel="next" title="netket.experimental.sampler.MetropolisPtSampler" href="netket.experimental.sampler.MetropolisPtSampler.html" />
     <link rel="prev" title="netket.sampler.MetropolisSampler" href="netket.sampler.MetropolisSampler.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -199,6 +199,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../hilbert.html#using-hilbert-spaces-with-jax-jitted-functions">Using Hilbert spaces with <span class="xref std std-ref">jax.jit</span>ted functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../operator.html">The Operator module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operator.html#the-discreteoperator-interface">The DiscreteOperator interface</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../varstate.html">The Variational State Interface</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../varstate.html#constructing-a-variational-state">Constructing a Variational State</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../varstate.html#defining-models-flax">Defining models: Flax</a></li>
@@ -247,6 +251,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#using-haiku">Using Haiku</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_expect.html">Overriding defaults in NetKet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_expect.html#netket-architecture-multiple-dispatch">NetKet Architecture: Multiple Dispatch</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../custom_preconditioners.html">Defining Custom Preconditioners</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../custom_preconditioners.html#the-preconditioner-interface">The preconditioner interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
@@ -259,9 +267,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../custom_expect.html">Overriding behaviour and defining custom operators</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../custom_expect.html#netket-architecture-multiple-dispatch">NetKet Architecture: Multiple Dispatch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../custom_expect.html#defining-custom-implementations-for-expectation-values">Defining custom implementations for expectation values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_operator.html">Defining Custom Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_operator.html#defining-a-custom-zero-operator">Defining a custom <em>zero</em> operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_operator.html#defining-an-operator-from-scratch">Defining an operator from scratch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_operator.html#defining-an-operator-the-easy-way">Defining an operator the easy way</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_operator.html#comparison-of-the-two-approaches">Comparison of the two approaches</a></li>
 </ul>
 </li>
 </ul>
@@ -294,7 +304,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api-stability.html#storing-the-environment">Storing the environment</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API: netket package</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
@@ -331,21 +341,22 @@
 <li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.PauliStrings.html">netket.operator.PauliStrings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.LocalLiouvillian.html">netket.operator.LocalLiouvillian</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../api.html#pre-defined-operators">Pre-defined operators</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.create.html">netket.operator.boson.create</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.destroy.html">netket.operator.boson.destroy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.number.html">netket.operator.boson.number</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.proj.html">netket.operator.boson.proj</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmax.html">netket.operator.spin.sigmax</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmay.html">netket.operator.spin.sigmay</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmaz.html">netket.operator.spin.sigmaz</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmap.html">netket.operator.spin.sigmap</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmam.html">netket.operator.spin.sigmam</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.boson.create.html">netket.operator.boson.create</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.boson.destroy.html">netket.operator.boson.destroy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.boson.number.html">netket.operator.boson.number</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.boson.proj.html">netket.operator.boson.proj</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmax.html">netket.operator.spin.sigmax</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmay.html">netket.operator.spin.sigmay</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmaz.html">netket.operator.spin.sigmaz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmap.html">netket.operator.spin.sigmap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmam.html">netket.operator.spin.sigmam</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../api.html#continuous-space-operators">Continuous space operators</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.ContinuousOperator.html">netket.operator.ContinuousOperator</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.KineticEnergy.html">netket.operator.KineticEnergy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.PotentialEnergy.html">netket.operator.PotentialEnergy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.ContinuousOperator.html">netket.operator.ContinuousOperator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.KineticEnergy.html">netket.operator.KineticEnergy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.PotentialEnergy.html">netket.operator.PotentialEnergy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.SumOperator.html">netket.operator.SumOperator</a></li>
 </ul>
 </li>
 </ul>
@@ -370,9 +381,12 @@
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.ExactSampler.html">netket.sampler.ExactSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisSampler.html">netket.sampler.MetropolisSampler</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">netket.sampler.MetropolisSamplerNumpy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="netket.experimental.sampler.MetropolisPtSampler.html">netket.experimental.sampler.MetropolisPtSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisLocal.html">netket.sampler.MetropolisLocal</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisExchange.html">netket.sampler.MetropolisExchange</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisHamiltonian.html">netket.sampler.MetropolisHamiltonian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.ARDirectSampler.html">netket.sampler.ARDirectSampler</a></li>
 </ul>
 </li>
@@ -447,6 +461,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.VariationalState.html">netket.vqs.VariationalState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.MCState.html">netket.vqs.MCState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.MCMixedState.html">netket.vqs.MCMixedState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.get_local_kernel.html">netket.vqs.get_local_kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.get_local_kernel_arguments.html">netket.vqs.get_local_kernel_arguments</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer-module">Optimizer Module</a><ul>
@@ -505,6 +521,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api-experimental.html">Experimental API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#samplers">Samplers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisPtSampler.html">netket.experimental.sampler.MetropolisPtSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisSamplerPmap.html">netket.experimental.sampler.MetropolisSamplerPmap</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>

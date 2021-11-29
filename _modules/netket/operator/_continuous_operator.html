@@ -119,14 +119,14 @@
 <span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">AbstractOperator</span>
 
 
-<div class="viewcode-block" id="ContinuousOperator"><a class="viewcode-back" href="../../../docs/_generated/hilbert/netket.operator.ContinuousOperator.html#netket.operator.ContinuousOperator">[docs]</a><span class="k">class</span> <span class="nc">ContinuousOperator</span><span class="p">(</span><span class="n">AbstractOperator</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ContinuousOperator</span><span class="p">(</span><span class="n">AbstractOperator</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;This class is the abstract base class for operators defined on a</span>
 <span class="sd">    continuous Hilbert space. Users interested in implementing new</span>
 <span class="sd">    quantum Operators for continuous Hilbert spaces should subclass</span>
 <span class="sd">    `ContinuousOperator` and implement its interface.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ContinuousOperator.__init__"><a class="viewcode-back" href="../../../docs/_generated/hilbert/netket.operator.ContinuousOperator.html#netket.operator.ContinuousOperator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hilbert</span><span class="p">:</span> <span class="n">AbstractHilbert</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DType</span> <span class="o">=</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="ContinuousOperator.__init__"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.ContinuousOperator.html#netket.operator.ContinuousOperator.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hilbert</span><span class="p">:</span> <span class="n">AbstractHilbert</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DType</span> <span class="o">=</span> <span class="nb">float</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructs the continuous operator acting on the given hilbert space and</span>
 <span class="sd">        with a certain data type.</span>
@@ -195,7 +195,7 @@
 
             <span class="k">return</span> <span class="n">SumOperator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coefficients</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">NotImplemented</span>  <span class="c1"># pragma: no cover</span></div>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>  <span class="c1"># pragma: no cover</span>
 </pre></div>
 
     </div>

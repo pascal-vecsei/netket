@@ -203,7 +203,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_local_operator</span><span class="p">()</span> <span class="o">@</span> <span class="n">other</span>
 
 
-<div class="viewcode-block" id="Ising"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.Ising.html#netket.operator.Ising">[docs]</a><span class="k">class</span> <span class="nc">Ising</span><span class="p">(</span><span class="n">SpecialHamiltonian</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Ising</span><span class="p">(</span><span class="n">SpecialHamiltonian</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Transverse-Field Ising Hamiltonian :math:`-h\sum_i \sigma_i^{(x)} +J\sum_{\langle i,j\rangle} \sigma_i^{(z)}\sigma_j^{(z)}`.</span>
 
@@ -439,10 +439,10 @@
         <span class="k">return</span> <span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">gccf_fun</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Ising(J=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_J</span><span class="si">}</span><span class="s2">, h=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_h</span><span class="si">}</span><span class="s2">; dim=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Ising(J=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_J</span><span class="si">}</span><span class="s2">, h=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_h</span><span class="si">}</span><span class="s2">; dim=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">)&quot;</span>
 
 
-<div class="viewcode-block" id="Heisenberg"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.Heisenberg.html#netket.operator.Heisenberg">[docs]</a><span class="k">class</span> <span class="nc">Heisenberg</span><span class="p">(</span><span class="n">GraphOperator</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Heisenberg</span><span class="p">(</span><span class="n">GraphOperator</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Heisenberg hamiltonian on a lattice.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -557,10 +557,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sign_rule</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Heisenberg(J=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_J</span><span class="si">}</span><span class="s2">, sign_rule=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_sign_rule</span><span class="si">}</span><span class="s2">; dim=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Heisenberg(J=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_J</span><span class="si">}</span><span class="s2">, sign_rule=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_sign_rule</span><span class="si">}</span><span class="s2">; dim=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">)&quot;</span>
 
 
-<div class="viewcode-block" id="BoseHubbard"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.BoseHubbard.html#netket.operator.BoseHubbard">[docs]</a><span class="k">class</span> <span class="nc">BoseHubbard</span><span class="p">(</span><span class="n">SpecialHamiltonian</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">BoseHubbard</span><span class="p">(</span><span class="n">SpecialHamiltonian</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An extended Bose Hubbard model Hamiltonian operator, containing both</span>
 <span class="sd">    on-site interactions and nearest-neighboring density-density interactions.</span>
@@ -938,7 +938,7 @@
                 <span class="n">_max_conn</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">gccf_fun</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">gccf_fun</span><span class="p">)</span>
 </pre></div>
 
     </div>

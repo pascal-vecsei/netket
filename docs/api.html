@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Public API: netket package &#8212; netket v3.0 documentation</title>
+    <title>Public API &#8212; netket v3.0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -201,6 +201,10 @@
 <li class="toctree-l2"><a class="reference internal" href="hilbert.html#using-hilbert-spaces-with-jax-jitted-functions">Using Hilbert spaces with <span class="xref std std-ref">jax.jit</span>ted functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="operator.html">The Operator module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="operator.html#the-discreteoperator-interface">The DiscreteOperator interface</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="varstate.html">The Variational State Interface</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="varstate.html#constructing-a-variational-state">Constructing a Variational State</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="varstate.html#defining-models-flax">Defining models: Flax</a></li>
@@ -249,6 +253,10 @@
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#using-haiku">Using Haiku</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="custom_expect.html">Overriding defaults in NetKet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_expect.html#netket-architecture-multiple-dispatch">NetKet Architecture: Multiple Dispatch</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">Defining Custom Preconditioners</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-preconditioner-interface">The preconditioner interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
@@ -261,9 +269,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="custom_expect.html">Overriding behaviour and defining custom operators</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="custom_expect.html#netket-architecture-multiple-dispatch">NetKet Architecture: Multiple Dispatch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="custom_expect.html#defining-custom-implementations-for-expectation-values">Defining custom implementations for expectation values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_operator.html">Defining Custom Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_operator.html#defining-a-custom-zero-operator">Defining a custom <em>zero</em> operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_operator.html#defining-an-operator-from-scratch">Defining an operator from scratch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_operator.html#defining-an-operator-the-easy-way">Defining an operator the easy way</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_operator.html#comparison-of-the-two-approaches">Comparison of the two approaches</a></li>
 </ul>
 </li>
 </ul>
@@ -296,7 +306,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api-stability.html#storing-the-environment">Storing the environment</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Public API: netket package</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Public API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
@@ -333,21 +343,22 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/operator/netket.operator.PauliStrings.html">netket.operator.PauliStrings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/operator/netket.operator.LocalLiouvillian.html">netket.operator.LocalLiouvillian</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pre-defined-operators">Pre-defined operators</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.boson.create.html">netket.operator.boson.create</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.boson.destroy.html">netket.operator.boson.destroy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.boson.number.html">netket.operator.boson.number</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.boson.proj.html">netket.operator.boson.proj</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmax.html">netket.operator.spin.sigmax</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmay.html">netket.operator.spin.sigmay</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmaz.html">netket.operator.spin.sigmaz</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmap.html">netket.operator.spin.sigmap</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmam.html">netket.operator.spin.sigmam</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.boson.create.html">netket.operator.boson.create</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.boson.destroy.html">netket.operator.boson.destroy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.boson.number.html">netket.operator.boson.number</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.boson.proj.html">netket.operator.boson.proj</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmax.html">netket.operator.spin.sigmax</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmay.html">netket.operator.spin.sigmay</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmaz.html">netket.operator.spin.sigmaz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmap.html">netket.operator.spin.sigmap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmam.html">netket.operator.spin.sigmam</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#continuous-space-operators">Continuous space operators</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.ContinuousOperator.html">netket.operator.ContinuousOperator</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.KineticEnergy.html">netket.operator.KineticEnergy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/hilbert/netket.operator.PotentialEnergy.html">netket.operator.PotentialEnergy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.ContinuousOperator.html">netket.operator.ContinuousOperator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.KineticEnergy.html">netket.operator.KineticEnergy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.PotentialEnergy.html">netket.operator.PotentialEnergy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/operator/netket.operator.SumOperator.html">netket.operator.SumOperator</a></li>
 </ul>
 </li>
 </ul>
@@ -372,9 +383,12 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.ExactSampler.html">netket.sampler.ExactSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisSampler.html">netket.sampler.MetropolisSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisSamplerNumpy.html">netket.sampler.MetropolisSamplerNumpy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.experimental.sampler.MetropolisPtSampler.html">netket.experimental.sampler.MetropolisPtSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisLocal.html">netket.sampler.MetropolisLocal</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisExchange.html">netket.sampler.MetropolisExchange</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisHamiltonian.html">netket.sampler.MetropolisHamiltonian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.ARDirectSampler.html">netket.sampler.ARDirectSampler</a></li>
 </ul>
 </li>
@@ -449,6 +463,8 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.VariationalState.html">netket.vqs.VariationalState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCState.html">netket.vqs.MCState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCMixedState.html">netket.vqs.MCMixedState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.get_local_kernel.html">netket.vqs.get_local_kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.get_local_kernel_arguments.html">netket.vqs.get_local_kernel_arguments</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#optimizer-module">Optimizer Module</a><ul>
@@ -507,6 +523,8 @@
 <li class="toctree-l1"><a class="reference internal" href="api-experimental.html">Experimental API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api-experimental.html#samplers">Samplers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/experimental/samplers/netket.experimental.sampler.MetropolisPtSampler.html">netket.experimental.sampler.MetropolisPtSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/samplers/netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/samplers/netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/experimental/samplers/netket.experimental.sampler.MetropolisSamplerPmap.html">netket.experimental.sampler.MetropolisSamplerPmap</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="_generated/experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
@@ -525,8 +543,8 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="public-api-netket-package">
-<span id="api"></span><h1>Public API: netket package<a class="headerlink" href="#public-api-netket-package" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="public-api">
+<span id="api"></span><h1>Public API<a class="headerlink" href="#public-api" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="graph">
 <span id="graph-api"></span><h2>Graph<a class="headerlink" href="#graph" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
@@ -651,31 +669,31 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.boson.create.html#netket.operator.boson.create" title="netket.operator.boson.create"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.boson.create</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/operator/netket.operator.boson.create.html#netket.operator.boson.create" title="netket.operator.boson.create"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.boson.create</span></code></a></p></td>
 <td><p>Builds the boson creation operator <span class="math notranslate nohighlight">\(\hat{a}^\dagger\)</span> acting on the <cite>site</cite>-th of the Hilbert space <cite>hilbert</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.boson.destroy.html#netket.operator.boson.destroy" title="netket.operator.boson.destroy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.boson.destroy</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/operator/netket.operator.boson.destroy.html#netket.operator.boson.destroy" title="netket.operator.boson.destroy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.boson.destroy</span></code></a></p></td>
 <td><p>Builds the boson destruction operator <span class="math notranslate nohighlight">\(\hat{a}\)</span> acting on the <cite>site</cite>-th of the Hilbert space <cite>hilbert</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.boson.number.html#netket.operator.boson.number" title="netket.operator.boson.number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.boson.number</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/operator/netket.operator.boson.number.html#netket.operator.boson.number" title="netket.operator.boson.number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.boson.number</span></code></a></p></td>
 <td><p>Builds the number operator <span class="math notranslate nohighlight">\(\hat{a}^\dagger\hat{a}\)</span>  acting on the <cite>site</cite>-th of the Hilbert space <cite>hilbert</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.boson.proj.html#netket.operator.boson.proj" title="netket.operator.boson.proj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.boson.proj</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/operator/netket.operator.boson.proj.html#netket.operator.boson.proj" title="netket.operator.boson.proj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.boson.proj</span></code></a></p></td>
 <td><p>Builds the projector operator <span class="math notranslate nohighlight">\(|n\rangle\langle n |\)</span> acting on the <cite>site</cite>-th of the Hilbert space <cite>hilbert</cite> and collapsing on the state with <cite>n</cite> bosons.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmax.html#netket.operator.spin.sigmax" title="netket.operator.spin.sigmax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmax</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmax.html#netket.operator.spin.sigmax" title="netket.operator.spin.sigmax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmax</span></code></a></p></td>
 <td><p>Builds the <span class="math notranslate nohighlight">\(\sigma^x\)</span> operator acting on the <cite>site</cite>-th of the Hilbert space <cite>hilbert</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmay.html#netket.operator.spin.sigmay" title="netket.operator.spin.sigmay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmay</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmay.html#netket.operator.spin.sigmay" title="netket.operator.spin.sigmay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmay</span></code></a></p></td>
 <td><p>Builds the <span class="math notranslate nohighlight">\(\sigma^y\)</span> operator acting on the <cite>site</cite>-th of the Hilbert space <cite>hilbert</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmaz.html#netket.operator.spin.sigmaz" title="netket.operator.spin.sigmaz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmaz</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmaz.html#netket.operator.spin.sigmaz" title="netket.operator.spin.sigmaz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmaz</span></code></a></p></td>
 <td><p>Builds the <span class="math notranslate nohighlight">\(\sigma^z\)</span> operator acting on the <cite>site</cite>-th of the Hilbert space <cite>hilbert</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmap.html#netket.operator.spin.sigmap" title="netket.operator.spin.sigmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmap</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmap.html#netket.operator.spin.sigmap" title="netket.operator.spin.sigmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmap</span></code></a></p></td>
 <td><p>Builds the <span class="math notranslate nohighlight">\(\sigma^{+} = \frac{1}{2}(\sigma^x + i \sigma^y)\)</span> operator acting on the <cite>site</cite>-th of the Hilbert space <cite>hilbert</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmam.html#netket.operator.spin.sigmam" title="netket.operator.spin.sigmam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmam</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/operator/netket.operator.spin.sigmam.html#netket.operator.spin.sigmam" title="netket.operator.spin.sigmam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.spin.sigmam</span></code></a></p></td>
 <td><p>Builds the <span class="math notranslate nohighlight">\(\sigma^{-} = \frac{1}{2}(\sigma^x - i \sigma^y)\)</span> operator acting on the <cite>site</cite>-th of the Hilbert space <cite>hilbert</cite>.</p></td>
 </tr>
 </tbody>
@@ -689,14 +707,17 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.ContinuousOperator.html#netket.operator.ContinuousOperator" title="netket.operator.ContinuousOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.ContinuousOperator</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/operator/netket.operator.ContinuousOperator.html#netket.operator.ContinuousOperator" title="netket.operator.ContinuousOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.ContinuousOperator</span></code></a></p></td>
 <td><p>This class is the abstract base class for operators defined on a continuous Hilbert space.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.KineticEnergy.html#netket.operator.KineticEnergy" title="netket.operator.KineticEnergy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.KineticEnergy</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/operator/netket.operator.KineticEnergy.html#netket.operator.KineticEnergy" title="netket.operator.KineticEnergy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.KineticEnergy</span></code></a></p></td>
 <td><p>This is the kinetic energy operator (hbar = 1).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.operator.PotentialEnergy.html#netket.operator.PotentialEnergy" title="netket.operator.PotentialEnergy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.PotentialEnergy</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/operator/netket.operator.PotentialEnergy.html#netket.operator.PotentialEnergy" title="netket.operator.PotentialEnergy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.PotentialEnergy</span></code></a></p></td>
 <td><p>Returns the local potential energy defined in afun</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/operator/netket.operator.SumOperator.html#netket.operator.SumOperator" title="netket.operator.SumOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.operator.SumOperator</span></code></a></p></td>
+<td><p>This class implements the action of the _expect_kernel()-method of ContinuousOperator for a sum of ContinuousOperator objects.</p></td>
 </tr>
 </tbody>
 </table>
@@ -780,16 +801,25 @@ have a much higher overhead for small to moderate (for GPUs) system sizes.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisSamplerNumpy.html#netket.sampler.MetropolisSamplerNumpy" title="netket.sampler.MetropolisSamplerNumpy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisSamplerNumpy</span></code></a></p></td>
 <td><p>Metropolis-Hastings sampler for an Hilbert space according to a specific transition rule executed on CPU through Numpy.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisLocal.html#netket.sampler.MetropolisLocal" title="netket.sampler.MetropolisLocal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisLocal</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.experimental.sampler.MetropolisPtSampler.html#netket.experimental.sampler.MetropolisPtSampler" title="netket.experimental.sampler.MetropolisPtSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.sampler.MetropolisPtSampler</span></code></a></p></td>
+<td><p>Metropolis-Hastings with Parallel Tempering sampler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisLocal.html#netket.sampler.MetropolisLocal" title="netket.sampler.MetropolisLocal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisLocal</span></code></a></p></td>
 <td><p>Sampler acting on one local degree of freedom.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisExchange.html#netket.sampler.MetropolisExchange" title="netket.sampler.MetropolisExchange"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisExchange</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisExchange.html#netket.sampler.MetropolisExchange" title="netket.sampler.MetropolisExchange"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisExchange</span></code></a></p></td>
 <td><p>This sampler acts locally only on two local degree of freedom <span class="math notranslate nohighlight">\(s_i\)</span> and <span class="math notranslate nohighlight">\(s_j\)</span>, and proposes a new state: <span class="math notranslate nohighlight">\(s_1 \dots s^\prime_i \dots s^\prime_j \dots s_N\)</span>, where in general <span class="math notranslate nohighlight">\(s^\prime_i \neq s_i\)</span> and <span class="math notranslate nohighlight">\(s^\prime_j \neq s_j\)</span>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisHamiltonian.html#netket.sampler.MetropolisHamiltonian" title="netket.sampler.MetropolisHamiltonian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisHamiltonian</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisHamiltonian.html#netket.sampler.MetropolisHamiltonian" title="netket.sampler.MetropolisHamiltonian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisHamiltonian</span></code></a></p></td>
 <td><p>Sampling based on the off-diagonal elements of a Hamiltonian (or a generic Operator).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.ARDirectSampler.html#netket.sampler.ARDirectSampler" title="netket.sampler.ARDirectSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.ARDirectSampler</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.experimental.sampler.MetropolisLocalPt.html#netket.experimental.sampler.MetropolisLocalPt" title="netket.experimental.sampler.MetropolisLocalPt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.sampler.MetropolisLocalPt</span></code></a></p></td>
+<td><p>Sampler acting on one local degree of freedom.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.experimental.sampler.MetropolisExchangePt.html#netket.experimental.sampler.MetropolisExchangePt" title="netket.experimental.sampler.MetropolisExchangePt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.sampler.MetropolisExchangePt</span></code></a></p></td>
+<td><p>This sampler acts locally only on two local degree of freedom <span class="math notranslate nohighlight">\(s_i\)</span> and <span class="math notranslate nohighlight">\(s_j\)</span>, and proposes a new state: <span class="math notranslate nohighlight">\(s_1 \dots s^\prime_i \dots s^\prime_j \dots s_N\)</span>, where in general <span class="math notranslate nohighlight">\(s^\prime_i \neq s_i\)</span> and <span class="math notranslate nohighlight">\(s^\prime_j \neq s_j\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.ARDirectSampler.html#netket.sampler.ARDirectSampler" title="netket.sampler.ARDirectSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.ARDirectSampler</span></code></a></p></td>
 <td><p>Direct sampler for autoregressive neural networks.</p></td>
 </tr>
 </tbody>
@@ -1027,6 +1057,12 @@ Read more about the design goal of this module in their <a class="reference exte
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/variational/netket.vqs.MCMixedState.html#netket.vqs.MCMixedState" title="netket.vqs.MCMixedState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.vqs.MCMixedState</span></code></a></p></td>
 <td><p>Variational State for a Mixed Variational Neural Quantum State.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.vqs.get_local_kernel</span></code></p></td>
+<td><p>Returns the function computing the local estimator for the given variational state and operator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.vqs.get_local_kernel_arguments</span></code></p></td>
+<td><p>Returns the samples of vstate used to compute the expectation value of the operator O, and the connected elements and matrix elements.</p></td>
 </tr>
 </tbody>
 </table>

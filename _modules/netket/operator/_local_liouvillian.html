@@ -125,7 +125,7 @@
 <span class="kn">from</span> <span class="nn">._abstract_super_operator</span> <span class="kn">import</span> <span class="n">AbstractSuperOperator</span>
 
 
-<div class="viewcode-block" id="LocalLiouvillian"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.LocalLiouvillian.html#netket.operator.LocalLiouvillian">[docs]</a><span class="k">class</span> <span class="nc">LocalLiouvillian</span><span class="p">(</span><span class="n">AbstractSuperOperator</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">LocalLiouvillian</span><span class="p">(</span><span class="n">AbstractSuperOperator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    LocalLiouvillian super-operator, acting on the DoubledHilbert (tensor product) space</span>
 <span class="sd">    ℋ⊗ℋ.</span>
@@ -551,7 +551,7 @@
 
         <span class="k">return</span> <span class="n">liouvillian</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian</span><span class="o">.</span><span class="n">to_qobj</span><span class="p">(),</span> <span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">to_qobj</span><span class="p">()</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">jump_operators</span><span class="p">]</span>
-        <span class="p">)</span></div></div>
+        <span class="p">)</span></div>
 </pre></div>
 
     </div>
