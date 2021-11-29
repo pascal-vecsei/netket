@@ -115,7 +115,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.discrete_hilbert</span> <span class="kn">import</span> <span class="n">DiscreteHilbert</span>
+<span class="kn">from</span> <span class="nn">.discrete_hilbert</span> <span class="kn">import</span> <span class="n">DiscreteHilbert</span><span class="p">,</span> <span class="n">_is_indexable</span>
 
 
 <span class="c1"># TODO: Make parametric class</span>
@@ -154,23 +154,24 @@
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">hi</span><span class="o">.</span><span class="n">size</span> <span class="k">for</span> <span class="n">hi</span> <span class="ow">in</span> <span class="n">hilb_spaces</span><span class="p">])</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">hi</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">hi</span> <span class="ow">in</span> <span class="n">hilb_spaces</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cum_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cum_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cum_sizes</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sizes</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">hi</span><span class="o">.</span><span class="n">n_states</span> <span class="k">for</span> <span class="n">hi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hilbert_spaces</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ns_states_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cum_ns_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span><span class="p">)])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cum_ns_states_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span><span class="p">)]))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_delta_indices_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cum_indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hilbert_i</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">hi</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">hi</span> <span class="ow">in</span> <span class="n">hilb_spaces</span><span class="p">])</span>
+        <span class="c1"># pre-compute indexing data iff the tensor space is still indexable</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">hi</span><span class="o">.</span><span class="n">is_indexable</span> <span class="k">for</span> <span class="n">hi</span> <span class="ow">in</span> <span class="n">hilb_spaces</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_is_indexable</span><span class="p">(</span><span class="n">shape</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span> <span class="o">=</span> <span class="p">[</span><span class="n">hi</span><span class="o">.</span><span class="n">n_states</span> <span class="k">for</span> <span class="n">hi</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hilbert_spaces</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ns_states_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cum_ns_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span><span class="p">)])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cum_ns_states_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">cumprod</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span><span class="p">)]))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ns_states</span><span class="p">)</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span></div>
 
     <span class="nd">@property</span>
@@ -202,6 +203,8 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">n_states</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_indexable</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;The hilbert space is too large to be indexed.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_states</span>
 
     <span class="k">def</span> <span class="nf">_numbers_to_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numbers</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
