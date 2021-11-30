@@ -598,19 +598,19 @@ If you work with NetKet and determine that a particular implementation works bes
 The derivation in the case of a variational optimization for the ground state, can be sketched as follows:</p>
 <p>Given a a variational wavefunction <span class="math notranslate nohighlight">\( \ket{\psi_W} \)</span>, we consider its first order Taylor expansion around <span class="math notranslate nohighlight">\( W \)</span>, <span class="math notranslate nohighlight">\( \ket{\psi_{W+\delta W}} = \ket{\psi_W} + \delta W_k \hat{O}_k \ket{\psi_W} \)</span>, where <span class="math notranslate nohighlight">\( \bra{\sigma}\hat{O}_k \ket{\eta} = \delta_{\sigma,\eta} \frac{d \log\psi_W(\sigma)}{dW_k}\)</span>.
 We wish to determine the updates <span class="math notranslate nohighlight">\( \delta_{\sigma,\eta} \)</span> of the variational parameters that match a step of imaginary-time evolution, given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-2aefa06b-f769-4611-b1e1-a75089a88daf">
-<span class="eqno">(1)<a class="headerlink" href="#equation-2aefa06b-f769-4611-b1e1-a75089a88daf" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-33a0cc2c-be83-4089-b7b6-e9607d491649">
+<span class="eqno">(1)<a class="headerlink" href="#equation-33a0cc2c-be83-4089-b7b6-e9607d491649" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 \ket{\phi} = U(\epsilon)\ket{\psi_W} = e^{\epsilon\hat{H}}\ket{\psi_W} \sim (\mathbb{I} - \epsilon \hat{H})\ket{\psi_W}
 \end{equation}\]</div>
 <p>It is possible to show that the updates <span class="math notranslate nohighlight">\(\delta W_k \)</span> that minimise the norm of the state <span class="math notranslate nohighlight">\(\ket{\phi}-\ket{\psi_{W+\delta W}}\)</span> can be determined by solving the linear system</p>
-<div class="amsmath math notranslate nohighlight" id="equation-9b911131-004c-4884-9903-4c331aaee6dc">
-<span class="eqno">(2)<a class="headerlink" href="#equation-9b911131-004c-4884-9903-4c331aaee6dc" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-1ee409c3-058a-47ab-a676-54dcd39ea27e">
+<span class="eqno">(2)<a class="headerlink" href="#equation-1ee409c3-058a-47ab-a676-54dcd39ea27e" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 S_{i,k} \delta W_k = F_i
 \end{equation}\]</div>
 <p>where <span class="math notranslate nohighlight">\( F_i = \langle \hat{E}^{loc} \hat{O}_i\rangle_c \)</span> is the gradient of the Energy and <span class="math notranslate nohighlight">\( S_{i,k} = \langle \hat{O}^\dagger_i \hat{O}_k\rangle_c \)</span> is the Quantum Geometric Tensor.
 The QGT is positive definite, therefore it can be inverted and the solution is formally written as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4e127fc2-38be-4ea7-bd5b-4f88bc2b680b">
-<span class="eqno">(3)<a class="headerlink" href="#equation-4e127fc2-38be-4ea7-bd5b-4f88bc2b680b" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<div class="amsmath math notranslate nohighlight" id="equation-d75a76d7-230a-4cbc-b380-3a799f8f77e7">
+<span class="eqno">(3)<a class="headerlink" href="#equation-d75a76d7-230a-4cbc-b380-3a799f8f77e7" title="Permalink to this equation">¶</a></span>\[\begin{equation}
 \bf{\delta W} = S^{-1} \bf{F},
 \end{equation}\]</div>
 <p>where bold fonts are used for vectors.
