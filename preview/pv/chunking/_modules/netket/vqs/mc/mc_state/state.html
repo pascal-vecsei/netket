@@ -567,7 +567,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">chain_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">chain_length</span> <span class="o">=</span> <span class="n">compute_chain_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
-                <span class="n">check_chunks</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">check_chunk_size</span><span class="p">(</span>
