@@ -659,8 +659,8 @@
 <span class="sd">                     to implement BatchNorm. Consult</span>
 <span class="sd">                     `Flax&#39;s Module.apply documentation &lt;https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply&gt;`_</span>
 <span class="sd">                     for a more in-depth exaplanation).</span>
-<span class="sd">            is_hermitian: optional override for whever to use or not the hermitian logic. By default</span>
-<span class="sd">                          it&#39;s automatically detected.</span>
+<span class="sd">            use_covariance: whever to use the covariance formula, usually reserved for</span>
+<span class="sd">                hermitian operators, ⟨∂logψ Oˡᵒᶜ⟩ - ⟨∂logψ⟩⟨Oˡᵒᶜ⟩</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            An estimation of the quantum expectation value &lt;O&gt;.</span>

@@ -124,7 +124,7 @@
 <span class="kn">from</span> <span class="nn">flax.core.frozen_dict</span> <span class="kn">import</span> <span class="n">FrozenDict</span>
 
 <span class="kn">import</span> <span class="nn">netket.jax</span> <span class="k">as</span> <span class="nn">nkjax</span>
-<span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">AbstractOperator</span>
+<span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">AbstractOperator</span><span class="p">,</span> <span class="n">Squared</span>
 <span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 <span class="kn">from</span> <span class="nn">netket.utils.dispatch</span> <span class="kn">import</span> <span class="n">dispatch</span><span class="p">,</span> <span class="n">TrueT</span><span class="p">,</span> <span class="n">FalseT</span>
@@ -301,8 +301,8 @@
 <span class="sd">                model while you train it (for example to implement BatchNorm. Consult</span>
 <span class="sd">                `Flax&#39;s Module.apply documentation &lt;https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply&gt;`_</span>
 <span class="sd">                for a more in-depth exaplanation).</span>
-<span class="sd">            is_hermitian: optional override for whever to use or not the hermitian</span>
-<span class="sd">                logic. By default it&#39;s automatically detected.</span>
+<span class="sd">            use_covariance: whever to use the covariance formula, usually reserved for</span>
+<span class="sd">                hermitian operators, ⟨∂logψ Oˡᵒᶜ⟩ - ⟨∂logψ⟩⟨Oˡᵒᶜ⟩</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            An estimation of the quantum expectation value &lt;O&gt;.</span>
@@ -415,6 +415,15 @@
 
 
 <span class="c1"># default dispatch where use_covariance is not specified</span>
+<span class="c1"># Give it an higher precedence so this is always executed first, no matter what, if there</span>
+<span class="c1"># is a dispatch ambiguity.</span>
+<span class="c1"># This is not needed, but makes the dispatch logic work fine even if the users write weak</span>
+<span class="c1"># signatures (eg: if an users defines `expect_grad(vs: MCState, op: MyOperator, use_cov: Any)`</span>
+<span class="c1"># instead of `expect_grad(vs: MCState, op: MyOperator, use_cov: bool)`</span>
+<span class="c1"># there would be a resolution error because the signature defined by the user is stricter</span>
+<span class="c1"># for some arguments, but the one below here is stricter for `use_covariance` which is</span>
+<span class="c1"># set to bool. Since this signature below, in the worst case, does nothing, this ensures</span>
+<span class="c1"># that `expect_and_grad` is more user-friendly.</span>
 <span class="nd">@dispatch</span><span class="p">(</span><span class="n">precedence</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">expect_and_grad</span><span class="p">(</span>
     <span class="n">vstate</span><span class="p">:</span> <span class="n">VariationalState</span><span class="p">,</span>
@@ -441,7 +450,7 @@
 <span class="sd">        vstate: The variational state</span>
 <span class="sd">        Ô: the operator Ô for which we compute the expectation value and it&#39;s gradient</span>
 <span class="sd">        use_covariance: whever to use the covariance formula, usually reserved for</span>
-<span class="sd">            hermitian operators.</span>
+<span class="sd">            hermitian operators, ⟨∂logψ Oˡᵒᶜ⟩ - ⟨∂logψ⟩⟨Oˡᵒᶜ⟩</span>
 <span class="sd">        mutable: Can be bool, str, or list. Specifies which collections in the model_state should</span>
 <span class="sd">                 be treated as  mutable: bool: all/no collections are mutable. str: The name of a</span>
 <span class="sd">                 single mutable  collection. list: A list of names of mutable collections.</span>
@@ -460,7 +469,10 @@
         <span class="n">use_covariance</span> <span class="o">=</span> <span class="n">TrueT</span><span class="p">()</span> <span class="k">if</span> <span class="n">use_covariance</span> <span class="k">else</span> <span class="n">FalseT</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">use_covariance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">use_covariance</span> <span class="o">=</span> <span class="n">TrueT</span><span class="p">()</span> <span class="k">if</span> <span class="n">operator</span><span class="o">.</span><span class="n">is_hermitian</span> <span class="k">else</span> <span class="n">FalseT</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">Squared</span><span class="p">):</span>
+            <span class="n">use_covariance</span> <span class="o">=</span> <span class="n">FalseT</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">use_covariance</span> <span class="o">=</span> <span class="n">TrueT</span><span class="p">()</span> <span class="k">if</span> <span class="n">operator</span><span class="o">.</span><span class="n">is_hermitian</span> <span class="k">else</span> <span class="n">FalseT</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">mutable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">mutable</span> <span class="o">=</span> <span class="n">vstate</span><span class="o">.</span><span class="n">mutable</span>
