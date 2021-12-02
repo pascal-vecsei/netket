@@ -143,7 +143,7 @@
     <span class="n">chain_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_samples</span> <span class="o">/</span> <span class="n">n_chains</span><span class="p">))</span>
 
     <span class="n">n_samples_new</span> <span class="o">=</span> <span class="n">chain_length</span> <span class="o">*</span> <span class="n">n_chains</span>
-    <span class="n">n_samples_per_rank_new</span> <span class="o">=</span> <span class="n">n_samples</span> <span class="o">//</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
+    <span class="n">n_samples_per_rank_new</span> <span class="o">=</span> <span class="n">n_samples_new</span> <span class="o">//</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
 
     <span class="k">if</span> <span class="n">n_samples_new</span> <span class="o">!=</span> <span class="n">n_samples</span><span class="p">:</span>
         <span class="n">n_samples_per_rank</span> <span class="o">=</span> <span class="n">n_samples</span> <span class="o">//</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
