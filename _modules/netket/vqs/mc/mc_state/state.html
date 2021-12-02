@@ -113,7 +113,7 @@
 
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -125,13 +125,15 @@
 
 <span class="kn">from</span> <span class="nn">netket</span> <span class="kn">import</span> <span class="n">jax</span> <span class="k">as</span> <span class="n">nkjax</span>
 <span class="kn">from</span> <span class="nn">netket</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">netket.stats</span> <span class="kn">import</span> <span class="n">Stats</span>
+<span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">AbstractOperator</span>
 <span class="kn">from</span> <span class="nn">netket.sampler</span> <span class="kn">import</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">SamplerState</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">maybe_wrap_module</span><span class="p">,</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">warn_deprecation</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">wrap_afun</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">SeedT</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 <span class="kn">from</span> <span class="nn">netket.optimizer</span> <span class="kn">import</span> <span class="n">LinearOperator</span>
 <span class="kn">from</span> <span class="nn">netket.optimizer.qgt</span> <span class="kn">import</span> <span class="n">QGTAuto</span>
 
-<span class="kn">from</span> <span class="nn">netket.vqs</span> <span class="kn">import</span> <span class="n">VariationalState</span>
+<span class="kn">from</span> <span class="nn">netket.vqs.base</span> <span class="kn">import</span> <span class="n">VariationalState</span><span class="p">,</span> <span class="n">expect</span><span class="p">,</span> <span class="n">expect_and_grad</span>
 
 
 <span class="k">def</span> <span class="nf">compute_chain_length</span><span class="p">(</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
@@ -139,7 +141,36 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid number of samples: n_samples=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_samples</span><span class="p">))</span>
 
     <span class="n">chain_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_samples</span> <span class="o">/</span> <span class="n">n_chains</span><span class="p">))</span>
+
+    <span class="n">n_samples_new</span> <span class="o">=</span> <span class="n">chain_length</span> <span class="o">*</span> <span class="n">n_chains</span>
+    <span class="n">n_samples_per_rank_new</span> <span class="o">=</span> <span class="n">n_samples</span> <span class="o">//</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
+
+    <span class="k">if</span> <span class="n">n_samples_new</span> <span class="o">!=</span> <span class="n">n_samples</span><span class="p">:</span>
+        <span class="n">n_samples_per_rank</span> <span class="o">=</span> <span class="n">n_samples</span> <span class="o">//</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;n_samples=</span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">n_samples_per_rank</span><span class="si">}</span><span class="s2"> per MPI rank) does not &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;divide n_chains=</span><span class="si">{</span><span class="n">n_chains</span><span class="si">}</span><span class="s2">, increased to </span><span class="si">{</span><span class="n">n_samples_new</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">n_samples_per_rank_new</span><span class="si">}</span><span class="s2"> per MPI rank)&quot;</span>
+        <span class="p">)</span>
+
     <span class="k">return</span> <span class="n">chain_length</span>
+
+
+<span class="k">def</span> <span class="nf">check_chunk_size</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">):</span>
+    <span class="n">n_samples_per_rank</span> <span class="o">=</span> <span class="n">n_samples</span> <span class="o">//</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
+
+    <span class="k">if</span> <span class="n">chunk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">chunk_size</span> <span class="o">&lt;</span> <span class="n">n_samples_per_rank</span> <span class="ow">and</span> <span class="n">n_samples_per_rank</span> <span class="o">%</span> <span class="n">chunk_size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chunk_size=</span><span class="si">{</span><span class="n">chunk_size</span><span class="si">}</span><span class="s2">`&lt;`n_samples_per_rank=</span><span class="si">{</span><span class="n">n_samples_per_rank</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="s2">&quot;chunk_size is not an integer fraction of `n_samples_per rank`. This is&quot;</span>
+                <span class="s2">&quot;unsupported. Please change `chunk_size` so that it divides evenly the&quot;</span>
+                <span class="s2">&quot;number of samples per rank or set it to `None` to disable chunking.&quot;</span>
+            <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_power_of_two</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">n</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">n</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
 
 
 <span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -182,6 +213,8 @@
     <span class="n">_apply_fun</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;The function used to evaluate the model&quot;&quot;&quot;</span>
 
+    <span class="n">_chunk_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
 <div class="viewcode-block" id="MCState.__init__"><a class="viewcode-back" href="../../../../../docs/_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span><span class="p">,</span>
@@ -191,6 +224,7 @@
         <span class="n">n_samples_per_rank</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">n_discard</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># deprecated</span>
         <span class="n">n_discard_per_chain</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">chunk_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">variables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PyTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">init_fun</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">apply_fun</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -311,7 +345,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n_samples_per_rank</span> <span class="o">=</span> <span class="n">n_samples_per_rank</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_discard_per_chain</span> <span class="o">=</span> <span class="n">n_discard_per_chain</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_discard_per_chain</span> <span class="o">=</span> <span class="n">n_discard_per_chain</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span> <span class="o">=</span> <span class="n">chunk_size</span></div>
 
 <div class="viewcode-block" id="MCState.init"><a class="viewcode-back" href="../../../../../docs/_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -371,12 +407,14 @@
     <span class="k">def</span> <span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">chain_length</span> <span class="o">=</span> <span class="n">compute_chain_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
 
-        <span class="n">n_samples_per_node</span> <span class="o">=</span> <span class="n">chain_length</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span>
+        <span class="n">n_samples_per_rank</span> <span class="o">=</span> <span class="n">chain_length</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span>
         <span class="n">n_samples</span> <span class="o">=</span> <span class="n">chain_length</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span>
+
+        <span class="n">check_chunk_size</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span> <span class="o">=</span> <span class="n">n_samples</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_chain_length</span> <span class="o">=</span> <span class="n">chain_length</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples_per_rank</span> <span class="o">=</span> <span class="n">n_samples_per_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples_per_rank</span> <span class="o">=</span> <span class="n">n_samples_per_rank</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
     <span class="nd">@property</span>
@@ -455,6 +493,48 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_discard_per_chain</span> <span class="o">=</span> <span class="n">val</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">chunk_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Suggested *maximum size* of the chunks used in forward and backward evaluations</span>
+<span class="sd">        of the Neural Network model. If your inputs are smaller than the chunk size</span>
+<span class="sd">        this setting is ignored.</span>
+
+<span class="sd">        This can be used to lower the memory required to run a computation with a very</span>
+<span class="sd">        high number of samples or on a very large lattice. Notice that inputs and</span>
+<span class="sd">        outputs must still fit in memory, but the intermediate computations will now</span>
+<span class="sd">        require less memory.</span>
+
+<span class="sd">        This option comes at an increased computational cost. While this cost should</span>
+<span class="sd">        be negligible for large-enough chunk sizes, don&#39;t use it unless you are memory</span>
+<span class="sd">        bound!</span>
+
+<span class="sd">        This option is an hint: only some operations support chunking. If you perform</span>
+<span class="sd">        an operation that is not implemented with chunking support, it will fall back</span>
+<span class="sd">        to no chunking. To check if this happened, set the environment variable</span>
+<span class="sd">        `NETKET_DEBUG=1`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_size</span>
+
+    <span class="nd">@chunk_size</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">chunk_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="c1"># disable chunks if it is None</span>
+        <span class="k">if</span> <span class="n">chunk_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_size</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">chunk_size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Chunk size must be a positive integer. &quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_power_of_two</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;For performance reasons, we suggest to use a power-of-two chunk size.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">check_chunk_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_size</span> <span class="o">=</span> <span class="n">chunk_size</span>
+
 <div class="viewcode-block" id="MCState.reset"><a class="viewcode-back" href="../../../../../docs/_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Resets the sampled states. This method is called automatically every time</span>
@@ -480,10 +560,18 @@
 <span class="sd">            n_samples: The total number of samples across all MPI ranks.</span>
 <span class="sd">            n_discard_per_chain: Number of discarded samples at the beginning of the markov chain.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">chain_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">chain_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain_length</span>
-        <span class="k">elif</span> <span class="n">chain_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">chain_length</span> <span class="o">=</span> <span class="n">compute_chain_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">chain_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">chain_length</span> <span class="o">=</span> <span class="n">compute_chain_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">check_chunk_size</span><span class="p">(</span>
+                    <span class="n">chain_length</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span> <span class="o">*</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">,</span>
+                <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_discard_per_chain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">n_discard_per_chain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_discard_per_chain</span>
@@ -537,6 +625,53 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">jit_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="n">σ</span><span class="p">)</span></div>
 
+    <span class="c1"># override to use chunks</span>
+<div class="viewcode-block" id="MCState.expect"><a class="viewcode-back" href="../../../../../docs/_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState.expect">[docs]</a>    <span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Estimates the quantum expectation value for a given operator O.</span>
+<span class="sd">            In the case of a pure state $\psi$, this is $&lt;O&gt;= &lt;Psi|O|Psi&gt;/&lt;Psi|Psi&gt;$</span>
+<span class="sd">            otherwise for a mixed state $\rho$, this is $&lt;O&gt; = \Tr[\rho \hat{O}/\Tr[\rho]$.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            Ô: the operator O.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An estimation of the quantum expectation value &lt;O&gt;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">)</span></div>
+
+    <span class="c1"># override to use chunks</span>
+<div class="viewcode-block" id="MCState.expect_and_grad"><a class="viewcode-back" href="../../../../../docs/_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState.expect_and_grad">[docs]</a>    <span class="k">def</span> <span class="nf">expect_and_grad</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">mutable</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_covariance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Stats</span><span class="p">,</span> <span class="n">PyTree</span><span class="p">]:</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Estimates both the gradient of the quantum expectation value of a given operator O.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            Ô: the operator Ô for which we compute the expectation value and it&#39;s gradient</span>
+<span class="sd">            mutable: Can be bool, str, or list. Specifies which collections in the model_state should</span>
+<span class="sd">                     be treated as  mutable: bool: all/no collections are mutable. str: The name of a</span>
+<span class="sd">                     single mutable  collection. list: A list of names of mutable collections.</span>
+<span class="sd">                     This is used to mutate the state of the model while you train it (for example</span>
+<span class="sd">                     to implement BatchNorm. Consult</span>
+<span class="sd">                     `Flax&#39;s Module.apply documentation &lt;https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply&gt;`_</span>
+<span class="sd">                     for a more in-depth exaplanation).</span>
+<span class="sd">            use_covariance: whever to use the covariance formula, usually reserved for</span>
+<span class="sd">                hermitian operators, ⟨∂logψ Oˡᵒᶜ⟩ - ⟨∂logψ⟩⟨Oˡᵒᶜ⟩</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An estimation of the quantum expectation value &lt;O&gt;.</span>
+<span class="sd">            An estimation of the average gradient of the quantum expectation value &lt;O&gt;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mutable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mutable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutable</span>
+
+        <span class="k">return</span> <span class="n">expect_and_grad</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">,</span> <span class="n">use_covariance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_size</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span>
+        <span class="p">)</span></div>
+
 <div class="viewcode-block" id="MCState.evaluate"><a class="viewcode-back" href="../../../../../docs/_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState.evaluate">[docs]</a>    <span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;Use MCState.log_value(σ) instead.&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">σ</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -586,8 +721,6 @@
 
 
 <span class="c1"># serialization</span>
-
-
 <span class="k">def</span> <span class="nf">serialize_MCState</span><span class="p">(</span><span class="n">vstate</span><span class="p">):</span>
     <span class="n">state_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;variables&quot;</span><span class="p">:</span> <span class="n">serialization</span><span class="o">.</span><span class="n">to_state_dict</span><span class="p">(</span><span class="n">vstate</span><span class="o">.</span><span class="n">variables</span><span class="p">),</span>

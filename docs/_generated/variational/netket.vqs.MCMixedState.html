@@ -626,6 +626,30 @@ Useful for example when you have a batchnorm layer that constructs the average/m
 </dd></dl>
 
 <dl class="py attribute">
+<dt id="netket.vqs.MCMixedState.chunk_size">
+<code class="sig-name descname"><span class="pre">chunk_size</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.chunk_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suggested <em>maximum size</em> of the chunks used in forward and backward evaluations
+of the Neural Network model. If your inputs are smaller than the chunk size
+this setting is ignored.</p>
+<p>This can be used to lower the memory required to run a computation with a very
+high number of samples or on a very large lattice. Notice that inputs and
+outputs must still fit in memory, but the intermediate computations will now
+require less memory.</p>
+<p>This option comes at an increased computational cost. While this cost should
+be negligible for large-enough chunk sizes, don’t use it unless you are memory
+bound!</p>
+<p>This option is an hint: only some operations support chunking. If you perform
+an operation that is not implemented with chunking support, it will fall back
+to no chunking. To check if this happened, set the environment variable
+<cite>NETKET_DEBUG=1</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
 <dt id="netket.vqs.MCMixedState.diagonal">
 <code class="sig-name descname"><span class="pre">diagonal</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.diagonal" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -883,19 +907,17 @@ otherwise for a mixed state $rho$, this is $&lt;O&gt; = Tr[rho hat{O}/Tr[rho]$.<
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Ô</strong> – the operator Ô for which we compute the expectation value and its
-gradient</p></li>
-<li><p><strong>mutable</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – Can be bool, str, or list. Specifies which collections in the
-<cite>model_state</cite> should be treated as  mutable: bool: all/no collections
-are mutable. str: The name of a single mutable  collection. list: A list
-of names of mutable collections. This is used to mutate the state of the
-model while you train it (for example to implement BatchNorm. Consult
+<li><p><strong>Ô</strong> – the operator Ô for which we compute the expectation value and it’s gradient</p></li>
+<li><p><strong>mutable</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – Can be bool, str, or list. Specifies which collections in the model_state should
+be treated as  mutable: bool: all/no collections are mutable. str: The name of a
+single mutable  collection. list: A list of names of mutable collections.
+This is used to mutate the state of the model while you train it (for example
+to implement BatchNorm. Consult
 <a class="reference external" href="https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply">Flax’s Module.apply documentation</a>
 for a more in-depth exaplanation).</p></li>
-<li><p><strong>is_hermitian</strong> – optional override for whever to use or not the hermitian
-logic. By default it’s automatically detected.</p></li>
+<li><p><strong>use_covariance</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – whever to use the covariance formula, usually reserved for
+hermitian operators, ⟨∂logψ Oˡᵒᶜ⟩ - ⟨∂logψ⟩⟨Oˡᵒᶜ⟩</p></li>
 <li><p><strong>Ô</strong> (<a class="reference internal" href="../operator/netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><em>netket.operator.AbstractOperator</em></a>) – </p></li>
-<li><p><strong>use_covariance</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a><em>]</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>

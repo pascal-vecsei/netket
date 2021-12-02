@@ -23,6 +23,7 @@
 
    Attributes
       .. autoattribute:: MCState.chain_length
+      .. autoattribute:: MCState.chunk_size
       .. autoattribute:: MCState.hilbert
       .. autoattribute:: MCState.model
       .. autoattribute:: MCState.model_state
