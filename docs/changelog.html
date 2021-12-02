@@ -217,6 +217,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="varstate.html#saving-and-loading-a-variational-state">Saving and Loading a Variational State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="varstate.html#using-exactstate-for-testing">Using ExactState for testing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a><ul>
@@ -459,6 +460,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#variational-state-interface">Variational State Interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.VariationalState.html">netket.vqs.VariationalState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.ExactState.html">netket.vqs.ExactState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCState.html">netket.vqs.MCState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCMixedState.html">netket.vqs.MCMixedState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.get_local_kernel.html">netket.vqs.get_local_kernel</a></li>
@@ -553,6 +555,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">nk.optimizer.Adam</span></code> now supports complex parameters, and you can use <code class="docutils literal notranslate"><span class="pre">nk.optimizer.split_complex</span></code> to make optimizers process complex parameters as if they are pairs of real parameters. <a class="reference external" href="https://github.com/netket/netket/pull/1009">#1009</a></p></li>
 <li><p>Chunking of <code class="docutils literal notranslate"><span class="pre">MCState.expect</span></code> and <code class="docutils literal notranslate"><span class="pre">MCState.expect_and_grad</span></code> computations is now supported, which allows to bound the memory cost in exchange of a minor increase in computation time. <a class="reference external" href="https://github.com/netket/netket/pull/1006">#1006</a> (and discussions in <a class="reference external" href="https://github.com/netket/netket/pull/918">#918</a> and <a class="reference external" href="https://github.com/netket/netket/pull/830">#830</a>)</p></li>
 <li><p><span class="xref std std-ref">nk.operator.LocalOperator</span> now accepts sparse matrices as input operators <a class="reference external" href="https://github.com/netket/netket/pull/919">#919</a></p></li>
+<li><p>A new variational state that performs exact summation over the whole Hilbert space has been added. It can be constructed with <span class="xref std std-ref">nk.vqs.ExactState</span> and supports the same Jax neural networks as <span class="xref std std-ref">nk.vqs.MCState</span>. <a class="reference external" href="https://github.com/netket/netket/pull/953">#953</a></p></li>
 </ul>
 </div>
 <div class="section" id="breaking-changes">

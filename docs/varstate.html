@@ -219,6 +219,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#saving-and-loading-a-variational-state">Saving and Loading a Variational State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-exactstate-for-testing">Using ExactState for testing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a><ul>
@@ -461,6 +462,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#variational-state-interface">Variational State Interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.VariationalState.html">netket.vqs.VariationalState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.ExactState.html">netket.vqs.ExactState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCState.html">netket.vqs.MCState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCMixedState.html">netket.vqs.MCMixedState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.get_local_kernel.html">netket.vqs.get_local_kernel</a></li>
@@ -779,6 +781,15 @@ use the same procedure outlined above, only that the list line should be:</p>
 </pre></div>
 </div>
 </div>
+</div>
+<div class="section" id="using-exactstate-for-testing">
+<h2>Using ExactState for testing<a class="headerlink" href="#using-exactstate-for-testing" title="Permalink to this headline">¶</a></h2>
+<p>In order to check the performance of a given model on small test systems, it is possible to use <code class="xref py py-class docutils literal notranslate"><span class="pre">ExactState</span></code> which can be used in place of <a class="reference internal" href="_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState" title="netket.vqs.MCState"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCState</span></code></a> and computes quantities not by stochastic sampling but by evaluation of the ansatz over the full Hilbert space basis. (Therefore, it is infeasible to use for system sizes beyond ED.)
+This can be helpful to diagnose potential errors arising from Monte Carlo sampling.
+.. code:: python</p>
+<blockquote>
+<div><p>vs = nk.vqs.ExactState(hilbert, nk.models.RBM())</p>
+</div></blockquote>
 </div>
 </div>
 
