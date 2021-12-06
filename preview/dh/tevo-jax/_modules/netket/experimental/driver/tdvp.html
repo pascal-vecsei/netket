@@ -193,7 +193,7 @@
 <span class="sd">                Lindbladian for density operators).</span>
 <span class="sd">            variational_state: The variational state.</span>
 <span class="sd">            integrator: Configuration of the algorithm used for solving the ODE.</span>
-<span class="sd">            t0: Initial time.</span>
+<span class="sd">            t0: Initial time at the start of the time evolution.</span>
 <span class="sd">            propagation_type: Determines the equation of motion: &quot;real&quot;  for the</span>
 <span class="sd">                real-time Schödinger equation (SE), &quot;imag&quot; for the imaginary-time SE.</span>
 <span class="sd">            qgt: The QGT specification.</span>
@@ -455,10 +455,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Current time step.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">dt</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Current time.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">t</span>
 
     <span class="nd">@t</span><span class="o">.</span><span class="n">setter</span>

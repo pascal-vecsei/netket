@@ -573,7 +573,7 @@ when used with Monte Carlo sampling via <span class="xref std std-ref">~netket.v
 Lindbladian for density operators).</p></li>
 <li><p><strong>variational_state</strong> (<a class="reference internal" href="../../variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState" title="netket.vqs.VariationalState"><code class="xref py py-class docutils literal notranslate"><span class="pre">VariationalState</span></code></a>) – The variational state.</p></li>
 <li><p><strong>integrator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">RKIntegratorConfig</span></code>) – Configuration of the algorithm used for solving the ODE.</p></li>
-<li><p><strong>t0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Initial time.</p></li>
+<li><p><strong>t0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Initial time at the start of the time evolution.</p></li>
 <li><p><strong>propagation_type</strong> – Determines the equation of motion: “real”  for the
 real-time Schödinger equation (SE), “imag” for the imaginary-time SE.</p></li>
 <li><p><strong>qgt</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">LinearOperator</span></code>]) – The QGT specification.</p></li>
@@ -602,7 +602,8 @@ to its norm.</p>
 <dt>Attributes</dt><dd><dl class="py attribute">
 <dt id="netket.experimental.driver.TDVP.dt">
 <code class="sig-name descname"><span class="pre">dt</span></code><a class="headerlink" href="#netket.experimental.driver.TDVP.dt" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Current time step.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="netket.experimental.driver.TDVP.generator">
@@ -649,7 +650,8 @@ This can be used, for example, to identify the line in a log file.</p>
 <dl class="py attribute">
 <dt id="netket.experimental.driver.TDVP.t">
 <code class="sig-name descname"><span class="pre">t</span></code><a class="headerlink" href="#netket.experimental.driver.TDVP.t" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Current time.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="netket.experimental.driver.TDVP.t0">
