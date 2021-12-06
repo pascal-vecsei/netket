@@ -531,8 +531,13 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api-experimental.html#ode-integrators">ODE Integrators</a></li>
 </ul>
 </li>
 </ul>
@@ -556,6 +561,8 @@
 <li><p>Chunking of <code class="docutils literal notranslate"><span class="pre">MCState.expect</span></code> and <code class="docutils literal notranslate"><span class="pre">MCState.expect_and_grad</span></code> computations is now supported, which allows to bound the memory cost in exchange of a minor increase in computation time. <a class="reference external" href="https://github.com/netket/netket/pull/1006">#1006</a> (and discussions in <a class="reference external" href="https://github.com/netket/netket/pull/918">#918</a> and <a class="reference external" href="https://github.com/netket/netket/pull/830">#830</a>)</p></li>
 <li><p><span class="xref std std-ref">nk.operator.LocalOperator</span> now accepts sparse matrices as input operators <a class="reference external" href="https://github.com/netket/netket/pull/919">#919</a></p></li>
 <li><p>A new variational state that performs exact summation over the whole Hilbert space has been added. It can be constructed with <span class="xref std std-ref">nk.vqs.ExactState</span> and supports the same Jax neural networks as <span class="xref std std-ref">nk.vqs.MCState</span>. <a class="reference external" href="https://github.com/netket/netket/pull/953">#953</a></p></li>
+<li><p>A new time-evolution driver that uses the Time-dependent-variational-principle has been added to the experimental submodule as <span class="xref std std-ref">nk.experimental.TDVP</span>. It works with time-independent and time-dependent hamiltonians and liouvillians. <a class="reference external" href="https://github.com/netket/netket/pull/1012">#1012</a></p></li>
+<li><p>A set of Runge-Kutta, jax-compatible integrators has been added to the experimental module to use together with the new TDVP driver. <a class="reference external" href="https://github.com/netket/netket/pull/1012">#1012</a></p></li>
 </ul>
 </div>
 <div class="section" id="breaking-changes">
@@ -573,6 +580,7 @@
 <h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>The constructor of <code class="docutils literal notranslate"><span class="pre">TensorHilbert</span></code> (which is used by the product operator <code class="docutils literal notranslate"><span class="pre">*</span></code> for inhomogeneous spaces) no longer fails when one of the component spaces is non-indexable. <a class="reference external" href="https://github.com/netket/netket/pull/1004">#1004</a></p></li>
+<li><p>The <span class="xref std std-ref">nk.hilbert.random.flip_state</span> method used by <code class="docutils literal notranslate"><span class="pre">MetropolisLocal</span></code> now throws an error when called on a <span class="xref std std-ref">nk.hilbert.ContinuousHilbert</span> hilbert space instead of entering an endless loop. <a class="reference external" href="https://github.com/netket/netket/pull/1014">#1014</a></p></li>
 </ul>
 </div>
 </div>
