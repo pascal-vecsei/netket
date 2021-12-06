@@ -111,15 +111,17 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">jax</span>
+<span class="kn">from</span> <span class="nn">flax</span> <span class="kn">import</span> <span class="n">linen</span> <span class="k">as</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
 <span class="kn">from</span> <span class="nn">jax.experimental</span> <span class="kn">import</span> <span class="n">loops</span>
 
 <span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">ContinuousHilbert</span>
 
-<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">mpi</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">wrap_afun</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">PRNGKeyT</span>
 
 <span class="kn">from</span> <span class="nn">netket.utils.deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">warn_deprecation</span>
@@ -361,6 +363,36 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sweeps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;n_sweeps&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
+<div class="viewcode-block" id="MetropolisSampler.sample_next"><a class="viewcode-back" href="../../../docs/_generated/samplers/netket.sampler.MetropolisSampler.html#netket.sampler.MetropolisSampler.sample_next">[docs]</a>    <span class="k">def</span> <span class="nf">sample_next</span><span class="p">(</span>
+        <span class="n">sampler</span><span class="p">,</span>
+        <span class="n">machine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SamplerState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">SamplerState</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Samples the next state in the markov chain.</span>
+
+<span class="sd">        If you subclass `MetropolisSampler`, you should not override this but override `_sample_next`</span>
+<span class="sd">        instead, because this contains some common logic.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            machine: a Flax module or callable apply function with the forward pass of the log-pdf.</span>
+<span class="sd">            parameters: The PyTree of parameters of the model.</span>
+<span class="sd">            state: The current state of the sampler. If it&#39;s not provided, it will be constructed</span>
+<span class="sd">                by calling :code:`sampler.reset(machine, parameters)` with a random seed.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            state: The new state of the sampler</span>
+<span class="sd">            σ: The next batch of samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Note: the return order is inverted wrt `.sample` because when called inside of</span>
+        <span class="c1"># a scan function the first returned argument should be the state.</span>
+
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sampler</span><span class="o">.</span><span class="n">_sample_next</span><span class="p">(</span><span class="n">wrap_afun</span><span class="p">(</span><span class="n">machine</span><span class="p">),</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span></div>
+
     <span class="k">def</span> <span class="nf">_init_state</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="n">key_state</span><span class="p">,</span> <span class="n">key_rule</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">rule_state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">rule</span><span class="o">.</span><span class="n">init_state</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">key_rule</span><span class="p">)</span>
@@ -394,6 +426,12 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_sample_next</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Implementation of `sample_next` for subclasses of `MetropolisSampler`.</span>
+
+<span class="sd">        If you subclass `MetropolisSampler`, you should override this and not `sample_next`</span>
+<span class="sd">        itself, because `sample_next` contains some common logic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">new_rng</span><span class="p">,</span> <span class="n">rng</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">loops</span><span class="o">.</span><span class="n">Scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
@@ -441,6 +479,9 @@
 
         <span class="k">return</span> <span class="n">new_state</span><span class="p">,</span> <span class="n">new_state</span><span class="o">.</span><span class="n">σ</span>
 
+    <span class="k">def</span> <span class="nf">_sample_chain</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_sample_chain</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="n">sampler</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">sampler</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span>
@@ -463,6 +504,66 @@
             <span class="o">+</span> <span class="s2">&quot;n_sweeps = </span><span class="si">{}</span><span class="s2">, &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_sweeps</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;dtype = </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">sample_next</span><span class="p">(</span>
+    <span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span><span class="p">,</span>
+    <span class="n">machine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">,</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SamplerState</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">SamplerState</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Samples the next state in the markov chain.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sampler: The Monte Carlo sampler.</span>
+<span class="sd">        machine: a Flax module or callable with the forward pass of the log-pdf.</span>
+<span class="sd">        parameters: The PyTree of parameters of the model.</span>
+<span class="sd">        state: The current state of the sampler. If it&#39;s not provided, it will be constructed</span>
+<span class="sd">            by calling :code:`sampler.reset(machine, parameters)` with a random seed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        state: The new state of the sampler</span>
+<span class="sd">        σ: The next batch of samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample_next</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+
+<span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">_sample_chain</span><span class="p">(</span>
+    <span class="n">sampler</span><span class="p">,</span>
+    <span class="n">machine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">,</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">SamplerState</span><span class="p">,</span>
+    <span class="n">chain_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">SamplerState</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Samples chain_length elements along the chains.</span>
+
+<span class="sd">    Internal method used for jitting calls</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        sampler: The Monte Carlo sampler.</span>
+<span class="sd">        machine: The model or Callable to sample from (if it&#39;s a function it should have</span>
+<span class="sd">            the signature :code:`f(parameters, σ) -&gt; jnp.ndarray`).</span>
+<span class="sd">        parameters: The PyTree of parameters of the model.</span>
+<span class="sd">        state: current state of the sampler. If None, then initialises it.</span>
+<span class="sd">        chain_length: (default=1), the length of the chains.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        σ: The next batch of samples.</span>
+<span class="sd">        state: The new state of the sampler</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_sample_next</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample_next</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+    <span class="n">state</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="n">_sample_next</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">,</span>
+        <span class="n">xs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">length</span><span class="o">=</span><span class="n">chain_length</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">samples</span><span class="p">,</span> <span class="n">state</span>
 
 
 <span class="k">def</span> <span class="nf">MetropolisLocal</span><span class="p">(</span><span class="n">hilbert</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetropolisSampler</span><span class="p">:</span>

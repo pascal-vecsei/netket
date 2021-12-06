@@ -35,6 +35,5 @@
       .. automethod:: ExactSampler.replace
       .. automethod:: ExactSampler.reset
       .. automethod:: ExactSampler.sample
-      .. automethod:: ExactSampler.sample_next
 
    

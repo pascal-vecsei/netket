@@ -763,6 +763,8 @@ state: The new state of the sampler</p>
 <dt id="netket.sampler.MetropolisSamplerNumpy.sample_next">
 <code class="sig-name descname"><span class="pre">sample_next</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">machine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.sampler.MetropolisSamplerNumpy.sample_next" title="Permalink to this definition">¶</a></dt>
 <dd><p>Samples the next state in the markov chain.</p>
+<p>If you subclass <cite>MetropolisSampler</cite>, you should not override this but override <cite>_sample_next</cite>
+instead, because this contains some common logic.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

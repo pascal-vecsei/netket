@@ -37,6 +37,5 @@
       .. automethod:: Sampler.replace
       .. automethod:: Sampler.reset
       .. automethod:: Sampler.sample
-      .. automethod:: Sampler.sample_next
 
    
