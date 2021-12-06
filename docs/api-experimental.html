@@ -533,6 +533,20 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#time-evolution-driver">Time Evolution Driver</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ode-integrators">ODE Integrators</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.Euler.html">netket.experimental.dynamics.Euler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.Heun.html">netket.experimental.dynamics.Heun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.Midpoint.html">netket.experimental.dynamics.Midpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.RK12.html">netket.experimental.dynamics.RK12</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.RK23.html">netket.experimental.dynamics.RK23</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.RK4.html">netket.experimental.dynamics.RK4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.RK45.html">netket.experimental.dynamics.RK45</a></li>
 </ul>
 </li>
 </ul>
@@ -605,6 +619,54 @@ several CPUs, but you have to start jax with a specific environment variable.</p
 </tbody>
 </table>
 </div>
+<div class="section" id="time-evolution-driver">
+<h3>Time Evolution Driver<a class="headerlink" href="#time-evolution-driver" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.driver.TDVP.html#netket.experimental.driver.TDVP" title="netket.experimental.driver.TDVP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.driver.TDVP</span></code></a></p></td>
+<td><p>Variational time evolution based on the time-dependent variational principle which, when used with Monte Carlo sampling via <span class="xref std std-ref">~netket.vqs.MCState</span>, is the time-dependent VMC (t-VMC) method.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="ode-integrators">
+<h2>ODE Integrators<a class="headerlink" href="#ode-integrators" title="Permalink to this headline">¶</a></h2>
+<p>This is a collection of ODE integrators that can be used with the TDVP
+driver above.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.Euler.html#netket.experimental.dynamics.Euler" title="netket.experimental.dynamics.Euler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.dynamics.Euler</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.Heun.html#netket.experimental.dynamics.Heun" title="netket.experimental.dynamics.Heun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.dynamics.Heun</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.Midpoint.html#netket.experimental.dynamics.Midpoint" title="netket.experimental.dynamics.Midpoint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.dynamics.Midpoint</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.RK12.html#netket.experimental.dynamics.RK12" title="netket.experimental.dynamics.RK12"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.dynamics.RK12</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.RK23.html#netket.experimental.dynamics.RK23" title="netket.experimental.dynamics.RK23"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.dynamics.RK23</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.RK4.html#netket.experimental.dynamics.RK4" title="netket.experimental.dynamics.RK4"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.dynamics.RK4</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.dynamics.RK45.html#netket.experimental.dynamics.RK45" title="netket.experimental.dynamics.RK45"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.experimental.dynamics.RK45</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 
