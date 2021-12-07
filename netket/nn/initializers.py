@@ -14,9 +14,8 @@
 
 import jax
 from jax import numpy as jnp
-from jax.nn import initializers
-from netket.jax.utils import dtype_real
-from netket.utils.deprecation import deprecated
+from jax.nn import initializers as _initializers
+from netket.utils.deprecation import deprecated as _deprecated
 
 
 # It is left here because `netket.nn.symmetric_linear` uses it, and the one in jax is not public.
@@ -25,6 +24,8 @@ def _complex_truncated_normal(key, upper, shape, dtype):
     Sample random values from a centered normal distribution on the complex plane,
     whose modulus is truncated to `upper`, and the variance before the truncation is one.
     """
+    from netket.jax.utils import dtype_real
+
     key_r, key_theta = jax.random.split(key)
     dtype = dtype_real(dtype)
     t = (1 - jnp.exp(jnp.array(-(upper ** 2), dtype))) * jax.random.uniform(
@@ -56,4 +57,6 @@ _func_names = [
 ]
 _msg = "`netket.nn.initializers` is deprecated. Use `jax.nn.initializers` instead."
 for func_name in _func_names:
-    locals()[func_name] = deprecated(_msg, func_name)(getattr(initializers, func_name))
+    locals()[func_name] = _deprecated(_msg, func_name)(getattr(_initializers, func_name))
+
+del func_name, jax, jnp
