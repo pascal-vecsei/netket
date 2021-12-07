@@ -593,6 +593,7 @@
 <ul class="simple">
 <li><p>The constructor of <code class="docutils literal notranslate"><span class="pre">TensorHilbert</span></code> (which is used by the product operator <code class="docutils literal notranslate"><span class="pre">*</span></code> for inhomogeneous spaces) no longer fails when one of the component spaces is non-indexable. <a class="reference external" href="https://github.com/netket/netket/pull/1004">#1004</a></p></li>
 <li><p>The <span class="xref std std-ref">nk.hilbert.random.flip_state</span> method used by <code class="docutils literal notranslate"><span class="pre">MetropolisLocal</span></code> now throws an error when called on a <span class="xref std std-ref">nk.hilbert.ContinuousHilbert</span> hilbert space instead of entering an endless loop. <a class="reference external" href="https://github.com/netket/netket/pull/1014">#1014</a></p></li>
+<li><p>Fixed bug in conversion to qutip for <code class="docutils literal notranslate"><span class="pre">MCMixedState</span></code>, where the resulting shape (hilbert space size) was wrong. <a class="reference external" href="https://github.com/netket/netket/pull/1020">#1020</a></p></li>
 </ul>
 </div>
 </div>
