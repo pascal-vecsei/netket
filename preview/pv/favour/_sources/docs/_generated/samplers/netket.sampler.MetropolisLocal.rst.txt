@@ -1,0 +1,14 @@
+﻿netket.sampler.MetropolisLocal
+==============================
+
+.. currentmodule:: netket.sampler
+
+.. autoclass:: MetropolisLocal
+   :show-inheritance:
+
+   
+      
+   
+      
+
+   
