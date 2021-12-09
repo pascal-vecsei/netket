@@ -235,9 +235,16 @@
     <span class="sd">&quot;&quot;&quot;State of the random number generator (key, in jax terms).&quot;&quot;&quot;</span>
     <span class="n">rule_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
     <span class="sd">&quot;&quot;&quot;Optional state of a transition rule.&quot;&quot;&quot;</span>
-    <span class="n">n_steps_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># those are initialised to 0. We want to initialise them to zero arrays because they can</span>
+    <span class="c1"># be passed to jax jitted functions that require type invariance to avoid recompilation</span>
+    <span class="n">n_steps_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="sd">&quot;&quot;&quot;Number of moves performed along the chains in this process since the last reset.&quot;&quot;&quot;</span>
-    <span class="n">n_accepted_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">n_accepted_proc</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="sd">&quot;&quot;&quot;Number of accepted transitions among the chains in this process since the last reset.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
