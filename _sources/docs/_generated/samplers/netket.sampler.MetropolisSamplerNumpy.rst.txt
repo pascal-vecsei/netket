@@ -41,5 +41,6 @@
       .. automethod:: MetropolisSamplerNumpy.reset
       .. automethod:: MetropolisSamplerNumpy.sample
       .. automethod:: MetropolisSamplerNumpy.sample_next
+      .. automethod:: MetropolisSamplerNumpy.samples
 
    

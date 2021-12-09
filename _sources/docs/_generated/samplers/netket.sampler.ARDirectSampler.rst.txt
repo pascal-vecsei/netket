@@ -35,5 +35,6 @@
       .. automethod:: ARDirectSampler.replace
       .. automethod:: ARDirectSampler.reset
       .. automethod:: ARDirectSampler.sample
+      .. automethod:: ARDirectSampler.samples
 
    

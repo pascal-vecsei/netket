@@ -42,5 +42,6 @@
       .. automethod:: MetropolisSamplerPmap.reset
       .. automethod:: MetropolisSamplerPmap.sample
       .. automethod:: MetropolisSamplerPmap.sample_next
+      .. automethod:: MetropolisSamplerPmap.samples
 
    
