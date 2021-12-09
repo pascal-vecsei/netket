@@ -113,6 +113,7 @@
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
@@ -123,7 +124,6 @@
 <span class="kn">from</span> <span class="nn">netket.driver</span> <span class="kn">import</span> <span class="n">AbstractVariationalDriver</span>
 <span class="kn">from</span> <span class="nn">netket.driver.abstract_variational_driver</span> <span class="kn">import</span> <span class="n">_to_iterable</span>
 <span class="kn">from</span> <span class="nn">netket.driver.vmc_common</span> <span class="kn">import</span> <span class="n">info</span>
-<span class="kn">from</span> <span class="nn">netket.experimental.dynamics.runge_kutta</span> <span class="kn">import</span> <span class="n">euclidean_norm</span><span class="p">,</span> <span class="n">maximum_norm</span>
 <span class="kn">from</span> <span class="nn">netket.logging.json_log</span> <span class="kn">import</span> <span class="n">JsonLog</span>
 <span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">AbstractOperator</span>
 <span class="kn">from</span> <span class="nn">netket.optimizer</span> <span class="kn">import</span> <span class="n">LinearOperator</span>
@@ -134,6 +134,7 @@
 <span class="kn">from</span> <span class="nn">netket.vqs</span> <span class="kn">import</span> <span class="n">VariationalState</span><span class="p">,</span> <span class="n">VariationalMixedState</span><span class="p">,</span> <span class="n">MCState</span>
 
 <span class="kn">from</span> <span class="nn">netket.experimental.dynamics</span> <span class="kn">import</span> <span class="n">RKIntegratorConfig</span>
+<span class="kn">from</span> <span class="nn">netket.experimental.dynamics._rk_solver</span> <span class="kn">import</span> <span class="n">euclidean_norm</span><span class="p">,</span> <span class="n">maximum_norm</span>
 
 
 <span class="nd">@dispatch</span>
@@ -338,6 +339,15 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">max_dt</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="n">step_accepted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">max_dt</span><span class="o">=</span><span class="n">max_dt</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;RK solver: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">message</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;RK solver: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">message</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="ne">UserWarning</span><span class="p">,</span>
+                    <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_step_count</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="c1"># Yield one last time if the remaining tstop is at t_end</span>
