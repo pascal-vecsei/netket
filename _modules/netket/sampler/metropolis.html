@@ -336,6 +336,9 @@
 <span class="sd">            machine_pow: The power to which the machine should be exponentiated to generate the pdf (default = 2).</span>
 <span class="sd">            dtype: The dtype of the statees sampled (default = np.float32).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;n_chains&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s2">&quot;n_chains_per_rank&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;n_chains_per_rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16</span>
+
         <span class="c1"># process arguments in the base</span>
         <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__pre_init__</span><span class="p">(</span><span class="n">hilbert</span><span class="o">=</span><span class="n">hilbert</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
