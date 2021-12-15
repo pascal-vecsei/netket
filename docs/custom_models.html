@@ -569,7 +569,7 @@ some examples.</p>
 <p>The 3 frameworks that are supported are:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://flax.readthedocs.io/en/latest/examples.html">Flax Linen API</a>, which is an easy-to-use framework to define complex neural networks</p></li>
-<li><p><cite>Barebone `stax</cite> &lt;<a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.example_libraries.stax.html">https://jax.readthedocs.io/en/latest/jax.example_libraries.stax.html</a>&gt;`_, which is an example module included with JAX.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Barebone</span> <span class="pre">`stax</span></code> &lt;<a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.example_libraries.stax.html">https://jax.readthedocs.io/en/latest/jax.example_libraries.stax.html</a>&gt;`_, which is an example module included with JAX.</p></li>
 <li><p><a class="reference external" href="https://github.com/deepmind/dm-haiku">Haiku</a>, which is a competitor to Flax, and offers somewhat equivalent expressivity with a rather different syntax.</p></li>
 </ul>
 <div class="section" id="commonalities">
@@ -579,7 +579,7 @@ The result <em>must</em> be a <code class="code docutils literal notranslate"><s
 your network for that entry.</p>
 <p>If you have a model that is differnt to write in such a way to act on batches, you
 can use <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.html#jax.vmap">jax.vmap</a> to vectorize it.</p>
-<p>Your model will be compilde with <cite>jax.jit</cite>. Therefore in general you should NEVER (unless you know what you are doing) use <code class="code docutils literal notranslate"><span class="pre">numpy</span></code>, but rather <code class="code docutils literal notranslate"><span class="pre">jax.numpy</span></code> inside of it.
+<p>Your model will be compilde with <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>. Therefore in general you should NEVER (unless you know what you are doing) use <code class="code docutils literal notranslate"><span class="pre">numpy</span></code>, but rather <code class="code docutils literal notranslate"><span class="pre">jax.numpy</span></code> inside of it.
 If you want to understand why, read <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax-101/index.html">Jax 101 guide</a> ( however, even if you don’t care, we think it’s hard to us a tool you don’t undrstand: so at least rad <a class="reference external" href="https://flax.readthedocs.io/en/latest/notebooks/jax_for_the_impatient.html">Jax for the Impatient</a>, which is shorter).</p>
 <div class="section" id="defining-models-init-and-apply-functions">
 <h3>Defining models: init and apply functions<a class="headerlink" href="#defining-models-init-and-apply-functions" title="Permalink to this headline">¶</a></h3>
@@ -598,9 +598,9 @@ in the <code class="code docutils literal notranslate"><span class="pre">flax.li
 a few months from now, <code class="code docutils literal notranslate"><span class="pre">import</span> <span class="pre">flax.nn</span></code> will work, but at the moment it won’t, as it’s importing a different,
 legacy, deprecated module).</p>
 <p>Flax supports complex numbers but does not make it overly easy to work with them.
-As such, netket exports a module, <cite>netket.nn</cite> which re-exports the functionality in <cite>flax.nn</cite>, but
+As such, netket exports a module, <code class="docutils literal notranslate"><span class="pre">netket.nn</span></code> which re-exports the functionality in <code class="docutils literal notranslate"><span class="pre">flax.nn</span></code>, but
 with the additional support of complex numbers.</p>
-<p>To define a Flax Module, simply create a class that inherits from <cite>nn.Module</cite>.
+<p>To define a Flax Module, simply create a class that inherits from <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code>.
 This class cannot have an <code class="code docutils literal notranslate"><span class="pre">__init__</span></code> method, but can have several class attributes.
 Class attributes should be hashable objects (so in general they can be strings, numbers, other classes, but cannot
 be numpy or jax arrays).</p>
@@ -621,7 +621,7 @@ passing any optional class attribute, such as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Model1</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If you want to use some layers inside your model, you can for example create them in the <cite>__call__</cite> function by decorating it with
+<p>If you want to use some layers inside your model, you can for example create them in the <code class="docutils literal notranslate"><span class="pre">__call__</span></code> function by decorating it with
 the <code class="code docutils literal notranslate"><span class="pre">&#64;nn.compact</span></code> decorator. Don’t worry: they will only be initialised once.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">netket.nn</span> <span class="k">as</span> <span class="nn">nknn</span>
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
