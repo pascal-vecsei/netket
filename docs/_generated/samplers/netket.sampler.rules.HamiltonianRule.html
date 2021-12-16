@@ -528,15 +528,15 @@
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisSamplerPmap.html">netket.experimental.sampler.MetropolisSamplerPmap</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#ode-integrators">ODE Integrators</a></li>
@@ -564,31 +564,31 @@
 must use the numpy variant <a class="reference internal" href="netket.sampler.rules.HamiltonianRuleNumpy.html#netket.sampler.rules.HamiltonianRuleNumpy" title="netket.sampler.rules.HamiltonianRuleNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">netket.sampler.rules.HamiltonianRuleNumpy</span></code></a>
 together with the numpy metropolis sampler <a class="reference internal" href="netket.sampler.MetropolisSamplerNumpy.html#netket.sampler.MetropolisSamplerNumpy" title="netket.sampler.MetropolisSamplerNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">netket.sampler.MetropolisSamplerNumpy</span></code></a>.</p>
 <dl class="class-dl-groups">
-<dt>Inheritance</dt><dd><div class="graphviz"><img src="../../../_images/inheritance-4b0c1e4847c4347745defcdd4bd43f2c5be568c8.png" alt="Inheritance diagram of netket.sampler.rules.HamiltonianRule" usemap="#inheritancee9a3077792" class="inheritance graphviz" /></div>
+<dt>Inheritance</dt><dd><div class="graphviz"><img src="../../../_images/inheritance-27a2b71b47c81ff6399be890cc07ed88c2d34da7.png" alt="Inheritance diagram of netket.sampler.rules.HamiltonianRule" usemap="#inheritancee9a3077792" class="inheritance graphviz" /></div>
 <map id="inheritancee9a3077792" name="inheritancee9a3077792">
 <area shape="rect" id="node1" href="#netket.sampler.rules.HamiltonianRule" target="_top" title="Rule proposing moves according to the terms in an operator." alt="" coords="229,5,396,31"/>
-<area shape="rect" id="node2" href="netket.sampler.MetropolisRule.html#netket.sampler.MetropolisRule" target="_top" title="Base class for Transition rules of Metropolis, such as Local, Exchange, Hamiltonian" alt="" coords="5,5,181,31"/>
+<area shape="rect" id="node2" href="netket.sampler.MetropolisRule.html#netket.sampler.MetropolisRule" target="_top" title="Base class for transition rules of Metropolis, such as Local, Exchange, Hamiltonian" alt="" coords="5,5,181,31"/>
 </map></dd>
 </dl>
 <dl class="class-dl-groups">
 <dt>Methods</dt><dd><dl class="py method">
 <dt id="netket.sampler.rules.HamiltonianRule.init_state">
 <code class="sig-name descname"><span class="pre">init_state</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/sampler/rules/hamiltonian.html#HamiltonianRule.init_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.sampler.rules.HamiltonianRule.init_state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialises the optional internal state of the Metropolis Sampler Transition
-Rule.</p>
-<p>The provided key is unique and does not need to be splitted.
-It should return an immutable datastructure.</p>
+<dd><p>Initialises the optional internal state of the Metropolis sampler transition
+rule.</p>
+<p>The provided key is unique and does not need to be splitted.</p>
+<p>It should return an immutable data structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sampler</strong> – The Metropolis sampler</p></li>
-<li><p><strong>machine</strong> – The forward evaluation function of the model, accepting PyTrees of parameters and inputs.</p></li>
-<li><p><strong>params</strong> – The dict of variables needed to evaluate the model.</p></li>
-<li><p><strong>key</strong> – A Jax PRNGKey rng state.</p></li>
+<li><p><strong>sampler</strong> – The Metropolis sampler.</p></li>
+<li><p><strong>machine</strong> – A Flax module with the forward pass of the log-pdf.</p></li>
+<li><p><strong>params</strong> – The PyTree of parameters of the model.</p></li>
+<li><p><strong>key</strong> – A Jax PRNGKey.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An Optional State.</p>
+<dd class="field-even"><p>An optional state.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -601,11 +601,11 @@ It should return an immutable datastructure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sampler</strong> (<a class="reference internal" href="netket.sampler.Sampler.html#netket.sampler.Sampler" title="netket.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a>) – the sampler</p></li>
-<li><p><strong>machine</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>) – the function to evaluate the model</p></li>
-<li><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – the parameters of the model</p></li>
-<li><p><strong>state</strong> (<a class="reference internal" href="netket.sampler.SamplerState.html#netket.sampler.SamplerState" title="netket.sampler.SamplerState"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerState</span></code></a>) – the current sampler state</p></li>
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – the PRNGKey to use to generate the random state</p></li>
+<li><p><strong>sampler</strong> (<a class="reference internal" href="netket.sampler.MetropolisSampler.html#netket.sampler.MetropolisSampler" title="netket.sampler.MetropolisSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetropolisSampler</span></code></a>) – The Metropolis sampler.</p></li>
+<li><p><strong>machine</strong> (<a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html#flax.linen.Module" title="(in Flax)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>) – A Flax module with the forward pass of the log-pdf.</p></li>
+<li><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The PyTree of parameters of the model.</p></li>
+<li><p><strong>state</strong> (<a class="reference internal" href="netket.sampler.SamplerState.html#netket.sampler.SamplerState" title="netket.sampler.SamplerState"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerState</span></code></a>) – The current state of the sampler. Should not modify it.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The PRNGKey to use to generate the random state.</p></li>
 </ul>
 </dd>
 </dl>
@@ -624,9 +624,9 @@ It should return an immutable datastructure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sampler</strong> (<a class="reference internal" href="netket.sampler.Sampler.html#netket.sampler.Sampler" title="netket.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a>) – The Metropolis sampler</p></li>
-<li><p><strong>machine</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>) – The forward evaluation function of the model, accepting PyTrees of parameters and inputs.</p></li>
-<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The dict of variables needed to evaluate the model.</p></li>
+<li><p><strong>sampler</strong> (<a class="reference internal" href="netket.sampler.MetropolisSampler.html#netket.sampler.MetropolisSampler" title="netket.sampler.MetropolisSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetropolisSampler</span></code></a>) – The Metropolis sampler.</p></li>
+<li><p><strong>machine</strong> (<a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html#flax.linen.Module" title="(in Flax)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>) – A Flax module with the forward pass of the log-pdf.</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The PyTree of parameters of the model.</p></li>
 <li><p><strong>sampler_state</strong> (<a class="reference internal" href="netket.sampler.SamplerState.html#netket.sampler.SamplerState" title="netket.sampler.SamplerState"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerState</span></code></a>) – The current state of the sampler. Should not modify it.</p></li>
 </ul>
 </dd>
@@ -634,7 +634,7 @@ It should return an immutable datastructure.</p>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A new, resetted, state of the rule. This returns the same type of <code class="xref py py-meth docutils literal notranslate"><span class="pre">sampler_state.rule_state()</span></code> and might be None.</p>
+<dd class="field-odd"><p>A new, resetted, state of the rule. This returns the same type of <code class="xref py py-meth docutils literal notranslate"><span class="pre">sampler_state.rule_state()</span></code> and might be <cite>None</cite>.</p>
 </dd>
 </dl>
 </dd></dl>

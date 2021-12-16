@@ -528,15 +528,15 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/experimental/samplers/netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/experimental/samplers/netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/experimental/samplers/netket.experimental.sampler.MetropolisSamplerPmap.html">netket.experimental.sampler.MetropolisSamplerPmap</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="_generated/experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_generated/experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api-experimental.html#ode-integrators">ODE Integrators</a></li>
@@ -768,13 +768,13 @@
 <td><p>Resets the state of the sampler.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.sample_next.html#netket.sampler.sample_next" title="netket.sampler.sample_next"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.sample_next</span></code></a>(sampler, machine, …)</p></td>
-<td><p>Samples the next state in the markov chain.</p></td>
+<td><p>Samples the next state in the Markov chain.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.sample.html#netket.sampler.sample" title="netket.sampler.sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.sample</span></code></a>(sampler, machine, …)</p></td>
-<td><p>Samples chain_length elements along the chains.</p></td>
+<td><p>Samples <cite>chain_length</cite> batches of samples along the chains.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.samples.html#netket.sampler.samples" title="netket.sampler.samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.samples</span></code></a>(sampler, machine, …)</p></td>
-<td><p>Returns a generator sampling chain_length elements along the chains.</p></td>
+<td><p>Returns a generator sampling <cite>chain_length</cite> batches of samples along the chains.</p></td>
 </tr>
 </tbody>
 </table>
@@ -803,7 +803,7 @@ have a much higher overhead for small to moderate (for GPUs) system sizes.</p>
 <td><p>This sampler generates i.i.d.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisSampler.html#netket.sampler.MetropolisSampler" title="netket.sampler.MetropolisSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisSampler</span></code></a></p></td>
-<td><p>Metropolis-Hastings sampler for an Hilbert space according to a specific transition rule.</p></td>
+<td><p>Metropolis-Hastings sampler for a Hilbert space according to a specific transition rule.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisSamplerNumpy.html#netket.sampler.MetropolisSamplerNumpy" title="netket.sampler.MetropolisSamplerNumpy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisSamplerNumpy</span></code></a></p></td>
 <td><p>Metropolis-Hastings sampler for an Hilbert space according to a specific transition rule executed on CPU through Numpy.</p></td>
@@ -844,7 +844,7 @@ Sampler. Rules with <code class="docutils literal notranslate"><span class="pre"
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisRule.html#netket.sampler.MetropolisRule" title="netket.sampler.MetropolisRule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisRule</span></code></a>(*args[, …])</p></td>
-<td><p>Base class for Transition rules of Metropolis, such as Local, Exchange, Hamiltonian and several others.</p></td>
+<td><p>Base class for transition rules of Metropolis, such as Local, Exchange, Hamiltonian and several others.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.rules.LocalRule.html#netket.sampler.rules.LocalRule" title="netket.sampler.rules.LocalRule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.rules.LocalRule</span></code></a>()</p></td>
 <td><p>A transition rule acting on the local degree of freedom.</p></td>
@@ -877,7 +877,7 @@ Sampler. Rules with <code class="docutils literal notranslate"><span class="pre"
 <td><p>Base class holding the state of a sampler.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisSamplerState.html#netket.sampler.MetropolisSamplerState" title="netket.sampler.MetropolisSamplerState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisSamplerState</span></code></a>(*args)</p></td>
-<td><p>State for a metropolis sampler.</p></td>
+<td><p>State for a Metropolis sampler.</p></td>
 </tr>
 </tbody>
 </table>

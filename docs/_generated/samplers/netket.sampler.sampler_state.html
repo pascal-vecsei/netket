@@ -526,15 +526,15 @@
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisSamplerPmap.html">netket.experimental.sampler.MetropolisSamplerPmap</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#ode-integrators">ODE Integrators</a></li>
@@ -556,16 +556,19 @@
 <dd><p>Creates the structure holding the state of the sampler.</p>
 <p>If you want reproducible samples, you should specify <cite>seed</cite>, otherwise the state
 will be initialised randomly.</p>
-<p>If running across several MPI processes, all sampler_states are guaranteed to be
-in a different (but deterministic) state.</p>
-<p>This is achieved by first reducing (summing) the seed provided to every MPI rank,
-then generating n_rank seeds starting from the reduced one, and every rank is
+<p>If running across several MPI processes, all <cite>sampler_state`s are guaranteed to be
+in a different (but deterministic) state.
+This is achieved by first reducing (summing) the seed provided to every MPI rank,
+then generating `n_rank</cite> seeds starting from the reduced one, and every rank is
 initialized with one of those seeds.</p>
+<p>The resulting state is guaranteed to be a frozen Python dataclass (in particular,
+a Flax dataclass), and it can be serialized using Flax serialization methods.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sampler</strong> (<a class="reference internal" href="netket.sampler.Sampler.html#netket.sampler.Sampler" title="netket.sampler.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a>) – The Monte Carlo sampler.</p></li>
-<li><p><strong>machine</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>, <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html#flax.linen.Module" title="(in Flax)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>]) – a Flax module or callable with the forward pass of the log-pdf.</p></li>
+<li><p><strong>machine</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>, <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html#flax.linen.Module" title="(in Flax)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>]) – A Flax module or callable with the forward pass of the log-pdf.
+If it is a callable, it should have the signature <code class="code docutils literal notranslate"><span class="pre">f(parameters,</span> <span class="pre">σ)</span> <span class="pre">-&gt;</span> <span class="pre">jnp.ndarray</span></code>.</p></li>
 <li><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The PyTree of parameters of the model.</p></li>
 <li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.10)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]) – An optional seed or jax PRNGKey. If not specified, a random seed will be used.</p></li>
 </ul>

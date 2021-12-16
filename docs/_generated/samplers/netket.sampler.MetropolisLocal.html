@@ -528,15 +528,15 @@
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisSamplerPmap.html">netket.experimental.sampler.MetropolisSamplerPmap</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#ode-integrators">ODE Integrators</a></li>
@@ -576,14 +576,14 @@ and <span class="math notranslate nohighlight">\(n_{\mathrm{max}}\)</span> excep
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>hilbert</strong> – The hilbert space to sample</p></li>
-<li><p><strong>n_chains</strong> – The number of Markov Chain to be run in parallel on a single process.</p></li>
-<li><p><strong>n_sweeps</strong> – The number of exchanges that compose a single sweep.
-If None, sweep_size is equal to the number of degrees of freedom being sampled
-(the size of the input vector s to the machine).</p></li>
-<li><p><strong>n_chains</strong> – The number of batches of the states to sample (default = 8)</p></li>
+<li><p><strong>hilbert</strong> – The Hilbert space to sample.</p></li>
+<li><p><strong>n_chains</strong> – The total number of independent Markov chains across all MPI ranks. Either specify this or <cite>n_chains_per_rank</cite>.</p></li>
+<li><p><strong>n_chains_per_rank</strong> – Number of independent chains on every MPI rank (default = 16).</p></li>
+<li><p><strong>n_sweeps</strong> – Number of sweeps for each step along the chain. Defaults to the number of sites in the Hilbert space.
+This is equivalent to subsampling the Markov chain.</p></li>
+<li><p><strong>reset_chains</strong> – If True, resets the chain state when <cite>reset</cite> is called on every new sampling (default = False).</p></li>
 <li><p><strong>machine_pow</strong> – The power to which the machine should be exponentiated to generate the pdf (default = 2).</p></li>
-<li><p><strong>dtype</strong> – The dtype of the statees sampled (default = np.float32).</p></li>
+<li><p><strong>dtype</strong> – The dtype of the states sampled (default = np.float64).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
