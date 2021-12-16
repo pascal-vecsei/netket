@@ -25,7 +25,6 @@
     <link rel="author" title="About these documents" href="../../../../about.html" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
-    <link rel="next" title="netket.experimental.dynamics.Euler" href="netket.experimental.dynamics.Euler.html" />
     <link rel="prev" title="netket.experimental.vqs.variables_from_tar" href="../variational/netket.experimental.vqs.variables_from_tar.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -539,16 +538,7 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api-experimental.html#ode-integrators">ODE Integrators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="netket.experimental.dynamics.Euler.html">netket.experimental.dynamics.Euler</a></li>
-<li class="toctree-l3"><a class="reference internal" href="netket.experimental.dynamics.Heun.html">netket.experimental.dynamics.Heun</a></li>
-<li class="toctree-l3"><a class="reference internal" href="netket.experimental.dynamics.Midpoint.html">netket.experimental.dynamics.Midpoint</a></li>
-<li class="toctree-l3"><a class="reference internal" href="netket.experimental.dynamics.RK12.html">netket.experimental.dynamics.RK12</a></li>
-<li class="toctree-l3"><a class="reference internal" href="netket.experimental.dynamics.RK23.html">netket.experimental.dynamics.RK23</a></li>
-<li class="toctree-l3"><a class="reference internal" href="netket.experimental.dynamics.RK4.html">netket.experimental.dynamics.RK4</a></li>
-<li class="toctree-l3"><a class="reference internal" href="netket.experimental.dynamics.RK45.html">netket.experimental.dynamics.RK45</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api-experimental.html#ode-integrators">ODE Integrators</a></li>
 </ul>
 </li>
 </ul>
@@ -590,19 +580,16 @@ real-time Schödinger equation (SE), “imag” for the imaginary-time SE.</p></
 <li><p><strong>linear_solver</strong> – The solver for solving the linear system determining the time evolution.</p></li>
 <li><p><strong>linear_solver_restart</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If False (default), the last solution of the linear system
 is used as initial value in subsequent steps.</p></li>
-<li><p><strong>error_norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>]) – <p>Norm function used to calculate the error with adaptive integrators.
-Can be either “euclidean” for the standard L2 vector norm <span class="math notranslate nohighlight">\(x^\dagger \cdot x\)</span>,
-“maximum” for the maximum norm <span class="math notranslate nohighlight">\(\max_i |x_i|\)</span>
+<li><p><strong>error_norm</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>]) – Norm function used to calculate the error with adaptive integrators.
+Can be either “euclidean” for the standard L2 vector norm <span class="math notranslate nohighlight">\(w^\dagger w\)</span>,
+“maximum” for the maximum norm <span class="math notranslate nohighlight">\(\max_i |w_i|\)</span>
 or “qgt”, in which case the scalar product induced by the QGT <span class="math notranslate nohighlight">\(S\)</span> is used
-to compute the norm <span class="math notranslate nohighlight">\(\Vert x \Vert^2_S = x^\dagger \cdot S \cdot x\)</span> as suggested
+to compute the norm <span class="math notranslate nohighlight">\(\Vert w \Vert^2_S = w^\dagger S w\)</span> as suggested
 in PRL 125, 100503 (2020).
-Additionally, it possible to pass a custom function with signature</p>
-<blockquote>
-<div><p><code class="code docutils literal notranslate"><span class="pre">norm(driver:</span> <span class="pre">TDVP,</span> <span class="pre">x:</span> <span class="pre">PyTree)</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code></p>
-</div></blockquote>
-<p>which can access the driver maps its second argument, a PyTree of parameters <code class="code docutils literal notranslate"><span class="pre">x</span></code>,
-to its norm.</p>
-</p></li>
+Additionally, it possible to pass a custom function with signature
+<code class="code docutils literal notranslate"><span class="pre">norm(x:</span> <span class="pre">PyTree)</span> <span class="pre">-&gt;</span> <span class="pre">float</span></code>
+which maps a PyTree of parameters <code class="code docutils literal notranslate"><span class="pre">x</span></code> to the corresponding norm.
+Note that norm is used in jax.jit-compiled code.</p></li>
 </ul>
 </dd>
 </dl>
@@ -675,16 +662,10 @@ This can be used, for example, to identify the line in a log file.</p>
 <dt>Methods</dt><dd><dl class="py method">
 <dt id="netket.experimental.driver.TDVP.advance">
 <code class="sig-name descname"><span class="pre">advance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/netket/experimental/driver/tdvp.html#TDVP.advance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.experimental.driver.TDVP.advance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Advance the time propagation by <cite>T</cite> to <cite>self.t + T</cite>.</p>
-<blockquote>
-<div><dl class="simple">
-<dt>Args:</dt><dd><p>T: Length of the integration interval.</p>
-</dd>
-</dl>
-</div></blockquote>
+<dd><p>Advance the time propagation by <code class="code docutils literal notranslate"><span class="pre">T</span></code> to <code class="code docutils literal notranslate"><span class="pre">self.t</span> <span class="pre">+</span> <span class="pre">T</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – </p>
+<dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Length of the integration interval.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -714,8 +695,8 @@ for the corresponding operators as leaves.</p>
 <dl class="py method">
 <dt id="netket.experimental.driver.TDVP.iter">
 <code class="sig-name descname"><span class="pre">iter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tstops</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/netket/experimental/driver/tdvp.html#TDVP.iter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.experimental.driver.TDVP.iter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a generator which advances the time evolution in
-steps of <cite>step</cite> for a total of <cite>n_iter</cite> times.</p>
+<dd><p>Returns a generator which advances the time evolution for an interval
+of length <code class="code docutils literal notranslate"><span class="pre">T</span></code>, stopping at <code class="code docutils literal notranslate"><span class="pre">tstops</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -728,6 +709,30 @@ integrator is used).</p></li>
 </dd>
 <dt class="field-even">Yields</dt>
 <dd class="field-even"><p>The current step count.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.experimental.driver.TDVP.ode">
+<code class="sig-name descname"><span class="pre">ode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../../_modules/netket/experimental/driver/tdvp.html#TDVP.ode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.experimental.driver.TDVP.ode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the TDVP equation of motion</p>
+<div class="math notranslate nohighlight">
+\[G(w) \dot w = \gamma F(w, t)\]</div>
+<p>where <span class="math notranslate nohighlight">\(G(w)\)</span> is the QGT, <span class="math notranslate nohighlight">\(F(w, t)\)</span> the gradient of <code class="code docutils literal notranslate"><span class="pre">self.generator</span></code>
+and <span class="math notranslate nohighlight">\(\gamma\)</span> one of
+<span class="math notranslate nohighlight">\(\gamma = -1\)</span> (imaginary-time dynamics for <code class="code docutils literal notranslate"><span class="pre">MCState</span></code>),
+<span class="math notranslate nohighlight">\(\gamma = -i\)</span> (real-time dynamics for <code class="code docutils literal notranslate"><span class="pre">MCState</span></code>), or
+<span class="math notranslate nohighlight">\(\gamma = 1\)</span> (real-time dynamics for <code class="code docutils literal notranslate"><span class="pre">MCMixedState</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> – Time (defaults to <code class="code docutils literal notranslate"><span class="pre">self.t</span></code>).</p></li>
+<li><p><strong>w</strong> – Variational parameters (defaults to <code class="code docutils literal notranslate"><span class="pre">self.state.parameters</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The time-derivative <span class="math notranslate nohighlight">\(\dot w\)</span>.</p>
 </dd>
 </dl>
 </dd></dl>
