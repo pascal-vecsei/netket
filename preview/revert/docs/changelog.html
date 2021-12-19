@@ -576,6 +576,7 @@
 <h3>Internal Changes<a class="headerlink" href="#internal-changes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>The definitions of <code class="docutils literal notranslate"><span class="pre">MCState</span></code> and <code class="docutils literal notranslate"><span class="pre">MCMixedState</span></code> have been moved to an internal module, <code class="docutils literal notranslate"><span class="pre">nk.vqs.mc</span></code> that is hidden by default. <a class="reference external" href="https://github.com/netket/netket/pull/954">#954</a></p></li>
+<li><p>Custom deepcopy for <code class="docutils literal notranslate"><span class="pre">LocalOperator</span></code> to avoid building <code class="docutils literal notranslate"><span class="pre">LocalOperator</span></code> from scratch each time it is copied <a class="reference external" href="https://github.com/netket/pull/964">#964</a></p></li>
 </ul>
 </div>
 <div class="section" id="bug-fixes">

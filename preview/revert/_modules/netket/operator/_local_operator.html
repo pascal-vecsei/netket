@@ -111,15 +111,19 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
-<span class="kn">import</span> <span class="nn">numbers</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">DType</span><span class="p">,</span> <span class="n">Array</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">numbers</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
 <span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span>
 
 <span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span><span class="p">,</span> <span class="n">Fock</span>
+<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">DType</span><span class="p">,</span> <span class="n">Array</span>
 
 <span class="kn">from</span> <span class="nn">._discrete_operator</span> <span class="kn">import</span> <span class="n">DiscreteOperator</span>
 <span class="kn">from</span> <span class="nn">._lazy</span> <span class="kn">import</span> <span class="n">Transpose</span>
@@ -350,9 +354,9 @@
 
         <span class="c1"># If we asked for a specific dtype, enforce it.</span>
         <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">operators</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operators</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">dt</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">operators</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_zero</span><span class="p">()</span>
@@ -392,9 +396,14 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span>
 
     <span class="nd">@property</span>
+    <span class="c1"># A way to cache the property depending on modifications of self._operators is described here:</span>
+    <span class="c1"># https://stackoverflow.com/questions/48262273/python-bookkeeping-dependencies-in-cached-attributes-that-might-change</span>
     <span class="k">def</span> <span class="nf">is_hermitian</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns true if this operator is hermitian.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian</span>
+        <span class="c1"># TODO: (VolodyaCO) I guess that if we have an operator with diagonal elements equal to 1j*C+Y, some complex constant, and</span>
+        <span class="c1"># self._constant=-1j*C, then the actual diagonal would be Y. How do we check hermiticity taking into account the diagonal</span>
+        <span class="c1"># elements as well as the self._constant? For the moment I just check hermiticity of the added constant, which must be real.</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian_op</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isreal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_constant</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">mel_cutoff</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -483,8 +492,9 @@
         <span class="n">op</span><span class="o">.</span><span class="n">_mels</span> <span class="o">*=</span> <span class="n">other</span>
         <span class="n">op</span><span class="o">.</span><span class="n">_constant</span> <span class="o">*=</span> <span class="n">other</span>
 
-        <span class="k">for</span> <span class="n">_op</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">_operators</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_op</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">_operators</span><span class="p">):</span>
             <span class="n">_op</span> <span class="o">*=</span> <span class="n">other</span>
+            <span class="n">op</span><span class="o">.</span><span class="n">_is_hermitian_op</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_hermitian</span><span class="p">(</span><span class="n">_op</span><span class="p">)</span>
 
         <span class="n">op</span><span class="o">.</span><span class="n">_nonzero_diagonal</span> <span class="o">=</span> <span class="n">has_nonzero_diagonal</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
 
@@ -505,8 +515,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_mels</span> <span class="o">*=</span> <span class="n">other</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_constant</span> <span class="o">*=</span> <span class="n">other</span>
 
-        <span class="k">for</span> <span class="n">_op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_op</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">):</span>
             <span class="n">_op</span> <span class="o">*=</span> <span class="n">other</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian_op</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_hermitian</span><span class="p">(</span><span class="n">_op</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_nonzero_diagonal</span> <span class="o">=</span> <span class="n">has_nonzero_diagonal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -591,7 +602,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_local_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_basis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Array saving whether each operator is hermitian (plus one component to keep if self._constant is also hermitian).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian_op</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_operators</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_acting_on_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">acting_on</span> <span class="o">=</span> <span class="p">[]</span>
@@ -641,6 +654,7 @@
             <span class="n">dim</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">support_i</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">_opv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">support_i</span><span class="p">][:</span><span class="n">dim</span><span class="p">,</span> <span class="p">:</span><span class="n">dim</span><span class="p">]</span>
             <span class="n">_opv</span> <span class="o">+=</span> <span class="n">operator</span><span class="p">[:</span><span class="n">dim</span><span class="p">,</span> <span class="p">:</span><span class="n">dim</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian_op</span><span class="p">[</span><span class="n">support_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_hermitian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">support_i</span><span class="p">])</span>
 
             <span class="n">n_local_states_per_site</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
                 <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size_at_index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">acting_on</span><span class="p">]</span>
@@ -657,12 +671,6 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">mel_cutoff</span><span class="p">,</span>
                 <span class="n">n_local_states_per_site</span><span class="p">,</span>
             <span class="p">)</span>
-
-            <span class="n">isherm</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">:</span>
-                <span class="n">isherm</span> <span class="o">=</span> <span class="n">isherm</span> <span class="ow">and</span> <span class="n">is_hermitian</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian</span> <span class="o">=</span> <span class="n">isherm</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_nonzero_diagonal</span> <span class="o">=</span> <span class="n">has_nonzero_diagonal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__add_new_operator__</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">acting_on</span><span class="p">)</span>
@@ -759,6 +767,12 @@
         <span class="k">if</span> <span class="n">acting_on</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_size</span> <span class="o">=</span> <span class="n">acting_on</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian_op</span> <span class="o">=</span> <span class="n">resize</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian_op</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_operators</span><span class="p">,),</span>
+            <span class="n">init</span><span class="o">=</span><span class="n">is_hermitian</span><span class="p">(</span><span class="n">operator</span><span class="p">),</span>
+        <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_append_matrix</span><span class="p">(</span>
             <span class="n">operator</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_diag_mels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
@@ -770,12 +784,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">mel_cutoff</span><span class="p">,</span>
             <span class="n">n_local_states_per_site</span><span class="p">,</span>
         <span class="p">)</span>
-
-        <span class="n">isherm</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">:</span>
-            <span class="n">isherm</span> <span class="o">=</span> <span class="n">isherm</span> <span class="ow">and</span> <span class="n">is_hermitian</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_hermitian</span> <span class="o">=</span> <span class="n">isherm</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_nonzero_diagonal</span> <span class="o">=</span> <span class="n">has_nonzero_diagonal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -821,11 +829,11 @@
 
             <span class="k">if</span> <span class="n">act</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">act_i</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">act_i</span><span class="p">):</span>
                 <span class="c1"># non-interesecting with same support</span>
-                <span class="n">operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">op</span><span class="p">)))</span>
+                <span class="n">operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">@</span> <span class="n">op</span><span class="p">)</span>
                 <span class="n">acting_on</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act_i</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
             <span class="k">elif</span> <span class="n">inters</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># disjoint supports</span>
-                <span class="n">operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">op</span><span class="p">)))</span>
+                <span class="n">operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">op</span><span class="p">))</span>
                 <span class="n">acting_on</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">act_i</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">+</span> <span class="n">act</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">_act</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
@@ -862,14 +870,26 @@
 
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_act</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">_act_i</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">_act</span><span class="p">,</span> <span class="n">_act_i</span><span class="p">):</span>
                     <span class="c1"># non-interesecting with same support</span>
-                    <span class="n">operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">_op_i</span><span class="p">,</span> <span class="n">_op</span><span class="p">))</span>
+                    <span class="n">operators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_op_i</span> <span class="o">@</span> <span class="n">_op</span><span class="p">)</span>
                     <span class="n">acting_on</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_act_i</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Something failed&quot;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">operators</span><span class="p">,</span> <span class="n">acting_on</span>
 
-<div class="viewcode-block" id="LocalOperator.copy"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.LocalOperator.html#netket.operator.LocalOperator.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;LocalOperator&quot;</span><span class="p">:</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;_hilbert&quot;</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">memo</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+                <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="LocalOperator.copy"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.LocalOperator.html#netket.operator.LocalOperator.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a copy of the operator, while optionally changing the dtype</span>
 <span class="sd">        of the operator.</span>
 
@@ -883,13 +903,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">can_cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">casting</span><span class="o">=</span><span class="s2">&quot;same_kind&quot;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot cast </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">LocalOperator</span><span class="p">(</span>
-            <span class="n">hilbert</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="p">,</span>
-            <span class="n">operators</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">op</span><span class="p">)</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">],</span>
-            <span class="n">acting_on</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_acting_on_list</span><span class="p">(),</span>
-            <span class="n">constant</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_constant</span><span class="p">,</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_diag_mels</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">_diag_mels</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_mels</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">_mels</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_operators</span> <span class="o">=</span> <span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">new</span><span class="o">.</span><span class="n">_operators</span><span class="p">]</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+        <span class="k">return</span> <span class="n">new</span></div>
 
 <div class="viewcode-block" id="LocalOperator.transpose"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.LocalOperator.html#netket.operator.LocalOperator.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">concrete</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;LocalOperator: Returns the tranpose of this operator.&quot;&quot;&quot;</span>
