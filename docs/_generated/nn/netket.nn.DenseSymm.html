@@ -129,6 +129,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-3-in-development">NetKet 3.3 (In development)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new-features">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#breaking-changes">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#deprecations">Deprecations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#internal-changes">Internal Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#bug-fixes">Bug Fixes</a></li>
 </ul>
@@ -556,9 +557,11 @@
 <dd><p>Implements a projection onto a symmetry group. The output will be
 equivariant with respect to the symmetry operations in the group and can
 be averaged to produce an invariant model.</p>
+<p>This layer maps an input of shape <cite>(…, in_features, n_sites)</cite> to an
+output of shape <cite>(…, features, num_symm)</cite>.</p>
 <p>Note: The output shape has changed to seperate the feature and symmetry
 dimensions. The previous shape was [num_samples, num_symm*features] and
-the new shape is [num_samples, num_symm, features]</p>
+the new shape is [num_samples, features, num_symm]</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -574,8 +577,8 @@ If symmetries is a graph the default point group is overwritten.</p></li>
 transform, matrix multiplication, or to choose a sensible default
 based on the symmetry group.</p></li>
 <li><p><strong>shape</strong> – A tuple specifying the dimensions of the translation group.</p></li>
-<li><p><strong>features</strong> – The number of symmetry-reduced features. The full output size
-is [n_symm,features].</p></li>
+<li><p><strong>features</strong> – The number of output features. The full output shape
+is [n_batch,features,n_symm].</p></li>
 <li><p><strong>use_bias</strong> – A bool specifying whether to add a bias to the output (default: True).</p></li>
 <li><p><strong>mask</strong> – An optional array of shape [n_sites] consisting of ones and zeros
 that can be used to give the kernel a particular shape.</p></li>

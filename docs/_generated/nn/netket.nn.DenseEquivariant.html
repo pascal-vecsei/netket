@@ -131,6 +131,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-3-in-development">NetKet 3.3 (In development)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new-features">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#breaking-changes">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#deprecations">Deprecations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#internal-changes">Internal Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#bug-fixes">Bug Fixes</a></li>
 </ul>
@@ -554,10 +555,10 @@
 <h1>netket.nn.DenseEquivariant<a class="headerlink" href="#netket-nn-denseequivariant" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="netket.nn.DenseEquivariant">
-<code class="sig-prename descclassname"><span class="pre">netket.nn.</span></code><code class="sig-name descname"><span class="pre">DenseEquivariant</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symmetries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/nn/symmetric_linear.html#DenseEquivariant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.nn.DenseEquivariant" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">netket.nn.</span></code><code class="sig-name descname"><span class="pre">DenseEquivariant</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">symmetries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">point_group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/nn/symmetric_linear.html#DenseEquivariant"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.nn.DenseEquivariant" title="Permalink to this definition">¶</a></dt>
 <dd><p>A group convolution operation that is equivariant over a symmetry group.</p>
 <p>Acts on a feature map of symmetry poses of shape [num_samples, in_features, num_symm]
-and returns a feature  map of poses of shape [num_samples, out_features, num_symm]</p>
+and returns a feature  map of poses of shape [num_samples, features, num_symm]</p>
 <p>G-convolutions are described in ` Cohen et. {it al} &lt;<a class="reference external" href="http://proceedings.mlr.press/v48/cohenc16.pdf">http://proceedings.mlr.press/v48/cohenc16.pdf</a>&gt;`_
 and applied to quantum many-body problems in ` Roth et. {it al} &lt;<a class="reference external" href="https://arxiv.org/pdf/2104.05085.pdf">https://arxiv.org/pdf/2104.05085.pdf</a>&gt;`_</p>
 <p>The G-convolution generalizes the convolution to non-commuting groups:</p>
@@ -565,6 +566,8 @@ and applied to quantum many-body problems in ` Roth et. {it al} &lt;<a class="re
 \[C^i_g = \sum_h {\bf W}_{g^{-1} h} \cdot {\bf f}_h\]</div>
 <p>Group elements that differ by the same symmetry operation (i.e. <span class="math notranslate nohighlight">\(g = xh\)</span>
 and <span class="math notranslate nohighlight">\(g' = xh'\)</span>) are connected by the same filter.</p>
+<p>This layer maps an input of shape <cite>(…, in_features, n_sites)</cite> to an
+output of shape <cite>(…, features, num_symm)</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -577,10 +580,8 @@ If symmetries is a graph the default point group is overwritten.</p></li>
 fourier transform over the translation group, a fourier transform using
 the irreducible representations or by constructing the full kernel matrix.</p></li>
 <li><p><strong>shape</strong> – A tuple specifying the dimensions of the translation group.</p></li>
-<li><p><strong>in_features</strong> – The number of symmetry-reduced features. The full input size
-is n_symm*in_features.</p></li>
-<li><p><strong>out_features</strong> – The number of symmetry-reduced features. The full output size
-is n_symm*out_features.</p></li>
+<li><p><strong>features</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – The number of output features. The full output shape
+is [n_batch,features,n_symm].</p></li>
 <li><p><strong>use_bias</strong> – A bool specifying whether to add a bias to the output (default: True).</p></li>
 <li><p><strong>mask</strong> – An optional array of shape [n_sites] consisting of ones and zeros
 that can be used to give the kernel a particular shape.</p></li>
