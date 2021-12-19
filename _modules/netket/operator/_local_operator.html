@@ -257,7 +257,7 @@
 <span class="sd">    state_to_number to perform the re-ordering.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">acting_on_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">acting_on</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">acting_on_sorted</span> <span class="o">==</span> <span class="n">acting_on</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">acting_on_sorted</span><span class="p">,</span> <span class="n">acting_on</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">mat</span><span class="p">,</span> <span class="n">acting_on</span>
 
     <span class="c1"># could write custom binary &lt;-&gt; int logic instead of using Fock...</span>
@@ -645,7 +645,7 @@
         <span class="c1"># find overlapping support</span>
         <span class="n">support_i</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">support</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_acting_on_list</span><span class="p">()):</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">acting_on</span> <span class="o">==</span> <span class="n">support</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">acting_on</span><span class="p">,</span> <span class="n">support</span><span class="p">):</span>
                 <span class="n">support_i</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
 
