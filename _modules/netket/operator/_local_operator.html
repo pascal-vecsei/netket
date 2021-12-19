@@ -667,9 +667,15 @@
             <span class="n">operator_row_index</span><span class="p">,</span> <span class="n">operator_column_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span>
                 <span class="n">support_i</span>
             <span class="p">]</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
-            <span class="n">operator_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">support_i</span><span class="p">][</span><span class="n">operator_row_index</span><span class="p">,</span> <span class="n">operator_column_index</span><span class="p">]</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">operator_row_index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">operator_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">support_i</span><span class="p">][</span>
+                        <span class="n">operator_row_index</span><span class="p">,</span> <span class="n">operator_column_index</span>
+                    <span class="p">]</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">operator_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_operators</span><span class="p">[</span><span class="n">support_i</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_append_matrix</span><span class="p">(</span>
                 <span class="n">operator_data</span><span class="p">,</span>
                 <span class="n">operator_row_index</span><span class="p">,</span>
@@ -787,9 +793,12 @@
         <span class="p">)</span>
 
         <span class="n">operator_row_index</span><span class="p">,</span> <span class="n">operator_column_index</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span>
-        <span class="n">operator_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
-            <span class="n">operator</span><span class="p">[</span><span class="n">operator_row_index</span><span class="p">,</span> <span class="n">operator_column_index</span><span class="p">]</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">operator</span><span class="o">.</span><span class="n">nnz</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">operator_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+                <span class="n">operator</span><span class="p">[</span><span class="n">operator_row_index</span><span class="p">,</span> <span class="n">operator_column_index</span><span class="p">]</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">operator_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">operator</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_append_matrix</span><span class="p">(</span>
             <span class="n">operator_data</span><span class="p">,</span>
             <span class="n">operator_row_index</span><span class="p">,</span>
@@ -825,6 +834,12 @@
     <span class="p">):</span>
         <span class="n">n_conns</span><span class="p">[:</span><span class="n">operator_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">diag_mels</span><span class="p">[:</span><span class="n">operator_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">mels</span><span class="p">[:</span><span class="n">operator_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># bail out early if the operator is empty</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">operator_row_index</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="k">for</span> <span class="n">element</span><span class="p">,</span> <span class="n">ridx</span><span class="p">,</span> <span class="n">cidx</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
             <span class="n">operator_data</span><span class="p">,</span> <span class="n">operator_row_index</span><span class="p">,</span> <span class="n">operator_column_index</span>
         <span class="p">):</span>

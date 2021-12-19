@@ -566,11 +566,9 @@ some examples.</p>
 <div class="section" id="commonalities">
 <h2>Commonalities<a class="headerlink" href="#commonalities" title="Permalink to this headline">¶</a></h2>
 <p>Whatever the framework you pick, your model must be able to accept batches of states, so 2-Dimensonal matrices <code class="code docutils literal notranslate"><span class="pre">(B,N)</span></code> where <span class="math notranslate nohighlight">\(N\)</span> is the number of local degrees of freedom in the hilbert space (spatial sites) and <span class="math notranslate nohighlight">\(B\)</span> is the number of batches.
-The result <em>must</em> be a <code class="code docutils literal notranslate"><span class="pre">(B,)</span></code> vector  where every element is the evaluation of
-your network for that entry.</p>
-<p>If you have a model that is differnt to write in such a way to act on batches, you
-can use <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.html#jax.vmap">jax.vmap</a> to vectorize it.</p>
-<p>Your model will be compilde with <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>. Therefore in general you should NEVER (unless you know what you are doing) use <code class="code docutils literal notranslate"><span class="pre">numpy</span></code>, but rather <code class="code docutils literal notranslate"><span class="pre">jax.numpy</span></code> inside of it.
+The result <em>must</em> be a <code class="code docutils literal notranslate"><span class="pre">(B,)</span></code> vector  where every element is the evaluation of your network for that entry.</p>
+<p>If you have a model that is difficult to write in such a way to act on batches, you can use <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.html#jax.vmap">jax.vmap</a> to vectorize it.</p>
+<p>Your model will be compiled with <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>. Therefore in general you should NEVER (unless you know what you are doing) use <code class="code docutils literal notranslate"><span class="pre">numpy</span></code>, but rather <code class="code docutils literal notranslate"><span class="pre">jax.numpy</span></code> inside of it.
 If you want to understand why, read <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax-101/index.html">Jax 101 guide</a> ( however, even if you don’t care, we think it’s hard to us a tool you don’t undrstand: so at least rad <a class="reference external" href="https://flax.readthedocs.io/en/latest/notebooks/jax_for_the_impatient.html">Jax for the Impatient</a>, which is shorter).</p>
 <div class="section" id="defining-models-init-and-apply-functions">
 <h3>Defining models: init and apply functions<a class="headerlink" href="#defining-models-init-and-apply-functions" title="Permalink to this headline">¶</a></h3>
@@ -633,7 +631,7 @@ the <code class="code docutils literal notranslate"><span class="pre">&#64;nn.co
 </pre></div>
 </div>
 <p>For more advanced examples, you can check the <a class="reference external" href="https://github.com/netket/netket/tree/master/netket/models">source-code</a>
-of the models included in netket  or Flax documentation.</p>
+of the models included in netket or Flax documentation.</p>
 </div>
 <div class="section" id="using-jax-stax">
 <h2>Using Jax/Stax<a class="headerlink" href="#using-jax-stax" title="Permalink to this headline">¶</a></h2>
