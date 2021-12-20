@@ -1,0 +1,14 @@
+﻿netket.graph.Edgeless
+=====================
+
+.. currentmodule:: netket.graph
+
+.. autoclass:: Edgeless
+   :show-inheritance:
+
+   
+      
+   
+      
+
+   
