@@ -14,25 +14,28 @@ NetKet
 If you find the NetKet project useful for your research, please consider citing our relevant software papers
 in order to help us to continue devoting time and ressources to NetKet development.
 
-The current version of NetKet 3.x is introduced in our recent preprint `arXiv:2112.10526 <https://arxiv.org/abs/2112.10526>`_, for which you can use this BibTeX entry:
+The current version of NetKet 3.x is described in our recent preprint `arXiv:2112.10526 <https://arxiv.org/abs/2112.10526>`_.
+
+NetKet 2.x is described in `SoftwareX 10, 100311 (2019) <https://doi.org/10.1016/j.softx.2019.100311>`_.
+Despite many new features, NetKet 3 still builds on the foundations of the NetKet 2 era too. Therefore,
+we would appreciate it if you cite both papers in order to continue giving credit to all the authors of
+NetKet 2 as well.
+
+Below are BibTeX entries for both papers:
 
 .. code-block:: bibtex
 
   @misc{netket3:2021,
     title={NetKet 3: Machine Learning Toolbox for Many-Body Quantum Systems},
     author={Filippo Vicentini and Damian Hofmann and Attila Szabó and Dian Wu and Christopher Roth
-      and Clemens Giuliani and Gabriel Pescia and Jannes Nys and Vladimir Vargas-Calderon
-      and Nikita Astrakhantsev and Giuseppe Carleo},
+        and Clemens Giuliani and Gabriel Pescia and Jannes Nys and Vladimir Vargas-Calderon
+        and Nikita Astrakhantsev and Giuseppe Carleo},
     year={2021},
     eprint={2112.10526},
     archivePrefix={arXiv},
-    primaryClass={quant-ph}
-  }
-
-NetKet 2.x is described in `SoftwareX 10, 100311 (2019) <https://doi.org/10.1016/j.softx.2019.100311>`_.
-Despite many new features, NetKet 3 still builds on the foundations of the NetKet 2 era too. Therefore,
-we would appreciate it if you cite both papers in order to continue giving credit to all the authors of
-NetKet 2 as well.
+    primaryClass={quant-ph},
+    url={https://arxiv.org/abs/2112.10526}
+}
 
 .. code-block:: bibtex
 
