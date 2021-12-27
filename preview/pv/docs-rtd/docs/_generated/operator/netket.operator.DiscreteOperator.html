@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>netket.operator.DiscreteOperator &mdash; netket v3.0 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="netket.operator.BoseHubbard" href="netket.operator.BoseHubbard.html" />
+    <link rel="prev" title="netket.operator.AbstractOperator" href="netket.operator.AbstractOperator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> netket<img src="../../../_static/logonav.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/netket3.html">Ground-State Variational Search with NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/jax.html">Using JAX as a backend in NetKet - Feature Preview for v3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/G-CNN_Honeycomb.html">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/G-CNN_Honeycomb.html#G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups">G-CNNs are generalizations of CNNs to non-abelian groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/G-CNN_Honeycomb.html#Defining-the-Hamiltonian">Defining the Hamiltonian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/G-CNN_Honeycomb.html#Defining-the-GCNN">Defining the GCNN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/G-CNN_Honeycomb.html#Variational-Monte-Carlo">Variational Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/G-CNN_Honeycomb.html#Checking-with-ED">Checking with ED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/G-CNN_Honeycomb.html#Simulating-A-Larger-Lattice">Simulating A Larger Lattice</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/j1j2.html">Variational Monte Carlo with Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/Heisenberg1d.html">Learning the ground-state of a spin model with different Neural Networks available in NetKet</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../superop.html">The Lindblad Master Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hilbert.html">The Hilbert module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../operator.html">The Operator module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../varstate.html">The Variational State Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../drivers.html">The Drivers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sharp-bits.html">🔪 The Sharp Bits 🔪</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_models.html">Defining Custom Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_expect.html">Overriding defaults in NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_preconditioners.html">Defining Custom Preconditioners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_operator.html">Defining Custom Operators</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../writing-tests.html">Writing Tests</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../api-stability.html">API Stability</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#graph">Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#hilbert">Hilbert</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../api.html#operators">Operators</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="netket.operator.AbstractOperator.html">netket.operator.AbstractOperator</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">netket.operator.DiscreteOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.operator.BoseHubbard.html">netket.operator.BoseHubbard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.operator.GraphOperator.html">netket.operator.GraphOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.operator.LocalOperator.html">netket.operator.LocalOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.operator.Ising.html">netket.operator.Ising</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.operator.Heisenberg.html">netket.operator.Heisenberg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.operator.PauliStrings.html">netket.operator.PauliStrings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.operator.LocalLiouvillian.html">netket.operator.LocalLiouvillian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#pre-defined-operators">Pre-defined operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#continuous-space-operators">Continuous space operators</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#exact-solvers">Exact solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#sampler">Sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#pre-built-models">Pre-built models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#model-tools">Model tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#variational-state-interface">Variational State Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer-module">Optimizer Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimization-drivers">Optimization drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#logging-output">Logging output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#utils">Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#callbacks">Callbacks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-experimental.html">Experimental API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">netket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../api.html">Public API</a> &raquo;</li>
+      <li>netket.operator.DiscreteOperator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/docs/_generated/operator/netket.operator.DiscreteOperator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="netket-operator-discreteoperator">
+<h1>netket.operator.DiscreteOperator<a class="headerlink" href="#netket-operator-discreteoperator" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt id="netket.operator.DiscreteOperator">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.operator.</span></code><code class="sig-name descname"><span class="pre">DiscreteOperator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hilbert</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.DiscreteOperator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">netket.operator.AbstractOperator</span></code></a></p>
+<p>This class is the base class for operators defined on a
+discrete Hilbert space. Users interested in implementing new
+quantum Operators for discrete Hilbert spaces should derive
+their own class from this class</p>
+<dl class="class-dl-groups">
+<dt>Inheritance</dt><dd><div class="graphviz"><img src="../../../_images/inheritance-f10601c4e3f934e4e5fee82d049c066d2d359255.png" alt="Inheritance diagram of netket.operator.DiscreteOperator" usemap="#inheritancebd4b42ee01" class="inheritance graphviz" /></div>
+<map id="inheritancebd4b42ee01" name="inheritancebd4b42ee01">
+<area shape="rect" id="node1" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" target="_top" title="Abstract class for quantum Operators. This class prototypes the methods" alt="" coords="5,5,196,31"/>
+<area shape="rect" id="node2" href="#netket.operator.DiscreteOperator" target="_top" title="This class is the base class for operators defined on a" alt="" coords="244,5,435,31"/>
+</map></dd>
+</dl>
+<dl class="class-dl-groups">
+<dt>Attributes</dt><dd><dl class="py attribute">
+<dt id="netket.operator.DiscreteOperator.H">
+<code class="sig-name descname"><span class="pre">H</span></code><a class="headerlink" href="#netket.operator.DiscreteOperator.H" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the Conjugate-Transposed operator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.DiscreteOperator.T">
+<code class="sig-name descname"><span class="pre">T</span></code><a class="headerlink" href="#netket.operator.DiscreteOperator.T" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the transposed operator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.DiscreteOperator.dtype">
+<code class="sig-name descname"><span class="pre">dtype</span></code><a class="headerlink" href="#netket.operator.DiscreteOperator.dtype" title="Permalink to this definition"></a></dt>
+<dd><p>The dtype of the operator’s matrix elements ⟨σ|Ô|σ’⟩.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.DiscreteOperator.hilbert">
+<code class="sig-name descname"><span class="pre">hilbert</span></code><a class="headerlink" href="#netket.operator.DiscreteOperator.hilbert" title="Permalink to this definition"></a></dt>
+<dd><p>The hilbert space associated to this operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../hilbert/netket.hilbert.AbstractHilbert.html#netket.hilbert.AbstractHilbert" title="netket.hilbert.AbstractHilbert"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.DiscreteOperator.is_hermitian">
+<code class="sig-name descname"><span class="pre">is_hermitian</span></code><a class="headerlink" href="#netket.operator.DiscreteOperator.is_hermitian" title="Permalink to this definition"></a></dt>
+<dd><p>Returns true if this operator is hermitian.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.DiscreteOperator.max_conn_size">
+<code class="sig-name descname"><span class="pre">max_conn_size</span></code><a class="headerlink" href="#netket.operator.DiscreteOperator.max_conn_size" title="Permalink to this definition"></a></dt>
+<dd><p>The maximum number of non zero ⟨x|O|x’⟩ for every x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.DiscreteOperator.size">
+<code class="sig-name descname"><span class="pre">size</span></code><a class="headerlink" href="#netket.operator.DiscreteOperator.size" title="Permalink to this definition"></a></dt>
+<dd><p>The total number number of local degrees of freedom.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+<dl class="class-dl-groups">
+<dt>Methods</dt><dd><dl class="py method">
+<dt id="netket.operator.DiscreteOperator.__call__">
+<code class="sig-name descname"><span class="pre">__call__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Call self as a function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>v</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><em>numpy.ndarray</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.apply">
+<code class="sig-name descname"><span class="pre">apply</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.apply"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.apply" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>v</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><em>numpy.ndarray</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.collect">
+<code class="sig-name descname"><span class="pre">collect</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.DiscreteOperator.collect" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a guranteed concrete instancce of an operator.</p>
+<p>As some operations on operators return lazy wrapperes (such as transpose,
+hermitian conjugate…), this is used to obtain a guaranteed non-lazy
+operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.conj">
+<code class="sig-name descname"><span class="pre">conj</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.DiscreteOperator.conj" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.conjugate">
+<code class="sig-name descname"><span class="pre">conjugate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.DiscreteOperator.conjugate" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the complex-conjugate of this operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete</strong> – if True returns a concrete operator and not a lazy wrapper</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>if concrete is not True, self or a lazy wrapper; the
+complex-conjugated operator otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.get_conn">
+<code class="sig-name descname"><span class="pre">get_conn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.get_conn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.get_conn" title="Permalink to this definition"></a></dt>
+<dd><p>Finds the connected elements of the Operator. Starting
+from a given quantum number x, it finds all other quantum numbers x’ such
+that the matrix element <span class="math notranslate nohighlight">\(O(x,x')\)</span> is different from zero. In general there
+will be several different connected states x’ satisfying this
+condition, and they are denoted here <span class="math notranslate nohighlight">\(x'(k)\)</span>, for <span class="math notranslate nohighlight">\(k=0,1...N_{\mathrm{connected}}\)</span>.
+:type x: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>
+:param x: An array of shape (hilbert.size) containing the quantum numbers x.
+:type x: <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The connected states x’ of shape (N_connected,hilbert.size)
+array: An array containing the matrix elements <span class="math notranslate nohighlight">\(O(x,x')\)</span> associated to each x’.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>matrix</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.10)"><strong>ValueError</strong></a> – If the given quantum number is not compatible with the hilbert space.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><em>numpy.ndarray</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.get_conn_flattened">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">get_conn_flattened</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sections</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.get_conn_flattened"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.get_conn_flattened" title="Permalink to this definition"></a></dt>
+<dd><p>Finds the connected elements of the Operator. Starting
+from a given quantum number x, it finds all other quantum numbers x’ such
+that the matrix element <span class="math notranslate nohighlight">\(O(x,x')\)</span> is different from zero. In general there
+will be several different connected states x’ satisfying this
+condition, and they are denoted here <span class="math notranslate nohighlight">\(x'(k)\)</span>, for <span class="math notranslate nohighlight">\(k=0,1...N_{\mathrm{connected}}\)</span>.</p>
+<p>This is a batched version, where x is a matrix of shape (batch_size,hilbert.size).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matrix</span></code>) – A matrix of shape (batch_size,hilbert.size) containing
+the batch of quantum numbers x.</p></li>
+<li><p><strong>sections</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – An array of sections for the flattened x’.
+See numpy.split for the meaning of sections.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The connected states x’, flattened together in a single matrix.
+array: An array containing the matrix elements <span class="math notranslate nohighlight">\(O(x,x')\)</span> associated to each x’.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.get_conn_padded">
+<code class="sig-name descname"><span class="pre">get_conn_padded</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.get_conn_padded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.get_conn_padded" title="Permalink to this definition"></a></dt>
+<dd><p>Finds the connected elements of the Operator.
+Starting from a batch of quantum numbers x={x_1, … x_n} of size B x M
+where B size of the batch and M size of the hilbert space, finds all states
+y_i^1, …, y_i^K connected to every x_i.
+Returns a matrix of size B x Kmax x M where Kmax is the maximum number of
+connections for every y_i.
+:type x: <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>
+:param x: A N-tensor of shape (…,hilbert.size) containing</p>
+<blockquote>
+<div><p>the batch/batches of quantum numbers x.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><p>The connected states x’, in a N+1-tensor.
+mels: A N-tensor containing the matrix elements <span class="math notranslate nohighlight">\(O(x,x')\)</span></p>
+<blockquote>
+<div><p>associated to each x’ for every batch.</p>
+</div></blockquote>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>x_primes</p>
+</dd>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><em>numpy.ndarray</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.n_conn">
+<code class="sig-name descname"><span class="pre">n_conn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.n_conn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.n_conn" title="Permalink to this definition"></a></dt>
+<dd><p>Return the number of states connected to x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">matrix</span></code>) – A matrix of shape (batch_size,hilbert.size) containing
+the batch of quantum numbers x.</p></li>
+<li><p><strong>out</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – If None an output array is allocated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The number of connected states x’ for each x[i].</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.to_dense">
+<code class="sig-name descname"><span class="pre">to_dense</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.to_dense"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.to_dense" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the dense matrix representation of the operator. Note that,
+in general, the size of the matrix is exponential in the number of quantum
+numbers, and this operation should thus only be performed for
+low-dimensional Hilbert spaces or sufficiently sparse operators.</p>
+<p>This method requires an indexable Hilbert space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The dense matrix representation of the operator as a Numpy array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.to_linear_operator">
+<code class="sig-name descname"><span class="pre">to_linear_operator</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.to_linear_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.to_linear_operator" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.to_qobj">
+<code class="sig-name descname"><span class="pre">to_qobj</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.to_qobj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.to_qobj" title="Permalink to this definition"></a></dt>
+<dd><p>Convert the operator to a qutip’s Qobj.
+:rtype: qutip.Qobj
+:returns: A <cite>qutip.Qobj</cite> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>qutip.Qobj</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.to_sparse">
+<code class="sig-name descname"><span class="pre">to_sparse</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_discrete_operator.html#DiscreteOperator.to_sparse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.DiscreteOperator.to_sparse" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the sparse matrix representation of the operator. Note that,
+in general, the size of the matrix is exponential in the number of quantum
+numbers, and this operation should thus only be performed for
+low-dimensional Hilbert spaces or sufficiently sparse operators.</p>
+<p>This method requires an indexable Hilbert space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/reference/generated/scipy.sparse.csr_matrix.html#scipy.sparse.csr_matrix" title="(in SciPy v1.7.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">csr_matrix</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The sparse matrix representation of the operator.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.DiscreteOperator.transpose">
+<code class="sig-name descname"><span class="pre">transpose</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.DiscreteOperator.transpose" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the transpose of this operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete</strong> – if True returns a concrete operator and not a lazy wrapper</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>if concrete is not True, self or a lazy wrapper; the
+transposed operator otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="netket.operator.AbstractOperator.html" class="btn btn-neutral float-left" title="netket.operator.AbstractOperator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="netket.operator.BoseHubbard.html" class="btn btn-neutral float-right" title="netket.operator.BoseHubbard" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019-2021, The Netket authors - All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+
+<script type="text/javascript">
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+      })
+</script>
+
+<!-- Temporary footer
+<div class="footer-wip">
+  <div class="footer-wip-content">
+    This documentation refers to an unreleased version of Netket.
+  </div>
+</div>
+-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118013987-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-118013987-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://www.netket.org",
+  "name": "NetKet",
+  "founder": "Giuseppe Carleo",
+  "foundingDate": "2018-04-24",
+  "foundingLocation" : "New York",
+  "logo": "https://www.netket.org/img/logo_small.jpg",
+  "sameAs": [
+    "https://twitter.com/NetKetOrg",
+    "https://github.com/NetKet/netket"
+  ],
+  "description" : "Netket is an open-source project delivering cutting-edge
+  methods for the study of many-body quantum systems with artificial neural
+  networks and machine learning techniques."
+}
+</script>
+
+
+</body>
+</html>

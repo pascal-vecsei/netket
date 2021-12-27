@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overriding defaults in NetKet &mdash; netket v3.0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Defining Custom Preconditioners" href="custom_preconditioners.html" />
+    <link rel="prev" title="Defining Custom Models" href="custom_models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> netket<img src="../_static/logonav.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/netket3.html">Ground-State Variational Search with NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/jax.html">Using JAX as a backend in NetKet - Feature Preview for v3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups">G-CNNs are generalizations of CNNs to non-abelian groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Defining-the-Hamiltonian">Defining the Hamiltonian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Defining-the-GCNN">Defining the GCNN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Variational-Monte-Carlo">Variational Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Checking-with-ED">Checking with ED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Simulating-A-Larger-Lattice">Simulating A Larger Lattice</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/j1j2.html">Variational Monte Carlo with Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/Heisenberg1d.html">Learning the ground-state of a spin model with different Neural Networks available in NetKet</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superop.html">The Lindblad Master Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hilbert.html">The Hilbert module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operator.html">The Operator module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="varstate.html">The Variational State Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">The Drivers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sharp-bits.html">🔪 The Sharp Bits 🔪</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_models.html">Defining Custom Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overriding defaults in NetKet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#netket-architecture-multiple-dispatch">NetKet Architecture: Multiple Dispatch</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">Defining Custom Preconditioners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_operator.html">Defining Custom Operators</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing-tests.html">Writing Tests</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api-stability.html">API Stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-experimental.html">Experimental API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">netket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Overriding defaults in NetKet</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/docs/custom_expect.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="overriding-defaults-in-netket">
+<h1>Overriding defaults in NetKet<a class="headerlink" href="#overriding-defaults-in-netket" title="Permalink to this headline"></a></h1>
+<p>In this section we will discuss how it is possible to extend NetKet or override
+default behaviour.
+NetKet is architectured in such a way that an user can override several parts of
+its default behaviour without having to edit its source code.
+You can simply fire up a jupyter instance, define a few methods overloading
+the default, and you’re all set.
+This is also valid if you want to define a custom object, such as a custom
+hilbert space or operator.</p>
+<div class="section" id="netket-architecture-multiple-dispatch">
+<span id="multiple-dispatch"></span><h2>NetKet Architecture: Multiple Dispatch<a class="headerlink" href="#netket-architecture-multiple-dispatch" title="Permalink to this headline"></a></h2>
+<p>Some parts of NetKet rely on multiple-dispatch in order to select the right implementation
+of a function, instead of the more limited single dispatch used in
+traditional Object-Oriented programming.
+Significant inspiration has been taken from the <a class="reference external" href="https://julialang.org/">Julia programming language</a>,
+and NetKet relies on an somehwat-faithfull implementation of Julia’s dispatch into python,
+provided by the <a class="reference external" href="https://github.com/wesselb/plum">plum-dispatch</a> package.</p>
+<p>If you are already familiar with multiple-dispatch, you can skip this section.
+If you want to see how to use multiple-dispatch in python, we refer you to the plum
+documentation. Otherwise, read on!</p>
+<p>The rationale behind multiple dispatch is the following: If you have a function acting on
+two objects, such as the <code class="docutils literal notranslate"><span class="pre">expect</span></code> function computing the expectation value of an operator
+over a variational state, how do you make sure that <code class="docutils literal notranslate"><span class="pre">expect</span></code> works for any combination of
+different variational states and operators?</p>
+<p>The standard object-oriented approach is to use single-dispatch to dispatch on the first
+argument (or owner) of the method. Therefore if <code class="docutils literal notranslate"><span class="pre">expect</span></code> is a method of <code class="docutils literal notranslate"><span class="pre">VariationalState</span></code>,
+you would be writing an <code class="docutils literal notranslate"><span class="pre">expect</span></code> method for every different <code class="docutils literal notranslate"><span class="pre">VariationalState</span></code>. This method
+should work with any operator you throw at it.</p>
+<p>Maybe you are capable of defining a very broad interface for Operators so that your implementation
+works for all the operators already defined, but how can an user define a new <code class="docutils literal notranslate"><span class="pre">CrazyOperator</span></code> that
+does not follow this convention?</p>
+<p>Multiple Dispatch makes it possible to define a method of a function that is only used when <em>all</em>
+the types match a given signature, and as long as the return type of the function makes sense,
+it will work with the rest of NetKet.  If my expect function is defined as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@netket</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">dispatch</span><span class="o">.</span><span class="n">dispatch</span>
+<span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="n">vstate</span> <span class="p">:</span> <span class="n">VariationalState</span><span class="p">,</span> <span class="n">operator</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">):</span>
+    <span class="c1"># a generic algorithm that works for any operator in NetKet</span>
+    <span class="k">return</span> <span class="n">netket</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">statistics</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And this function works for anything already implemented in Netket and always returns a
+statistics object (<code class="docutils literal notranslate"><span class="pre">netket.stats.Stat</span></code>).
+However, imagine that my <code class="docutils literal notranslate"><span class="pre">CrazyOperator</span></code> is defined on a Crazy Hilbert space that always
+gives random results. This is clearly incompatible with the standard implementation.
+However, instead of figuring a way to make such <code class="docutils literal notranslate"><span class="pre">CrazyOperator</span></code> fit in the what already exists,
+we can just define a custom dispatch rule as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CrazyOperator</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; A really crazy implementation. &quot;&quot;&quot;</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<span class="nd">@expect</span><span class="o">.</span><span class="n">dispatch</span>
+<span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="n">vstate</span> <span class="p">:</span> <span class="n">MCState</span><span class="p">,</span> <span class="n">operator</span><span class="p">:</span> <span class="n">CrazyOperator</span><span class="p">):</span>
+    <span class="c1"># A crazy implementation that only works for CrazyOperator</span>
+    <span class="k">return</span> <span class="n">netket</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">statistics</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="o">*</span><span class="n">operator</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>And everything will work as expected.
+Of course, to make everything <em>really</em> work, it would be best to have <code class="docutils literal notranslate"><span class="pre">CrazyOperator</span></code>
+subclass <code class="docutils literal notranslate"><span class="pre">AbstractOperator</span></code>, but that is not needed if you are carefull enough.</p>
+<p>The types that determine the dispatch are picked up by the type hints.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="custom_models.html" class="btn btn-neutral float-left" title="Defining Custom Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="custom_preconditioners.html" class="btn btn-neutral float-right" title="Defining Custom Preconditioners" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019-2021, The Netket authors - All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+
+<script type="text/javascript">
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+      })
+</script>
+
+<!-- Temporary footer
+<div class="footer-wip">
+  <div class="footer-wip-content">
+    This documentation refers to an unreleased version of Netket.
+  </div>
+</div>
+-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118013987-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-118013987-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://www.netket.org",
+  "name": "NetKet",
+  "founder": "Giuseppe Carleo",
+  "foundingDate": "2018-04-24",
+  "foundingLocation" : "New York",
+  "logo": "https://www.netket.org/img/logo_small.jpg",
+  "sameAs": [
+    "https://twitter.com/NetKetOrg",
+    "https://github.com/NetKet/netket"
+  ],
+  "description" : "Netket is an open-source project delivering cutting-edge
+  methods for the study of many-body quantum systems with artificial neural
+  networks and machine learning techniques."
+}
+</script>
+
+
+</body>
+</html>
