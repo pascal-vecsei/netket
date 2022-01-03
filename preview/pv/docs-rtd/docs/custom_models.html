@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Defining Custom Models &mdash; netket v3.0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Overriding defaults in NetKet" href="custom_expect.html" />
+    <link rel="prev" title="🔪 The Sharp Bits 🔪" href="sharp-bits.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> netket<img src="../_static/logonav.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/netket3.html">Ground-State Variational Search with NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/jax.html">Using JAX as a backend in NetKet - Feature Preview for v3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups">G-CNNs are generalizations of CNNs to non-abelian groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Defining-the-Hamiltonian">Defining the Hamiltonian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Defining-the-GCNN">Defining the GCNN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Variational-Monte-Carlo">Variational Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Checking-with-ED">Checking with ED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Simulating-A-Larger-Lattice">Simulating A Larger Lattice</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/j1j2.html">Variational Monte Carlo with Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/Heisenberg1d.html">Learning the ground-state of a spin model with different Neural Networks available in NetKet</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superop.html">The Lindblad Master Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hilbert.html">The Hilbert module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operator.html">The Operator module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="varstate.html">The Variational State Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">The Drivers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sharp-bits.html">🔪 The Sharp Bits 🔪</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Defining Custom Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#commonalities">Commonalities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#defining-models-init-and-apply-functions">Defining models: init and apply functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-flax-linen">Using Flax Linen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-jax-stax">Using Jax/Stax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-haiku">Using Haiku</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_expect.html">Overriding defaults in NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">Defining Custom Preconditioners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_operator.html">Defining Custom Operators</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing-tests.html">Writing Tests</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api-stability.html">API Stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-experimental.html">Experimental API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">netket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Defining Custom Models</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/docs/custom_models.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="defining-custom-models">
+<span id="custom-models"></span><h1>Defining Custom Models<a class="headerlink" href="#defining-custom-models" title="Permalink to this headline"></a></h1>
+<p>In this section we give some examples on how to define models for NetKet 3.
+There are mainly 3 ways to do that, and they all involve using some third party
+framework.
+Whatever you pick, we strongly advise you to read their documentation and whatch
+some examples.</p>
+<p>The 3 frameworks that are supported are:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://flax.readthedocs.io/en/latest/examples.html">Flax Linen API</a>, which is an easy-to-use framework to define complex neural networks</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Barebone</span> <span class="pre">`stax</span></code> &lt;<a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.example_libraries.stax.html">https://jax.readthedocs.io/en/latest/jax.example_libraries.stax.html</a>&gt;`_, which is an example module included with JAX.</p></li>
+<li><p><a class="reference external" href="https://github.com/deepmind/dm-haiku">Haiku</a>, which is a competitor to Flax, and offers somewhat equivalent expressivity with a rather different syntax.</p></li>
+</ul>
+<div class="section" id="commonalities">
+<h2>Commonalities<a class="headerlink" href="#commonalities" title="Permalink to this headline"></a></h2>
+<p>Whatever the framework you pick, your model must be able to accept batches of states, so 2-Dimensonal matrices <code class="code docutils literal notranslate"><span class="pre">(B,N)</span></code> where <span class="math notranslate nohighlight">\(N\)</span> is the number of local degrees of freedom in the hilbert space (spatial sites) and <span class="math notranslate nohighlight">\(B\)</span> is the number of batches.
+The result <em>must</em> be a <code class="code docutils literal notranslate"><span class="pre">(B,)</span></code> vector  where every element is the evaluation of your network for that entry.</p>
+<p>If you have a model that is difficult to write in such a way to act on batches, you can use <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.html#jax.vmap">jax.vmap</a> to vectorize it.</p>
+<p>Your model will be compiled with <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>. Therefore in general you should NEVER (unless you know what you are doing) use <code class="code docutils literal notranslate"><span class="pre">numpy</span></code>, but rather <code class="code docutils literal notranslate"><span class="pre">jax.numpy</span></code> inside of it.
+If you want to understand why, read <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax-101/index.html">Jax 101 guide</a> ( however, even if you don’t care, we think it’s hard to us a tool you don’t undrstand: so at least rad <a class="reference external" href="https://flax.readthedocs.io/en/latest/notebooks/jax_for_the_impatient.html">Jax for the Impatient</a>, which is shorter).</p>
+<div class="section" id="defining-models-init-and-apply-functions">
+<h3>Defining models: init and apply functions<a class="headerlink" href="#defining-models-init-and-apply-functions" title="Permalink to this headline"></a></h3>
+<p>Internally, variational states don’t need a Flax model to work with, but only two functions: an initialization
+function, used to initialize the parameters and the state of the model, and an apply function, used to evaluate
+the model.</p>
+<p>If you don’t want to use Flax, Haiku or other supported methods, you can define your own tuple of functions and
+pass it to the Variational State constructor. Keep in mind, however, that those two functions will be executed
+inside <code class="code docutils literal notranslate"><span class="pre">jax.jit</span></code> blocks, so they must be jit-compatible.</p>
+</div>
+</div>
+<div class="section" id="using-flax-linen">
+<h2>Using Flax Linen<a class="headerlink" href="#using-flax-linen" title="Permalink to this headline"></a></h2>
+<p>To define a model using Flax Linen you need to define a Flax Module. Normally those functionalities are present
+in the <code class="code docutils literal notranslate"><span class="pre">flax.linen</span></code> module, that people usually import with <code class="code docutils literal notranslate"><span class="pre">import</span> <span class="pre">flax.linen</span> <span class="pre">as</span> <span class="pre">nn</span></code> (some day in
+a few months from now, <code class="code docutils literal notranslate"><span class="pre">import</span> <span class="pre">flax.nn</span></code> will work, but at the moment it won’t, as it’s importing a different,
+legacy, deprecated module).</p>
+<p>Flax supports complex numbers but does not make it overly easy to work with them.
+As such, netket exports a module, <code class="docutils literal notranslate"><span class="pre">netket.nn</span></code> which re-exports the functionality in <code class="docutils literal notranslate"><span class="pre">flax.nn</span></code>, but
+with the additional support of complex numbers.</p>
+<p>To define a Flax Module, simply create a class that inherits from <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code>.
+This class cannot have an <code class="code docutils literal notranslate"><span class="pre">__init__</span></code> method, but can have several class attributes.
+Class attributes should be hashable objects (so in general they can be strings, numbers, other classes, but cannot
+be numpy or jax arrays).</p>
+<p>Models should define the <code class="code docutils literal notranslate"><span class="pre">__call__(self,</span> <span class="pre">x)</span></code> function that represents their action on a batch of inputs <code class="code docutils literal notranslate"><span class="pre">x</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">netket.nn</span> <span class="k">as</span> <span class="nn">nknn</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+
+<span class="k">class</span> <span class="nc">Model1</span><span class="p">(</span><span class="n">nknn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+
+        <span class="n">y</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The example above does a very simple sum on the input and multiplies it by a number. To create the module, we simply construct it
+passing any optional class attribute, such as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Model1</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you want to use some layers inside your model, you can for example create them in the <code class="docutils literal notranslate"><span class="pre">__call__</span></code> function by decorating it with
+the <code class="code docutils literal notranslate"><span class="pre">&#64;nn.compact</span></code> decorator. Don’t worry: they will only be initialised once.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">netket.nn</span> <span class="k">as</span> <span class="nn">nknn</span>
+<span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
+
+<span class="k">class</span> <span class="nc">RBM</span><span class="p">(</span><span class="n">nknn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+
+        <span class="n">y</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">alpha</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="nd">@nknn</span><span class="o">.</span><span class="n">compact</span>
+        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+                <span class="c1"># create a dense layers with alpha * N features, where N is the size of the system</span>
+                <span class="n">dense</span> <span class="o">=</span> <span class="n">nknn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="c1"># apply the dense layer</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">dense</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="c1"># sum the output</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For more advanced examples, you can check the <a class="reference external" href="https://github.com/netket/netket/tree/master/netket/models">source-code</a>
+of the models included in netket or Flax documentation.</p>
+</div>
+<div class="section" id="using-jax-stax">
+<h2>Using Jax/Stax<a class="headerlink" href="#using-jax-stax" title="Permalink to this headline"></a></h2>
+<p>See tutorial <a class="reference internal" href="../tutorials/jax.html"><span class="doc">Using Jax: Netket 3 preview</span></a></p>
+</div>
+<div class="section" id="using-haiku">
+<h2>Using Haiku<a class="headerlink" href="#using-haiku" title="Permalink to this headline"></a></h2>
+<p>See <a class="reference external" href="https://github.com/netket/netket/blob/master/Examples/Ising1d/ising1d_hk.py">this example</a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sharp-bits.html" class="btn btn-neutral float-left" title="🔪 The Sharp Bits 🔪" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="custom_expect.html" class="btn btn-neutral float-right" title="Overriding defaults in NetKet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019-2021, The Netket authors - All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+
+<script type="text/javascript">
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+      })
+</script>
+
+<!-- Temporary footer
+<div class="footer-wip">
+  <div class="footer-wip-content">
+    This documentation refers to an unreleased version of Netket.
+  </div>
+</div>
+-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118013987-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-118013987-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://www.netket.org",
+  "name": "NetKet",
+  "founder": "Giuseppe Carleo",
+  "foundingDate": "2018-04-24",
+  "foundingLocation" : "New York",
+  "logo": "https://www.netket.org/img/logo_small.jpg",
+  "sameAs": [
+    "https://twitter.com/NetKetOrg",
+    "https://github.com/NetKet/netket"
+  ],
+  "description" : "Netket is an open-source project delivering cutting-edge
+  methods for the study of many-body quantum systems with artificial neural
+  networks and machine learning techniques."
+}
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>netket.sampler.rules.custom_numpy &mdash; netket v3.0 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> netket<img src="../../../../_static/logonav.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/netket3.html">Ground-State Variational Search with NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/jax.html">Using JAX as a backend in NetKet - Feature Preview for v3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/G-CNN_Honeycomb.html">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/G-CNN_Honeycomb.html#G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups">G-CNNs are generalizations of CNNs to non-abelian groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/G-CNN_Honeycomb.html#Defining-the-Hamiltonian">Defining the Hamiltonian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/G-CNN_Honeycomb.html#Defining-the-GCNN">Defining the GCNN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/G-CNN_Honeycomb.html#Variational-Monte-Carlo">Variational Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/G-CNN_Honeycomb.html#Checking-with-ED">Checking with ED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/G-CNN_Honeycomb.html#Simulating-A-Larger-Lattice">Simulating A Larger Lattice</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/j1j2.html">Variational Monte Carlo with Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/Heisenberg1d.html">Learning the ground-state of a spin model with different Neural Networks available in NetKet</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/superop.html">The Lindblad Master Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/hilbert.html">The Hilbert module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/operator.html">The Operator module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/varstate.html">The Variational State Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/drivers.html">The Drivers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/sharp-bits.html">🔪 The Sharp Bits 🔪</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/custom_models.html">Defining Custom Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/custom_expect.html">Overriding defaults in NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/custom_preconditioners.html">Defining Custom Preconditioners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/custom_operator.html">Defining Custom Operators</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/contributing.html">Contributing to NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/writing-tests.html">Writing Tests</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/api-stability.html">API Stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/api.html">Public API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../docs/api-experimental.html">Experimental API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">netket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+      <li>netket.sampler.rules.custom_numpy</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for netket.sampler.rules.custom_numpy</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright 2021 The NetKet Authors - All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span class="c1"># you may not use this file except in compliance with the License.</span>
+<span class="c1"># You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">flax</span> <span class="kn">import</span> <span class="n">struct</span>
+
+<span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">AbstractOperator</span>
+
+
+<span class="kn">from</span> <span class="nn">..metropolis</span> <span class="kn">import</span> <span class="n">MetropolisRule</span>
+
+
+<span class="nd">@struct</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span> <span class="nc">CustomRuleState</span><span class="p">:</span>
+    <span class="n">sections</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">rand_op_n</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">weight_cumsum</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+
+<span class="nd">@struct</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span> <span class="nc">CustomRuleNumpy</span><span class="p">(</span><span class="n">MetropolisRule</span><span class="p">):</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">pytree_node</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">weight_list</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">pytree_node</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Raise errors if hilbert is not an Hilbert</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">,</span> <span class="n">AbstractOperator</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Argument to CustomRuleNumpy must be a valid operator, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;but operator is a </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">_check_operators</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">operators</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_list</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_list</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">n_operators</span><span class="p">,):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;move_weights have the wrong shape&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_list</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;move_weights must be positive&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
+                <span class="bp">self</span><span class="p">,</span>
+                <span class="s2">&quot;weight_list&quot;</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">n_operators</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;weight_list&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_list</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_list</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="CustomRuleNumpy.init_state"><a class="viewcode-back" href="../../../../docs/_generated/samplers/netket.sampler.rules.CustomRuleNumpy.html#netket.sampler.rules.CustomRuleNumpy.init_state">[docs]</a>    <span class="k">def</span> <span class="nf">init_state</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CustomRuleState</span><span class="p">(</span>
+            <span class="n">sections</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_batches</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+            <span class="n">rand_op_n</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_batches</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+            <span class="n">weight_cumsum</span><span class="o">=</span><span class="n">rule</span><span class="o">.</span><span class="n">weight_list</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(),</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CustomRuleNumpy.transition"><a class="viewcode-back" href="../../../../docs/_generated/samplers/netket.sampler.rules.CustomRuleNumpy.html#netket.sampler.rules.CustomRuleNumpy.transition">[docs]</a>    <span class="k">def</span> <span class="nf">transition</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">rng</span><span class="p">,</span> <span class="n">σ</span><span class="p">):</span>
+        <span class="n">rule_state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">rule_state</span>
+
+        <span class="c1"># numba does not support jitting np.random number generators</span>
+        <span class="c1"># so we have to generate the random numbers outside the jit</span>
+        <span class="c1"># block</span>
+        <span class="n">rnd_uniform</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">σ</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">_pick_random_and_init</span><span class="p">(</span>
+            <span class="n">σ</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">rule_state</span><span class="o">.</span><span class="n">weight_cumsum</span><span class="p">,</span>
+            <span class="n">rnd_uniform</span><span class="o">=</span><span class="n">rnd_uniform</span><span class="p">,</span>
+            <span class="n">out</span><span class="o">=</span><span class="n">rule_state</span><span class="o">.</span><span class="n">rand_op_n</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">σ_conns</span><span class="p">,</span> <span class="n">mels</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">get_conn_filtered</span><span class="p">(</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">σ</span><span class="p">,</span> <span class="n">rule_state</span><span class="o">.</span><span class="n">sections</span><span class="p">,</span> <span class="n">rule_state</span><span class="o">.</span><span class="n">rand_op_n</span>
+        <span class="p">)</span>
+
+        <span class="c1"># numba does not support jitting np.random number generators</span>
+        <span class="c1"># so we have to generate the random numbers outside the jit</span>
+        <span class="c1"># block</span>
+        <span class="n">rnd_uniform</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">σ1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">_choose_and_return</span><span class="p">(</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">σ1</span><span class="p">,</span>
+            <span class="n">σ_conns</span><span class="p">,</span>
+            <span class="n">mels</span><span class="p">,</span>
+            <span class="n">rule_state</span><span class="o">.</span><span class="n">sections</span><span class="p">,</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">log_prob_corr</span><span class="p">,</span>
+            <span class="n">rnd_uniform</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_pick_random_and_init</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">move_cumulative</span><span class="p">,</span> <span class="n">rnd_uniform</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">rnd_uniform</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">move_cumulative</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+
+    <span class="c1"># return out</span>
+
+
+<span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_choose_and_return</span><span class="p">(</span><span class="n">σp</span><span class="p">,</span> <span class="n">x_prime</span><span class="p">,</span> <span class="n">mels</span><span class="p">,</span> <span class="n">sections</span><span class="p">,</span> <span class="n">log_prob_corr</span><span class="p">,</span> <span class="n">rnd_uniform</span><span class="p">):</span>
+    <span class="n">low</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">σp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">rnd_uniform</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">exit_state</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">cumulative_prob</span> <span class="o">=</span> <span class="n">mels</span><span class="p">[</span><span class="n">low</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+        <span class="k">while</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="n">cumulative_prob</span><span class="p">:</span>
+            <span class="n">exit_state</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">cumulative_prob</span> <span class="o">+=</span> <span class="n">mels</span><span class="p">[</span><span class="n">low</span> <span class="o">+</span> <span class="n">exit_state</span><span class="p">]</span><span class="o">.</span><span class="n">real</span>
+        <span class="n">σp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_prime</span><span class="p">[</span><span class="n">low</span> <span class="o">+</span> <span class="n">exit_state</span><span class="p">]</span>
+        <span class="n">low</span> <span class="o">=</span> <span class="n">sections</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="n">log_prob_corr</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_check_operators</span><span class="p">(</span><span class="n">operators</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operators</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">op</span><span class="o">.</span><span class="n">imag</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1.0e-10</span>
+        <span class="k">assert</span> <span class="n">op</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019-2021, The Netket authors - All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+
+<script type="text/javascript">
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+      })
+</script>
+
+<!-- Temporary footer
+<div class="footer-wip">
+  <div class="footer-wip-content">
+    This documentation refers to an unreleased version of Netket.
+  </div>
+</div>
+-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118013987-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-118013987-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://www.netket.org",
+  "name": "NetKet",
+  "founder": "Giuseppe Carleo",
+  "foundingDate": "2018-04-24",
+  "foundingLocation" : "New York",
+  "logo": "https://www.netket.org/img/logo_small.jpg",
+  "sameAs": [
+    "https://twitter.com/NetKetOrg",
+    "https://github.com/NetKet/netket"
+  ],
+  "description" : "Netket is an open-source project delivering cutting-edge
+  methods for the study of many-body quantum systems with artificial neural
+  networks and machine learning techniques."
+}
+</script>
+
+
+</body>
+</html>
