@@ -1096,13 +1096,14 @@ as SR.</p>
 optimizers. If you want to write a custom optimizer or use more advanced ones, we suggest
 you have a look at optax documentation.</p>
 <p>Check it out for up-to-date informations on available optimisers.</p>
-<p>:::{warning}
-Even if optimisers in <code class="docutils literal notranslate"><span class="pre">netket.optimizer</span></code> are optax optimisers, they have slightly different
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Even if optimisers in <code class="docutils literal notranslate"><span class="pre">netket.optimizer</span></code> are optax optimisers, they have slightly different
 names (they are capitalised) and the argument names have been rearranged and renamed.
 This was chosen in order not to break our API from previous versions</p>
 <p>In general, we advise you to directly use optax, as it is much more powerful, provides more
-optimisers, and it’s extremely easy to use step-dependent schedulers.
-:::</p>
+optimisers, and it’s extremely easy to use step-dependent schedulers.</p>
+</div>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
