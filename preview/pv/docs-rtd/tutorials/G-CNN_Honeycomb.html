@@ -44,13 +44,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="netket3.html">Ground-State Variational Search with NetKet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="jax.html">Using JAX as a backend in NetKet - Feature Preview for v3.0</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups">G-CNNs are generalizations of CNNs to non-abelian groups</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#Defining-the-Hamiltonian">Defining the Hamiltonian</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#Defining-the-GCNN">Defining the GCNN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#Variational-Monte-Carlo">Variational Monte Carlo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#Checking-with-ED">Checking with ED</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#Simulating-A-Larger-Lattice">Simulating A Larger Lattice</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups">G-CNNs are generalizations of CNNs to non-abelian groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Defining-the-Hamiltonian">Defining the Hamiltonian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Defining-the-GCNN">Defining the GCNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Variational-Monte-Carlo">Variational Monte Carlo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Checking-with-ED">Checking with ED</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Simulating-A-Larger-Lattice">Simulating A Larger Lattice</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="j1j2.html">Variational Monte Carlo with Neural Networks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heisenberg1d.html">Learning the ground-state of a spin model with different Neural Networks available in NetKet</a></li>
 </ul>
@@ -388,9 +390,8 @@ div.rendered_html tbody tr:hover {
 <p>where <span class="math notranslate nohighlight">\(\vec{\sigma}_{i}\)</span> are Pauli matrices and <span class="math notranslate nohighlight">\(&lt;&gt;\)</span> denotes nearest neighbor interactons.</p>
 <p>For this tutorial, many of the calculations will be much faster on a GPU. If you don’t have access to a GPU, you can open a <a class="reference external" href="https://colab.research.google.com/">Google Colab</a> notebook, and set runtime type to GPU.</p>
 <p>This tutorial wil be split into two parts. First I’ll provide a brief introduction to G-CNNs and describe what advantages they bring. Second, we’ll use NetKet to find the ground state of the antiferromagnetic Heisenberg model on the honeycomb lattice. First we will simulate a lattice with <span class="math notranslate nohighlight">\(N=18\)</span> sites in order to compare with exact diagonalization. Then we will simulate a lattice with <span class="math notranslate nohighlight">\(N=72\)</span> sites.</p>
-</div>
 <div class="section" id="G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups">
-<h1>G-CNNs are generalizations of CNNs to non-abelian groups<a class="headerlink" href="#G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups" title="Permalink to this headline"></a></h1>
+<h2>G-CNNs are generalizations of CNNs to non-abelian groups<a class="headerlink" href="#G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups" title="Permalink to this headline"></a></h2>
 <p>The convolutional neural network (CNN) has revolutionized the field of computer vision. The CNN enforces translational invariance, which means that feeding a CNN translated copies of an image will produce the exact same output. This is important for recognizing objects, which may located differently in different images.</p>
 <p>The hidden layers of a CNN contain a group of <span class="math notranslate nohighlight">\({\bf features}\)</span>, corresponding to translations of the image, where each feature is represented by a vector. At each layer, the CNN integrates over these features to produce a different set of features over the translation group:</p>
 <div class="math notranslate nohighlight">
@@ -426,7 +427,7 @@ import matplotlib.pyplot as plt
 </div>
 </div>
 <div class="section" id="Defining-the-Hamiltonian">
-<h1>Defining the Hamiltonian<a class="headerlink" href="#Defining-the-Hamiltonian" title="Permalink to this headline"></a></h1>
+<h2>Defining the Hamiltonian<a class="headerlink" href="#Defining-the-Hamiltonian" title="Permalink to this headline"></a></h2>
 <p>We begin by defining the Hamiltonian as a list of lattice points. NetKet will automatically convert these points into a graph with nearest neighbor connections. The honeycomb lattice is a triangular lattice with two sites per unit cell.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -495,7 +496,7 @@ ha = nk.operator.Heisenberg(hilbert=hi, graph=graph, sign_rule=True)
 <p>We also optimize over states with total <span class="math notranslate nohighlight">\(S_z\)</span> of zero since we know the ground state has spin 0.</p>
 </div>
 <div class="section" id="Defining-the-GCNN">
-<h1>Defining the GCNN<a class="headerlink" href="#Defining-the-GCNN" title="Permalink to this headline"></a></h1>
+<h2>Defining the GCNN<a class="headerlink" href="#Defining-the-GCNN" title="Permalink to this headline"></a></h2>
 <p>We can define a GCNN with an arbitrary number of layers and specify the feature dimension of each layer accordingly:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -517,7 +518,7 @@ ma = nk.models.GCNN(symmetries = symmetries, layers = num_layers, features = fea
 <p>Feel free to try different shaped models. By default, the GCNN weights are initialized with variance scaling, which ensures that the activations will be unit-normal throughout the model at the start of training. Additionally, GCNN defaults to a SELU non-linearity, which moves the activations in the direction of unit-normal, even when they start to deviate. These features ensure that our model will behave well, even when we stack a large number of layers.</p>
 </div>
 <div class="section" id="Variational-Monte-Carlo">
-<h1>Variational Monte Carlo<a class="headerlink" href="#Variational-Monte-Carlo" title="Permalink to this headline"></a></h1>
+<h2>Variational Monte Carlo<a class="headerlink" href="#Variational-Monte-Carlo" title="Permalink to this headline"></a></h2>
 <p>In order to perform VMC we need to define a sampler and an optimizer. We sample using Metropolis-Hastings, which uses the exchange rule to propose new states. The exchange rule swaps the spin of two neighbouring sites, keeping the magnetization fixed (in this case, 0). We optimize uzing stochaistic reconfiguration, which uses curvature information to find the best direction of descent.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -637,7 +638,7 @@ gs.run(n_iter = 100,out = &#39;out&#39;)
 <p>You will notice that the variance continues to get even smaller, giving evidence that we are nearing an eigenstate.</p>
 </div>
 <div class="section" id="Checking-with-ED">
-<h1>Checking with ED<a class="headerlink" href="#Checking-with-ED" title="Permalink to this headline"></a></h1>
+<h2>Checking with ED<a class="headerlink" href="#Checking-with-ED" title="Permalink to this headline"></a></h2>
 <p>It seems likely that our ground state is correct, as we approached an eigenstate with low energy, but lets be safe and check our work. We can do Lanczos diagonalization for small lattices in NetKet.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -684,7 +685,7 @@ print((ED_energy_18sites- vmc_energy_18sites)/ED_energy_18sites)
 <p>Looks like our model did a good job! If you just trained for the first 100 iterations the error should be less than <span class="math notranslate nohighlight">\(10^{-4}\)</span> and if you trained with the larger batch size, the error should be close to <span class="math notranslate nohighlight">\(10^{-5}\)</span></p>
 </div>
 <div class="section" id="Simulating-A-Larger-Lattice">
-<h1>Simulating A Larger Lattice<a class="headerlink" href="#Simulating-A-Larger-Lattice" title="Permalink to this headline"></a></h1>
+<h2>Simulating A Larger Lattice<a class="headerlink" href="#Simulating-A-Larger-Lattice" title="Permalink to this headline"></a></h2>
 <p>Lets see how the GCNN does on a larger lattice that cannot be simulated with exact diagonalization. We’ll do a <span class="math notranslate nohighlight">\(6 \times 6\)</span> lattice which has <span class="math notranslate nohighlight">\(72\)</span> sites. We need to redefine a few things:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
@@ -941,6 +942,7 @@ print((extrapolated_est-final_en)/extrapolated_est)
 </div>
 <p>If everything went well your error should be around .1%!</p>
 <p>This concludes the tutorial. Only an hour ago we knew nothing about the Heisenberg model on a Hexagonal lattice. Now we have an accurate approximation of the ground state wavefunction!</p>
+</div>
 </div>
 
 
