@@ -571,6 +571,7 @@
 <h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Initialisation of all implementations of <code class="docutils literal notranslate"><span class="pre">DenseSymm</span></code>, <code class="docutils literal notranslate"><span class="pre">DenseEquivariant</span></code>, <code class="docutils literal notranslate"><span class="pre">GCNN</span></code> now defaults to truncated normals with Lecun variance scaling. For layers without masking, there should be no noticeable change in behaviour. For masked layers, the same variance scaling now works correctly. <a class="reference external" href="https://github.com/netket/netket/pull/1045">#1045</a></p></li>
+<li><p>Fix bug that prevented gradients of non-hermitian operators to be computed. The feature is still marked as experimental but will now run (we do not guarantee that results are correct). <a class="reference external" href="https://github.com/netket/netket/pull/1045">#1045</a></p></li>
 </ul>
 </div>
 </div>
