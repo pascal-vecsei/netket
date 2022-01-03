@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Defining Custom Preconditioners &mdash; netket v3.0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Defining Custom Operators" href="custom_operator.html" />
+    <link rel="prev" title="Overriding defaults in NetKet" href="custom_expect.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> netket<img src="../_static/logonav.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/netket3.html">Ground-State Variational Search with NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/jax.html">Using JAX as a backend in NetKet - Feature Preview for v3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#G-CNNs-are-generalizations-of-CNNs-to-non-abelian-groups">G-CNNs are generalizations of CNNs to non-abelian groups</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Defining-the-Hamiltonian">Defining the Hamiltonian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Defining-the-GCNN">Defining the GCNN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Variational-Monte-Carlo">Variational Monte Carlo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Checking-with-ED">Checking with ED</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html#Simulating-A-Larger-Lattice">Simulating A Larger Lattice</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/j1j2.html">Variational Monte Carlo with Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/Heisenberg1d.html">Learning the ground-state of a spin model with different Neural Networks available in NetKet</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superop.html">The Lindblad Master Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hilbert.html">The Hilbert module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operator.html">The Operator module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="varstate.html">The Variational State Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">The Drivers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sharp-bits.html">🔪 The Sharp Bits 🔪</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_models.html">Defining Custom Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_expect.html">Overriding defaults in NetKet</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Defining Custom Preconditioners</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-preconditioner-interface">The preconditioner interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#bare-interface">Bare interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#linearoperator-interface">LinearOperator interface</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#the-preconditioner-function-api">The preconditioner function API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_operator.html">Defining Custom Operators</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing-tests.html">Writing Tests</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api-stability.html">API Stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-experimental.html">Experimental API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">netket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Defining Custom Preconditioners</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/docs/custom_preconditioners.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="defining-custom-preconditioners">
+<h1>Defining Custom Preconditioners<a class="headerlink" href="#defining-custom-preconditioners" title="Permalink to this headline"></a></h1>
+<p>NetKet calls <em>gradient preconditioner</em> that class of techniques that transform the
+gradient of the cost function in order to improve convergence properties before
+passing it to an optimiser like <a class="reference internal" href="_generated/optim/netket.optimizer.Sgd.html#netket-optimizer-sgd"><span class="std std-ref">netket.optimizer.Sgd</span></a> or <a class="reference internal" href="_generated/optim/netket.optimizer.Adam.html#netket-optimizer-adam"><span class="std std-ref">netket.optimizer.Adam</span></a>.</p>
+<p>Examples of <em>gradient preconditioners</em> are the <a class="reference external" href="https://www.attaccalite.com/PhDThesis/html/node15.html">Stochastic Reconfiguration (SR)</a> method  (also known as <a class="reference external" href="https://wiseodd.github.io/techblog/2018/03/14/natural-gradient/">Natural Gradient Descent</a> in ML literature), the Linear Method or second order Hessian-based optimisation.</p>
+<p>We call those methods <em>gradient preconditioners</em> because they take as input the gradient of the cost function (e.g., the energy gradient in VMC ground state optimisation) and output a transformed gradient.</p>
+<p>In the current version, NetKet provides Stocastic Reconfiguration (<span class="xref std std-ref">netket.optimiser.SR</span>) as a built-in method.
+It is also possible to define your own method. If you implement the API as outlined in this document, you will be able to use your own preconditioner for use in NetKet optimisation driver without issues.</p>
+<p>Keep in mind that writing your own optimisation loop only requires writing about 10  lines of code and you are not forced to use NetKet’s drivers!
+We believe our design to be fairly modular and flexible and thus should be able to accommodate a wide variety of use-cases, but there will be algorithms that are hard to express within the boundaries of our API.
+Do not turn away from NetKet in those cases, but take all the pieces that you need and write your own optimisation loop!</p>
+<div class="section" id="the-preconditioner-interface">
+<h2>The preconditioner interface<a class="headerlink" href="#the-preconditioner-interface" title="Permalink to this headline"></a></h2>
+<p>Preconditioners must be implemented as a Callable object or function with the following signature:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">preconditioner</span><span class="p">(</span><span class="n">vstate</span><span class="p">:</span> <span class="n">VariationalState</span><span class="p">,</span> <span class="n">gradient</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTree</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>The Callable must accept two (positional) inputs, where the first is the variational state itself and the latter is the current gradient, stored as a PyTree.
+The output of the preconditioner must be the transformed gradient stored as a PyTree.</p>
+<p>This general API will allow you to implement any preconditioner and use it together with NetKet Variational Drivers.
+However, note that any performance optimisation (such as calling <span class="xref std std-ref">jax.jit</span> on the code) will be your responsability.</p>
+<div class="section" id="the-linearpreconditioner-interface">
+<h3>The LinearPreconditioner interface<a class="headerlink" href="#the-linearpreconditioner-interface" title="Permalink to this headline"></a></h3>
+<p>Several preconditioners, including the Stochastic Reconfiguration, transform the gradient by solving a linear system of equation.
+begin{equation}
+S \bf{x} + \bf{F}
+end{equation}
+where <span class="math notranslate nohighlight">\( S \)</span> is a linear operator, <span class="math notranslate nohighlight">\( F \)</span> is the gradient and the solution <span class="math notranslate nohighlight">\(\bf{x}\)</span> is the preconditioned gradient.</p>
+<p>NetKet implements a basic interface called <span class="xref std std-ref">netket.optimizer.LinearPreconditioner</span> to make it easier to implement this kind of
+solvers. It is especially tuned for the cases where <span class="math notranslate nohighlight">\( S \)</span> is a linear operator.</p>
+<p>To construct <span class="xref std std-ref">netket.optimizer.LinearPreconditioner</span> you must supply two objects: the <code class="docutils literal notranslate"><span class="pre">lhs_constructor</span></code>, which is a function or
+closure with signature <code class="docutils literal notranslate"><span class="pre">(VariationalState)-&gt;LinearOperator</span></code> that accepts one argument, the variational state, and constructs the linear
+operator associated with it.
+The other object is a linear solver method, that must accept the linear operator and the gradient and compute the solution.
+The gradient is always provided as a PyTree.</p>
+<p>To give a clear example: in the case of the Stochastic Reconfiguration (SR) method, if we call <span class="math notranslate nohighlight">\( \vb{F} \)</span> the gradient of the energy and <span class="math notranslate nohighlight">\( S \)</span> the Quantum Geometric Tensor (also known as SR matrix), we need to solve the system of equation <span class="math notranslate nohighlight">\( S d\vb{w} = F \)</span> to compute the resulting gradient.
+The <span class="math notranslate nohighlight">\( S \)</span> matrix in this case is the <code class="docutils literal notranslate"><span class="pre">lhs</span></code> or LinearOperator of the preconditioner, while the function is any linear solver such as <code class="docutils literal notranslate"><span class="pre">cholesky</span></code>, <code class="docutils literal notranslate"><span class="pre">jnp.linalg.solve</span></code> or iterative solvers such as <code class="docutils literal notranslate"><span class="pre">scipy.sparse.linalg.cg</span></code>.</p>
+<p>As there are different ways to compute the <span class="math notranslate nohighlight">\( S \)</span> matrix, all with their different computational performance characteristics, and there are different solvers, we believe that this design makes the code more modular and easier to reason about.</p>
+<p>When defining a preconditioner object you have two options: you can implement the bare API, which gives you maximum freedom but makes you responsible for all optimisations, or you can implement the <code class="docutils literal notranslate"><span class="pre">LinearOperator</span></code> interface, which constraints you a bit but will take care of a few performance optimisations.</p>
+<div class="section" id="bare-interface">
+<h4>Bare interface<a class="headerlink" href="#bare-interface" title="Permalink to this headline"></a></h4>
+<p>The bare-minimum API a preconditioner <code class="docutils literal notranslate"><span class="pre">lhs</span></code> must implement:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- It must be a class
+
+- There must be a function to build it from a variational state. This function will be called with the variational state as the first positional argument.  This function must not necessarily be a method of the class. 
+
+- This class must have a `solve(self, function, gradient, *, x0=None)` method taking as argument the gradient to be preconditioned and must not error if a keyword argument `x0` is passed to it. `x0` is the output of `solve` the last time it has been called, and might be ignored if not needed. `function` is the function computing the preconditioner.
+</pre></div>
+</div>
+<p>You can subclass the abstract base class :ref<code class="docutils literal notranslate"><span class="pre">nk.optimizer.PreconditionerObject</span></code> to be sure that you are
+implementing the correct interface, but you are not obliged to subclass it.</p>
+<p>When you implement such an interface you are left with maximum flexibility, however you will be responsible for <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code>ing all computational intensive methods (most likely <code class="docutils literal notranslate"><span class="pre">solve</span></code>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">MyObject</span><span class="p">(</span><span class="n">variational_state</span><span class="p">):</span>
+    <span class="n">stuff_a</span><span class="p">,</span> <span class="n">stuff_b</span> <span class="o">=</span> <span class="n">compute_stuff</span><span class="p">(</span><span class="n">variational_state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">MyObjectT</span><span class="p">(</span><span class="n">stuff_a</span><span class="p">,</span> <span class="n">stuff_b</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">MyObjectT</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span>
+        <span class="c1"># setup this object</span>
+
+    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preconditioner_function</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># prepare</span>
+        <span class="o">...</span>
+        <span class="c1"># compute</span>
+        <span class="k">return</span> <span class="n">solve_fun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Be warned that if you want to <span class="xref std std-ref">jax.jit</span> compile the solve method, as it is usually computationally intensive, you must either specify how to flatten and unflatten to a PyTree your <code class="docutils literal notranslate"><span class="pre">MyObjectT</span></code>, or you should mark it as a <code class="docutils literal notranslate"><span class="pre">flax.struct.dataclass</span></code>, which is a frozen dataclass which does that automatically.
+Since you cannot write the <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method for a frozen dataclass, we usually define a constructor function as shown above.</p>
+<p>You might be asking why each object needs a <code class="docutils literal notranslate"><span class="pre">solve</span></code> method and is passed to the preconditioner function instead of the over way around. The reason for this is to invert the control: <code class="docutils literal notranslate"><span class="pre">preconditioner_function</span></code>s must obey a certain API, but even if they do, different objects might need to perform some different initialization to compute the precondition in a more efficient way.
+This architecture allows every object to run arbitrary logic before executing the preconditioner of choice.
+Particular examples of this approach can be seen by looking at the implementation of <a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianDense.html#netket-optimizer-qgt-qgtjacobiandense"><span class="std std-ref">netket.optimizer.qgt.QGTJacobianDense</span></a> and <a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianPyTree.html#netket-optimizer-qgt-qgtjacobianpytree"><span class="std std-ref">netket.optimizer.qgt.QGTJacobianPyTree</span></a>.</p>
+</div>
+<div class="section" id="linearoperator-interface">
+<h4>LinearOperator interface<a class="headerlink" href="#linearoperator-interface" title="Permalink to this headline"></a></h4>
+<p>You can also subclass <span class="xref std std-ref">netket.optimizer.LinearOperator</span>.
+A LinearOperator must be a <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.struct.html"><code class="docutils literal notranslate"><span class="pre">flax</span></code> dataclass</a>, which is an immutable
+object (therefore after construction you cannot modify its attributes).</p>
+<p>LinearOperators have several convenience methods, and they will act as matrices: you can right-multiply them by a PyTree
+vector or a dense vector. You can obtain their dense representation, and it will automatically jit-compile all computationally
+intensive operations.</p>
+<p>To implement the LinearOperator interface you should implement the following methods:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="k">def</span> <span class="nf">MyLinearOperator</span><span class="p">(</span><span class="n">variational_state</span><span class="p">):</span>
+    <span class="n">stuff_a</span><span class="p">,</span> <span class="n">stuff_b</span> <span class="o">=</span> <span class="n">compute_stuff</span><span class="p">(</span><span class="n">variational_state</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">MyLinearOperatorT</span><span class="p">(</span><span class="n">stuff_a</span><span class="p">,</span> <span class="n">stuff_b</span><span class="p">)</span>
+
+<span class="nd">@flax</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span> <span class="nc">MyLinearOperatorT</span><span class="p">(</span><span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">LinearOperator</span><span class="p">):</span>
+
+    <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span> <span class="fm">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="c1"># prepare</span>
+        <span class="o">...</span>
+        <span class="c1"># compute</span>
+        <span class="k">return</span> <span class="n">result</span> 
+
+    <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span> <span class="nf">to_dense</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">dense_matrix</span>
+
+    <span class="c1">#optional</span>
+    <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+    <span class="k">def</span> <span class="nf">_solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solve_fun</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PyTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTree</span><span class="p">:</span>
+        <span class="c1">#...</span>
+        <span class="k">return</span> <span class="n">solution</span><span class="p">,</span> <span class="n">solution_info</span>
+</pre></div>
+</div>
+<p>The bare minimum thing to implement is <code class="docutils literal notranslate"><span class="pre">__matmul__</span></code>, specifying how to multiply the linear operator by a pytree.
+You can also define a custom <code class="docutils literal notranslate"><span class="pre">_solve</span></code> method if you have some computationally intensive setup code you wish to
+run before executing a solve function (that will call matmul repeatedly).
+The <code class="docutils literal notranslate"><span class="pre">_solve</span></code> takes as first input the solve function, which is passed as a closure so it does not need to be marked
+as static (even though it is).  The x0 is an optional argument which must be accepted but can be ignored, and it is the last previous solution to the linear system.
+Optionally, one can also define the <code class="docutils literal notranslate"><span class="pre">to_dense</span></code> method.</p>
+</div>
+</div>
+<div class="section" id="the-preconditioner-function-api">
+<h3>The preconditioner function API<a class="headerlink" href="#the-preconditioner-function-api" title="Permalink to this headline"></a></h3>
+<p>The preconditioner function must have the following signature:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">preconditioner_function</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">gradient</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1">#...</span>
+    <span class="k">return</span> <span class="n">preconditioned_gradient</span><span class="p">,</span> <span class="n">x0</span>
+</pre></div>
+</div>
+<p>The object that will be passed is the selected preconditioner object, previously constructed.
+The gradient is the gradient of the loss function to precondition.
+x0 is an optional initial condition that might be ignored.</p>
+<p>The gradient might be a PyTree version or a dense ravelling of the PyTree. The result of the function should be a preconditioned gradient with the same format.
+Additional keyword argument can be present, and will in general be set through a closure or <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code>, because this function will be called with the signature above.
+If you have a peculiar preconditioner, you can assume that <code class="docutils literal notranslate"><span class="pre">preconditioner_function</span></code> will be called only from your <code class="docutils literal notranslate"><span class="pre">preconditioner</span> <span class="pre">object</span></code>, but in general it is good practice respecting the interface above so that different functions can work with different objects.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="custom_expect.html" class="btn btn-neutral float-left" title="Overriding defaults in NetKet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="custom_operator.html" class="btn btn-neutral float-right" title="Defining Custom Operators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019-2021, The Netket authors - All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+
+<script type="text/javascript">
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+      })
+</script>
+
+<!-- Temporary footer
+<div class="footer-wip">
+  <div class="footer-wip-content">
+    This documentation refers to an unreleased version of Netket.
+  </div>
+</div>
+-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118013987-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-118013987-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://www.netket.org",
+  "name": "NetKet",
+  "founder": "Giuseppe Carleo",
+  "foundingDate": "2018-04-24",
+  "foundingLocation" : "New York",
+  "logo": "https://www.netket.org/img/logo_small.jpg",
+  "sameAs": [
+    "https://twitter.com/NetKetOrg",
+    "https://github.com/NetKet/netket"
+  ],
+  "description" : "Netket is an open-source project delivering cutting-edge
+  methods for the study of many-body quantum systems with artificial neural
+  networks and machine learning techniques."
+}
+</script>
+
+
+</body>
+</html>
