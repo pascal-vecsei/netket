@@ -129,7 +129,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-4-in-development">NetKet 3.4 (⚙️ In development)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-3-1-in-development">NetKet 3.3.1 (⚙️ In development)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new-features">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#breaking-changes">Breaking Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#bug-fixes">Bug Fixes</a></li>
@@ -597,14 +597,17 @@ number is given, all layers will have the same number of features.</p></li>
 <li><p><strong>parity</strong> – Optional argument with value +/-1 that specifies the eigenvalue
 with respect to parity (only use on two level systems).</p></li>
 <li><p><strong>dtype</strong> – The dtype of the weights.</p></li>
-<li><p><strong>activation</strong> – The nonlinear activation function between hidden layers.</p></li>
+<li><p><strong>activation</strong> – The nonlinear activation function between hidden layers. Defaults to
+<span class="xref std std-ref">nk.nn.activation.reim_selu</span>.</p></li>
 <li><p><strong>output_activation</strong> – The nonlinear activation before the output.</p></li>
 <li><p><strong>equal_amplitudes</strong> – If True forces all basis states to have equal amplitude
 by setting Re[psi] = 0.</p></li>
 <li><p><strong>use_bias</strong> – If True uses a bias in all layers.</p></li>
 <li><p><strong>precision</strong> – Numerical precision of the computation see <a href="#id1"><span class="problematic" id="id2">`</span></a>jax.lax.Precision`for details.</p></li>
-<li><p><strong>kernel_init</strong> – Initializer for the Dense layer matrix.</p></li>
-<li><p><strong>bias_init</strong> – Initializer for the hidden bias.</p></li>
+<li><p><strong>kernel_init</strong> – Initializer for the kernels of all layers. Defaults to
+<cite>lecun_normal(in_axis=1, out_axis=0)</cite> which guarantees the correct variance of the
+output.</p></li>
+<li><p><strong>bias_init</strong> – Initializer for the biases of all layers.</p></li>
 </ul>
 </dd>
 </dl>

@@ -119,10 +119,9 @@
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">jax</span>
-<span class="kn">from</span> <span class="nn">jax.nn.initializers</span> <span class="kn">import</span> <span class="n">normal</span><span class="p">,</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">lecun_normal</span><span class="p">,</span> <span class="n">variance_scaling</span>
+<span class="kn">from</span> <span class="nn">jax.nn.initializers</span> <span class="kn">import</span> <span class="n">zeros</span><span class="p">,</span> <span class="n">lecun_normal</span>
 
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">warn_deprecation</span>
-<span class="kn">from</span> <span class="nn">netket.nn.initializers</span> <span class="kn">import</span> <span class="n">_complex_truncated_normal</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">HashableArray</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">DType</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 <span class="kn">from</span> <span class="nn">netket.utils.group</span> <span class="kn">import</span> <span class="n">PermutationGroup</span>
@@ -130,47 +129,13 @@
 <span class="kn">from</span> <span class="nn">netket.graph</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Lattice</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
-
-<span class="k">class</span> <span class="nc">_default_densesymm_initializer</span><span class="p">:</span>
-    <span class="k">pass</span>
-
-
-<span class="n">default_densesymm_initializer</span> <span class="o">=</span> <span class="n">_default_densesymm_initializer</span><span class="p">()</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Sentinel value to signal the default densesymm initializer.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># All layers defined here have kernels of shape [out_features, in_features, n_symm]</span>
+<span class="n">default_equivariant_initializer</span> <span class="o">=</span> <span class="n">lecun_normal</span><span class="p">(</span><span class="n">in_axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">get_default_densesymm_init</span><span class="p">(</span><span class="n">real_input_size</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns a kernel init equivalent to lecun_normal but</span>
-<span class="sd">    whose scale depends on the number of physical degrees of freedom of the</span>
-<span class="sd">    layer.</span>
-
-<span class="sd">    This is the correct initialization to have in order to guarantee variance</span>
-<span class="sd">    1 of every output channel.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-        <span class="n">shape</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">as_named_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-
-        <span class="n">variance</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scale</span> <span class="o">/</span> <span class="n">real_input_size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
-            <span class="c1"># constant is stddev of standard normal truncated to (-2, 2)</span>
-            <span class="n">stddev</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.87962566103423978</span>
-            <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">truncated_normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="n">stddev</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">stddev</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">variance</span><span class="p">)</span> <span class="o">/</span> <span class="mf">0.95311164380491208</span>
-            <span class="k">return</span> <span class="n">_complex_truncated_normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="n">stddev</span>
-
-    <span class="k">return</span> <span class="n">init</span>
-
-
-<span class="k">def</span> <span class="nf">unit_normal_scaling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-        <span class="n">jnp</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
-    <span class="p">)</span>
+<span class="k">def</span> <span class="nf">_normalise_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">new_norm</span><span class="p">):</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mask</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">*</span> <span class="n">new_norm</span> <span class="o">**</span> <span class="mf">0.5</span>
 
 
 <span class="k">def</span> <span class="nf">symm_input_warning</span><span class="p">(</span><span class="n">x_shape</span><span class="p">,</span> <span class="n">new_x_shape</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -204,14 +169,16 @@
     <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;numerical precision of the computation see `jax.lax.Precision`for details.&quot;&quot;&quot;</span>
 
-    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">default_densesymm_initializer</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">default_equivariant_initializer</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the kernel. Defaults to Lecun normal.&quot;&quot;&quot;</span>
     <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># pylint: disable=attribute-defined-outside-init</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetries</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span> <span class="o">=</span> <span class="n">_normalise_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span><span class="p">)</span>
 
     <span class="nd">@compact</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
@@ -238,21 +205,15 @@
 
         <span class="n">in_features</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="c1"># generate the default kernel init if necessary</span>
-        <span class="n">kernel_init</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">get_default_densesymm_init</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span> <span class="ow">is</span> <span class="n">default_densesymm_initializer</span>
-            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span>
-        <span class="p">)</span>
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
             <span class="s2">&quot;kernel&quot;</span><span class="p">,</span>
-            <span class="n">kernel_init</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="c1"># Converts the convolutional kernel of shape (self.features, in_features, n_sites)</span>
         <span class="c1"># to a full dense kernel of shape (self.features, in_features, n_symm, n_sites).</span>
@@ -299,10 +260,10 @@
     <span class="sd">&quot;&quot;&quot;The dtype of the weights.&quot;&quot;&quot;</span>
     <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">lecun_normal</span><span class="p">()</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">default_equivariant_initializer</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the kernel. Defaults to Lecun normal.&quot;&quot;&quot;</span>
     <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">sg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space_group</span><span class="p">)</span>
@@ -310,6 +271,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_point</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span> <span class="o">=</span> <span class="n">_normalise_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">sg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="c1"># maps (n_sites) dimension of kernels to (sites_per_cell, n_point, *shape)</span>
         <span class="c1"># as used in FFT-based group convolution</span>
@@ -345,15 +309,9 @@
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
-        <span class="c1"># generate the default kernel init if necessary</span>
-        <span class="n">kernel_init</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">get_default_densesymm_init</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span> <span class="o">*</span> <span class="n">in_features</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span> <span class="ow">is</span> <span class="n">default_densesymm_initializer</span>
-            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span>
-        <span class="p">)</span>
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
             <span class="s2">&quot;kernel&quot;</span><span class="p">,</span>
-            <span class="n">kernel_init</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
         <span class="p">)</span>
@@ -361,7 +319,7 @@
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="c1"># Converts the convolutional kernel of shape (features, in_features, n_sites)</span>
         <span class="c1"># to the expanded kernel of shape (features, in_features, sites_per_cell,</span>
@@ -418,10 +376,10 @@
     <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;numerical precision of the computation see `jax.lax.Precision`for details.&quot;&quot;&quot;</span>
 
-    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">unit_normal_scaling</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">default_equivariant_initializer</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the kernel. Defaults to Lecun normal.&quot;&quot;&quot;</span>
     <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
@@ -429,6 +387,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_point</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span> <span class="o">=</span> <span class="n">_normalise_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pt</span><span class="p">))</span>
 
         <span class="c1"># maps (n_sites) dimension of kernels to (n_point, n_point, *shape)</span>
         <span class="c1"># as used in FFT-based group convolution</span>
@@ -456,18 +416,14 @@
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
             <span class="s2">&quot;kernel&quot;</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
-            <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span>
-                <span class="n">in_features</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">n_point</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">,</span>
-            <span class="p">),</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_point</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="c1"># Convert the convolutional kernel of shape (features, in_features, n_symm)</span>
         <span class="c1"># to the expanded kernel of shape (features, in_features, n_point(in),</span>
@@ -543,13 +499,16 @@
     <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;numerical precision of the computation see `jax.lax.Precision`for details.&quot;&quot;&quot;</span>
 
-    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">unit_normal_scaling</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">default_equivariant_initializer</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the kernel. Defaults to Lecun normal.&quot;&quot;&quot;</span>
     <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">irreps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span> <span class="o">=</span> <span class="n">_normalise_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
             <span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">irrep</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">irrep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">irreps</span><span class="p">],</span>
             <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -645,7 +604,7 @@
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_ft</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
 
@@ -690,14 +649,15 @@
     <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;numerical precision of the computation see `jax.lax.Precision`for details.&quot;&quot;&quot;</span>
 
-    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">unit_normal_scaling</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">default_equivariant_initializer</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the kernel. Defaults to Lecun normal.&quot;&quot;&quot;</span>
     <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">product_table</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span> <span class="o">=</span> <span class="n">_normalise_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
 
     <span class="nd">@compact</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
@@ -722,7 +682,7 @@
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scaled_mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="c1"># Converts the convolutional kernel of shape (features, in_features, n_symm)</span>
         <span class="c1"># to a full dense kernel of shape (features, in_features, n_symm, n_symm)</span>
