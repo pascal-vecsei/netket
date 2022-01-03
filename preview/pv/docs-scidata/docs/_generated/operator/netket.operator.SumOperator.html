@@ -1,0 +1,1321 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>netket.operator.SumOperator &#8212; netket v3.0 documentation</title>
+    
+  <link href="../../../_static/css/theme.css" rel="stylesheet">
+  <link href="../../../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/css/blank.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    
+  <link rel="preload" as="script" href="../../../_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="netket.exact.full_ed" href="../exact/netket.exact.full_ed.html" />
+    <link rel="prev" title="netket.operator.PotentialEnergy" href="netket.operator.PotentialEnergy.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+
+<a class="navbar-brand" href="../../../index.html">
+  <img src="../../../_static/logonav.png" class="logo" alt="logo">
+</a>      
+
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://www.netket.org/getting_started.html">
+  Get Started
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="../../index.html">
+  Documentation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://www.netket.org/citing">
+  Citing
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference external nav-link" href="https://www.netket.org/about.html">
+  About
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/netket/netket" rel="noopener" target="_blank" title="GitHub">
+            <span><i class="fab fa-github"></i></span>
+            <label class="sr-only">GitHub</label>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://twitter.com/NetKetOrg" rel="noopener" target="_blank" title="Twitter">
+            <span><i class="fab fa-twitter"></i></span>
+            <label class="sr-only">Twitter</label>
+          </a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <p class="caption">
+ <span class="caption-text">
+  Tutorials
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../tutorials/netket3.html">
+   Ground-State Variational Search with NetKet
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../tutorials/jax.html">
+   Using JAX as a backend in NetKet - Feature Preview for v3.0
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../tutorials/G-CNN_Honeycomb.html">
+   Using a group convolutional neural network to learn the ground-state of a symmetric spin model
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../tutorials/j1j2.html">
+   Variational Monte Carlo with Neural Networks
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../../tutorials/Heisenberg1d.html">
+   Learning the ground-state of a spin model with different Neural Networks available in NetKet
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Reference Documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../getting_started.html">
+   Getting Started
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../changelog.html">
+   Change Log
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../superop.html">
+   The Lindblad Master Equation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../hilbert.html">
+   The Hilbert module
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../operator.html">
+   The Operator module
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../varstate.html">
+   The Variational State Interface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../sr.html">
+   Quantum Geometric Tensor and Stochastic Reconfiguration
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../drivers.html">
+   The Drivers API
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../sharp-bits.html">
+   🔪 The Sharp Bits 🔪
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Extending NetKet
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../custom_models.html">
+   Defining Custom Models
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../custom_expect.html">
+   Overriding defaults in NetKet
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../custom_preconditioners.html">
+   Defining Custom Preconditioners
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../custom_operator.html">
+   Defining Custom Operators
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Developer Documentation
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../contributing.html">
+   Contributing to NetKet
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../writing-tests.html">
+   Writing Tests
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  API documentation
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../api-stability.html">
+   API Stability
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="../../api.html">
+   Public API
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="../graph/netket.graph.AbstractGraph.html">
+     netket.graph.AbstractGraph
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../graph/netket.graph.Graph.html">
+     netket.graph.Graph
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../graph/netket.graph.Lattice.html">
+     netket.graph.Lattice
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../graph/netket.graph.Edgeless.html">
+     netket.graph.Edgeless
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../graph/netket.graph.Hypercube.html">
+     netket.graph.Hypercube
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../graph/netket.graph.lattice.LatticeSite.html">
+     netket.graph.lattice.LatticeSite
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../graph/netket.graph.Chain.html">
+     netket.graph.Chain
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../graph/netket.graph.Grid.html">
+     netket.graph.Grid
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.AbstractHilbert.html">
+     netket.hilbert.AbstractHilbert
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.ContinuousHilbert.html">
+     netket.hilbert.ContinuousHilbert
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.DiscreteHilbert.html">
+     netket.hilbert.DiscreteHilbert
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.HomogeneousHilbert.html">
+     netket.hilbert.HomogeneousHilbert
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.CustomHilbert.html">
+     netket.hilbert.CustomHilbert
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.TensorHilbert.html">
+     netket.hilbert.TensorHilbert
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.DoubledHilbert.html">
+     netket.hilbert.DoubledHilbert
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.Spin.html">
+     netket.hilbert.Spin
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.Qubit.html">
+     netket.hilbert.Qubit
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.Fock.html">
+     netket.hilbert.Fock
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../hilbert/netket.hilbert.Particle.html">
+     netket.hilbert.Particle
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.AbstractOperator.html">
+     netket.operator.AbstractOperator
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.DiscreteOperator.html">
+     netket.operator.DiscreteOperator
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.BoseHubbard.html">
+     netket.operator.BoseHubbard
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.GraphOperator.html">
+     netket.operator.GraphOperator
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.LocalOperator.html">
+     netket.operator.LocalOperator
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.Ising.html">
+     netket.operator.Ising
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.Heisenberg.html">
+     netket.operator.Heisenberg
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.PauliStrings.html">
+     netket.operator.PauliStrings
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.LocalLiouvillian.html">
+     netket.operator.LocalLiouvillian
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.boson.create.html">
+     netket.operator.boson.create
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.boson.destroy.html">
+     netket.operator.boson.destroy
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.boson.number.html">
+     netket.operator.boson.number
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.boson.proj.html">
+     netket.operator.boson.proj
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.spin.sigmax.html">
+     netket.operator.spin.sigmax
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.spin.sigmay.html">
+     netket.operator.spin.sigmay
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.spin.sigmaz.html">
+     netket.operator.spin.sigmaz
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.spin.sigmap.html">
+     netket.operator.spin.sigmap
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.spin.sigmam.html">
+     netket.operator.spin.sigmam
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.ContinuousOperator.html">
+     netket.operator.ContinuousOperator
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.KineticEnergy.html">
+     netket.operator.KineticEnergy
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="netket.operator.PotentialEnergy.html">
+     netket.operator.PotentialEnergy
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     netket.operator.SumOperator
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../exact/netket.exact.full_ed.html">
+     netket.exact.full_ed
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../exact/netket.exact.lanczos_ed.html">
+     netket.exact.lanczos_ed
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../exact/netket.exact.steady_state.html">
+     netket.exact.steady_state
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.sampler_state.html">
+     netket.sampler.sampler_state
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.reset.html">
+     netket.sampler.reset
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.sample_next.html">
+     netket.sampler.sample_next
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.sample.html">
+     netket.sampler.sample
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.samples.html">
+     netket.sampler.samples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.Sampler.html">
+     netket.sampler.Sampler
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.ExactSampler.html">
+     netket.sampler.ExactSampler
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.MetropolisSampler.html">
+     netket.sampler.MetropolisSampler
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.MetropolisSamplerNumpy.html">
+     netket.sampler.MetropolisSamplerNumpy
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.experimental.sampler.MetropolisPtSampler.html">
+     netket.experimental.sampler.MetropolisPtSampler
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.MetropolisLocal.html">
+     netket.sampler.MetropolisLocal
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.MetropolisExchange.html">
+     netket.sampler.MetropolisExchange
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.MetropolisHamiltonian.html">
+     netket.sampler.MetropolisHamiltonian
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.experimental.sampler.MetropolisLocalPt.html">
+     netket.experimental.sampler.MetropolisLocalPt
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.experimental.sampler.MetropolisExchangePt.html">
+     netket.experimental.sampler.MetropolisExchangePt
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.ARDirectSampler.html">
+     netket.sampler.ARDirectSampler
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.MetropolisRule.html">
+     netket.sampler.MetropolisRule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.rules.LocalRule.html">
+     netket.sampler.rules.LocalRule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.rules.ExchangeRule.html">
+     netket.sampler.rules.ExchangeRule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.rules.HamiltonianRule.html">
+     netket.sampler.rules.HamiltonianRule
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.rules.HamiltonianRuleNumpy.html">
+     netket.sampler.rules.HamiltonianRuleNumpy
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.rules.CustomRuleNumpy.html">
+     netket.sampler.rules.CustomRuleNumpy
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.SamplerState.html">
+     netket.sampler.SamplerState
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../samplers/netket.sampler.MetropolisSamplerState.html">
+     netket.sampler.MetropolisSamplerState
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.RBM.html">
+     netket.models.RBM
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.RBMModPhase.html">
+     netket.models.RBMModPhase
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.RBMMultiVal.html">
+     netket.models.RBMMultiVal
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.RBMSymm.html">
+     netket.models.RBMSymm
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.Jastrow.html">
+     netket.models.Jastrow
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.MPSPeriodic.html">
+     netket.models.MPSPeriodic
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.NDM.html">
+     netket.models.NDM
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.GCNN.html">
+     netket.models.GCNN
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.AbstractARNN.html">
+     netket.models.AbstractARNN
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.ARNNDense.html">
+     netket.models.ARNNDense
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.ARNNConv1D.html">
+     netket.models.ARNNConv1D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.ARNNConv2D.html">
+     netket.models.ARNNConv2D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.FastARNNConv1D.html">
+     netket.models.FastARNNConv1D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../models/netket.models.FastARNNConv2D.html">
+     netket.models.FastARNNConv2D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.Module.html">
+     netket.nn.Module
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.Dense.html">
+     netket.nn.Dense
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.DenseGeneral.html">
+     netket.nn.DenseGeneral
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.DenseSymm.html">
+     netket.nn.DenseSymm
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.DenseEquivariant.html">
+     netket.nn.DenseEquivariant
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.Conv.html">
+     netket.nn.Conv
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.Embed.html">
+     netket.nn.Embed
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.MaskedDense1D.html">
+     netket.nn.MaskedDense1D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.MaskedConv1D.html">
+     netket.nn.MaskedConv1D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.MaskedConv2D.html">
+     netket.nn.MaskedConv2D
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.celu.html">
+     netket.nn.celu
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.elu.html">
+     netket.nn.elu
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.gelu.html">
+     netket.nn.gelu
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.glu.html">
+     netket.nn.glu
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.log_sigmoid.html">
+     netket.nn.log_sigmoid
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.log_softmax.html">
+     netket.nn.log_softmax
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.relu.html">
+     netket.nn.relu
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.sigmoid.html">
+     netket.nn.sigmoid
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.soft_sign.html">
+     netket.nn.soft_sign
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.softmax.html">
+     netket.nn.softmax
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.softplus.html">
+     netket.nn.softplus
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.swish.html">
+     netket.nn.swish
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.log_cosh.html">
+     netket.nn.log_cosh
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.reim_relu.html">
+     netket.nn.reim_relu
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../nn/netket.nn.reim_selu.html">
+     netket.nn.reim_selu
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../variational/netket.vqs.VariationalState.html">
+     netket.vqs.VariationalState
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../variational/netket.vqs.ExactState.html">
+     netket.vqs.ExactState
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../variational/netket.vqs.MCState.html">
+     netket.vqs.MCState
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../variational/netket.vqs.MCMixedState.html">
+     netket.vqs.MCMixedState
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../variational/netket.vqs.get_local_kernel.html">
+     netket.vqs.get_local_kernel
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../variational/netket.vqs.get_local_kernel_arguments.html">
+     netket.vqs.get_local_kernel_arguments
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.Adam.html">
+     netket.optimizer.Adam
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.AdaGrad.html">
+     netket.optimizer.AdaGrad
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.Sgd.html">
+     netket.optimizer.Sgd
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.Momentum.html">
+     netket.optimizer.Momentum
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.RmsProp.html">
+     netket.optimizer.RmsProp
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.SR.html">
+     netket.optimizer.SR
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.qgt.QGTAuto.html">
+     netket.optimizer.qgt.QGTAuto
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.qgt.QGTOnTheFly.html">
+     netket.optimizer.qgt.QGTOnTheFly
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.qgt.QGTJacobianPyTree.html">
+     netket.optimizer.qgt.QGTJacobianPyTree
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.qgt.QGTJacobianDense.html">
+     netket.optimizer.qgt.QGTJacobianDense
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.solver.svd.html">
+     netket.optimizer.solver.svd
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.solver.cholesky.html">
+     netket.optimizer.solver.cholesky
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.solver.LU.html">
+     netket.optimizer.solver.LU
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../optim/netket.optimizer.solver.solve.html">
+     netket.optimizer.solver.solve
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../driver/netket.driver.AbstractVariationalDriver.html">
+     netket.driver.AbstractVariationalDriver
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../driver/netket.driver.VMC.html">
+     netket.driver.VMC
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../driver/netket.driver.SteadyState.html">
+     netket.driver.SteadyState
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../driver/netket.logging.RuntimeLog.html">
+     netket.logging.RuntimeLog
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../driver/netket.logging.JsonLog.html">
+     netket.logging.JsonLog
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../driver/netket.logging.StateLog.html">
+     netket.logging.StateLog
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../driver/netket.logging.TensorBoardLog.html">
+     netket.logging.TensorBoardLog
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../utils/netket.utils.HashableArray.html">
+     netket.utils.HashableArray
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../callbacks/netket.callbacks.EarlyStopping.html">
+     netket.callbacks.EarlyStopping
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../callbacks/netket.callbacks.Timeout.html">
+     netket.callbacks.Timeout
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../api-experimental.html">
+   Experimental API
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisPtSampler.html">
+     netket.experimental.sampler.MetropolisPtSampler
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisLocalPt.html">
+     netket.experimental.sampler.MetropolisLocalPt
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisExchangePt.html">
+     netket.experimental.sampler.MetropolisExchangePt
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisSamplerPmap.html">
+     netket.experimental.sampler.MetropolisSamplerPmap
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_file.html">
+     netket.experimental.vqs.variables_from_file
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_tar.html">
+     netket.experimental.vqs.variables_from_tar
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="../experimental/dynamics/netket.experimental.driver.TDVP.html">
+     netket.experimental.driver.TDVP
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+
+<nav id="bd-toc-nav">
+    
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <div class="section" id="netket-operator-sumoperator">
+<h1>netket.operator.SumOperator<a class="headerlink" href="#netket-operator-sumoperator" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="netket.operator.SumOperator">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.operator.</span></code><code class="sig-name descname"><span class="pre">SumOperator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">operators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.SumOperator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="netket.operator.ContinuousOperator.html#netket.operator.ContinuousOperator" title="netket.operator.ContinuousOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">netket.operator.ContinuousOperator</span></code></a></p>
+<p>This class implements the action of the _expect_kernel()-method of
+ContinuousOperator for a sum of ContinuousOperator objects.</p>
+<dl class="class-dl-groups">
+<dt>Inheritance</dt><dd><div class="graphviz"><img src="../../../_images/inheritance-bfd6b6a7e620d328a3f68281129784a917cf4d44.png" alt="Inheritance diagram of netket.operator.SumOperator" usemap="#inheritancef4c16f4a57" class="inheritance graphviz" /></div>
+<map id="inheritancef4c16f4a57" name="inheritancef4c16f4a57">
+<area shape="rect" id="node1" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" target="_top" title="Abstract class for quantum Operators. This class prototypes the methods" alt="" coords="5,5,196,31"/>
+<area shape="rect" id="node2" href="netket.operator.ContinuousOperator.html#netket.operator.ContinuousOperator" target="_top" title="This class is the abstract base class for operators defined on a" alt="" coords="244,5,455,31"/>
+<area shape="rect" id="node3" href="#netket.operator.SumOperator" target="_top" title="This class implements the action of the _expect_kernel()&#45;method of" alt="" coords="503,5,669,31"/>
+</map></dd>
+</dl>
+<dl class="py method">
+<dt id="netket.operator.SumOperator.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">operators</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/operator/_sumoperators.html#SumOperator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.operator.SumOperator.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the action of a sum of local operators.
+:type operators: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>
+:param operators: A list of ContinuousOperator objects
+:type coefficients: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]]
+:param coefficients: A coefficient for each ContinuousOperator object
+:type dtype: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]
+:param dtype: Data type of the matrix elements. Defaults to <cite>np.float64</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>operators</strong> (<em>List</em>) – </p></li>
+<li><p><strong>coefficients</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>, </em><em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>dtype</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class-dl-groups">
+<dt>Attributes</dt><dd><dl class="py attribute">
+<dt id="netket.operator.SumOperator.H">
+<code class="sig-name descname"><span class="pre">H</span></code><a class="headerlink" href="#netket.operator.SumOperator.H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Conjugate-Transposed operator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.SumOperator.T">
+<code class="sig-name descname"><span class="pre">T</span></code><a class="headerlink" href="#netket.operator.SumOperator.T" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the transposed operator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.SumOperator.dtype">
+<code class="sig-name descname"><span class="pre">dtype</span></code><a class="headerlink" href="#netket.operator.SumOperator.dtype" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.SumOperator.hilbert">
+<code class="sig-name descname"><span class="pre">hilbert</span></code><a class="headerlink" href="#netket.operator.SumOperator.hilbert" title="Permalink to this definition">¶</a></dt>
+<dd><p>The hilbert space associated to this operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../hilbert/netket.hilbert.AbstractHilbert.html#netket.hilbert.AbstractHilbert" title="netket.hilbert.AbstractHilbert"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.SumOperator.is_hermitian">
+<code class="sig-name descname"><span class="pre">is_hermitian</span></code><a class="headerlink" href="#netket.operator.SumOperator.is_hermitian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.operator.SumOperator.size">
+<code class="sig-name descname"><span class="pre">size</span></code><a class="headerlink" href="#netket.operator.SumOperator.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number number of local degrees of freedom.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+<dl class="class-dl-groups">
+<dt>Methods</dt><dd><dl class="py method">
+<dt id="netket.operator.SumOperator.collect">
+<code class="sig-name descname"><span class="pre">collect</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.SumOperator.collect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a guranteed concrete instancce of an operator.</p>
+<p>As some operations on operators return lazy wrapperes (such as transpose,
+hermitian conjugate…), this is used to obtain a guaranteed non-lazy
+operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.SumOperator.conj">
+<code class="sig-name descname"><span class="pre">conj</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.SumOperator.conj" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.SumOperator.conjugate">
+<code class="sig-name descname"><span class="pre">conjugate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.SumOperator.conjugate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the complex-conjugate of this operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete</strong> – if True returns a concrete operator and not a lazy wrapper</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>if concrete is not True, self or a lazy wrapper; the
+complex-conjugated operator otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.operator.SumOperator.transpose">
+<code class="sig-name descname"><span class="pre">transpose</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.operator.SumOperator.transpose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the transpose of this operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>concrete</strong> – if True returns a concrete operator and not a lazy wrapper</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractOperator</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>if concrete is not True, self or a lazy wrapper; the
+transposed operator otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'> 
+    <a class='left-prev' id="prev-link" href="netket.operator.PotentialEnergy.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">netket.operator.PotentialEnergy</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="../exact/netket.exact.full_ed.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">netket.exact.full_ed</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../../../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+
+<script type="text/javascript">
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+      })
+</script>
+
+<!-- Temporary footer
+<div class="footer-wip">
+  <div class="footer-wip-content">
+    This documentation refers to an unreleased version of Netket.
+  </div>
+</div>
+-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118013987-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-118013987-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://www.netket.org",
+  "name": "NetKet",
+  "founder": "Giuseppe Carleo",
+  "foundingDate": "2018-04-24",
+  "foundingLocation" : "New York",
+  "logo": "https://www.netket.org/img/logo_small.jpg",
+  "sameAs": [
+    "https://twitter.com/NetKetOrg",
+    "https://github.com/NetKet/netket"
+  ],
+  "description" : "Netket is an open-source project delivering cutting-edge
+  methods for the study of many-body quantum systems with artificial neural
+  networks and machine learning techniques."
+}
+</script>
+
+  </body>
+</html>
