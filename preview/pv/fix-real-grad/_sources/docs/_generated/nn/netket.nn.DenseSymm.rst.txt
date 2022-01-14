@@ -1,0 +1,6 @@
+﻿netket.nn.DenseSymm
+===================
+
+.. currentmodule:: netket.nn
+
+.. autofunction:: DenseSymm
