@@ -1,0 +1,31 @@
+﻿netket.utils.HashableArray
+==========================
+
+.. currentmodule:: netket.utils
+
+.. autoclass:: HashableArray
+   :show-inheritance:
+
+   
+
+   .. rst-class:: class-dl-groups
+
+   Inheritance
+      .. inheritance-diagram:: netket.utils.HashableArray
+         :parts: 2
+
+
+   
+      
+   .. rst-class:: class-dl-groups
+
+   Attributes
+      .. autoattribute:: HashableArray.shape
+   
+      
+   .. rst-class:: class-dl-groups
+
+   Methods
+      .. automethod:: HashableArray.replace
+
+   
