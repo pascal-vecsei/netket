@@ -300,6 +300,18 @@
 <span class="sd">        Yields:</span>
 <span class="sd">            The current step count.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">tstops</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_iter</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">T</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">tstops</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Implementation of :code:`iter`. This method accepts and additional `callback` object, which</span>
+<span class="sd">        is called after every accepted step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">t_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+</span> <span class="n">T</span>
         <span class="k">if</span> <span class="n">tstops</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">tstops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">tstops</span><span class="p">,</span> <span class="n">t_end</span><span class="p">))</span>
@@ -339,15 +351,15 @@
                         <span class="ne">UserWarning</span><span class="p">,</span>
                     <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_step_count</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="c1"># also update progress bar here, if we are inside `self.run`</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_update_progress_bar</span><span class="p">()</span>
+            <span class="c1"># optionally call callback</span>
+            <span class="k">if</span> <span class="n">callback</span><span class="p">:</span>
+                <span class="n">callback</span><span class="p">()</span>
 
         <span class="c1"># Yield one last time if the remaining tstop is at t_end</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">always_stop</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">t_end</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">tstops</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">tstops</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t_end</span><span class="p">)</span>
         <span class="p">):</span>
-            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span></div>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
 
 <div class="viewcode-block" id="TDVP.run"><a class="viewcode-back" href="../../../../docs/_generated/experimental/dynamics/netket.experimental.driver.TDVP.html#netket.experimental.driver.TDVP.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -406,10 +418,21 @@
             <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">show_progress</span><span class="p">,</span>
             <span class="n">unit_scale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_first_step</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">first_step</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span> <span class="o">=</span> <span class="n">pbar</span>
-            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">tstops</span><span class="o">=</span><span class="n">tstops</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">update_progress_bar</span><span class="p">():</span>
+                <span class="c1"># Reset the timing of tqdm after the first step to ignore compilation time</span>
+                <span class="k">nonlocal</span> <span class="n">first_step</span>
+                <span class="k">if</span> <span class="n">first_step</span><span class="p">:</span>
+                    <span class="n">first_step</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">unpause</span><span class="p">()</span>
+
+                <span class="n">pbar</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_postfix</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_postfix</span><span class="p">)</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">tstops</span><span class="o">=</span><span class="n">tstops</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">update_progress_bar</span><span class="p">):</span>
                 <span class="n">log_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">_postfix</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;n&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span><span class="p">}</span>
@@ -434,14 +457,10 @@
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">mpi</span><span class="o">.</span><span class="n">mpi_any</span><span class="p">(</span><span class="n">callback_stop</span><span class="p">):</span>
                         <span class="k">break</span>
-
-                <span class="c1"># Update the progress bar</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_update_progress_bar</span><span class="p">()</span>
+                <span class="n">update_progress_bar</span><span class="p">()</span>
 
             <span class="c1"># Final update so that it shows up filled.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_update_progress_bar</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">update_progress_bar</span><span class="p">()</span>
 
         <span class="c1"># flush at the end of the evolution so that final values are saved to</span>
         <span class="c1"># file</span>
@@ -449,18 +468,6 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">loggers</span></div>
-
-    <span class="k">def</span> <span class="nf">_update_progress_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Reset the timing of tqdm after the first step, to ignore compilation time</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_first_step</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_first_step</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span><span class="o">.</span><span class="n">unpause</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_integrator</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_postfix</span><span class="p">[</span><span class="s2">&quot;n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_count</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_postfix</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_log_additional_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
