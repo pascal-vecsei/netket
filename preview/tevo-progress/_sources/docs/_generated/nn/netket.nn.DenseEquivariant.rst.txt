@@ -1,0 +1,6 @@
+﻿netket.nn.DenseEquivariant
+==========================
+
+.. currentmodule:: netket.nn
+
+.. autofunction:: DenseEquivariant
