@@ -1,0 +1,15 @@
+﻿netket.models.GCNN
+==================
+
+.. currentmodule:: netket.models
+
+.. autoclass:: GCNN
+   :show-inheritance:
+
+
+   
+      
+   
+      
+
+   
