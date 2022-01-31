@@ -564,8 +564,10 @@
 <div class="section" id="installation-and-requirements">
 <h2>Installation and requirements<a class="headerlink" href="#installation-and-requirements" title="Permalink to this headline">¶</a></h2>
 <p>Netket v3.0 requires <code class="docutils literal notranslate"><span class="pre">python&gt;=</span> <span class="pre">3.8</span></code> and optionally a recent MPI install.
-To install, run one of the two following commands</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install netket
+Before attempting the installation, you should update <code class="docutils literal notranslate"><span class="pre">pip</span></code> to a recent version (<code class="docutils literal notranslate"><span class="pre">&gt;=20.3</span></code>) to avoid getting a broken install.
+To install, run the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade pip
+pip install netket
 </pre></div>
 </div>
 <p>If you want to run NetKet on a GPU, you must install a GPU-compatible <code class="code docutils literal notranslate"><span class="pre">jaxlib</span></code>. For that, we advise you to
