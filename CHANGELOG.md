@@ -21,6 +21,7 @@
 * Support for coloured edges in `nk.graph.Grid`, removed in [#724](https://github.com/netket/netket/pull/724), is now restored. [#1074](https://github.com/netket/netket/pull/1074)
 * The logic to update the progress bar in `nk.experimental.TDVP` has been improved, and it should now display updates even if there are very sparse `save_steps`. [#1084](https://github.com/netket/netket/pull/1084)
 * The `nk.logging.TensorBoardLog` is now lazily initialized to better work in an MPI environment. [#1086](https://github.com/netket/netket/pull/1086)
+* The gradient of the expectation value obtained with `VarState.expect_and_grad` for `SquaredOperator`s was off by a factor of 2 in some cases, and wrong in others. This has now been fixed for models with real parameters. Models with complex parameters still return the wrong gradient (off by a factor of two) [#1065](https://github.com/netket/netket/pull/1065).
 
 ## NetKet 3.3.1 (🐛 Bug Fixes)
 
