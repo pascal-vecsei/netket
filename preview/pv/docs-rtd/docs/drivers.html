@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Drivers API &mdash; netket v3.0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🔪 The Sharp Bits 🔪" href="sharp-bits.html" />
+    <link rel="prev" title="Quantum Geometric Tensor and Stochastic Reconfiguration" href="sr.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> netket<img src="../_static/logonav.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/netket3.html">Ground-State Variational Search with NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/jax.html">Using JAX as a backend in NetKet - Feature Preview for v3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/j1j2.html">Variational Monte Carlo with Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/Heisenberg1d.html">Learning the ground-state of a spin model with different Neural Networks available in NetKet</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superop.html">The Lindblad Master Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hilbert.html">The Hilbert module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operator.html">The Operator module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="varstate.html">The Variational State Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">The Drivers API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#constructing-a-driver">Constructing a driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-optimisation">Running the optimisation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sharp-bits.html">🔪 The Sharp Bits 🔪</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="custom_models.html">Defining Custom Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_expect.html">Overriding defaults in NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">Defining Custom Preconditioners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_operator.html">Defining Custom Operators</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing-tests.html">Writing Tests</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api-stability.html">API Stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-experimental.html">Experimental API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">netket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>The Drivers API</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/docs/drivers.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="the-drivers-api">
+<h1>The Drivers API<a class="headerlink" href="#the-drivers-api" title="Permalink to this headline"></a></h1>
+<p>In this section we will briefly describe the capabilities of the drivers API.
+This page assumes that you have already read and are familiar witht the <span class="xref std std-ref">Variational State interface</span>.</p>
+<p>In Netket there are two drivers, even though you can define your own; those are:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="_generated/driver/netket.driver.VMC.html#netket.driver.VMC" title="netket.driver.VMC"><code class="xref py py-class docutils literal notranslate"><span class="pre">VMC</span></code></a>, to find the ground state of an Hamiltonian</p></li>
+<li><p><a class="reference internal" href="_generated/driver/netket.driver.SteadyState.html#netket.driver.SteadyState" title="netket.driver.SteadyState"><code class="xref py py-class docutils literal notranslate"><span class="pre">SteadyState</span></code></a>, to find the steady-state of a liouvillian</p></li>
+</ol>
+<p>A driver, will run your optimisation loop, computing the loss function and the gradient,
+using the gradient to update the parameters, and logging to yours sinks any data that you
+may wish.</p>
+<div class="section" id="constructing-a-driver">
+<h2>Constructing a driver<a class="headerlink" href="#constructing-a-driver" title="Permalink to this headline"></a></h2>
+<p>There are two objects both drivers above need in order to be constructed:</p>
+<ul class="simple">
+<li><p>The <a class="reference internal" href="_generated/operator/netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">netket.operator.AbstractOperator</span></code></a> defining the problem we wish to solve, such as the Hamiltonian for which we want to find the ground state or the Lindbladian for which we want to find the Steady-State.</p></li>
+<li><p>The <a class="reference internal" href="api.html#optimizer-api"><span class="std std-ref">Optimizer</span></a> to use in order to update the weights among iterations.</p></li>
+</ul>
+<p>Those are respectively the first and second argument of the constructor.</p>
+<p>Of course, you then need to comunicate the optimization driver what is the state you wish to optimize.
+For that reason, assuming you have constructed a variational state <code class="code docutils literal notranslate"><span class="pre">vstate</span></code>, you should pass it as
+a keyword argument <code class="code docutils literal notranslate"><span class="pre">variational_state=vstate</span></code> to the constructor.
+The resulting code looks a bit like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">Ising</span><span class="p">(</span><span class="n">hilbert</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">vstate</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">MCState</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">gs</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">VMC</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">variational_state</span><span class="o">=</span><span class="n">vstate</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There also exist an alternative syntax, where instead of passing the variational state you pass the arguments needed to construct the variational state to the driver itself.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">Ising</span><span class="p">(</span><span class="n">hilbert</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">gs</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">VMC</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And you can then access the variational state contructed like that through the attribute <code class="docutils literal notranslate"><span class="pre">gs.state</span></code>.
+The latter is there to guarantee better compatibility with legacy codebases, therefore we suggest to
+use the more first API, where the variational state is built explicitly.</p>
+</div>
+<div class="section" id="running-the-optimisation">
+<h2>Running the optimisation<a class="headerlink" href="#running-the-optimisation" title="Permalink to this headline"></a></h2>
+<p>The simplest way to use optimization drivers to perform the optimisation is to use their <a class="reference internal" href="_generated/driver/netket.driver.AbstractVariationalDriver.html#netket.driver.AbstractVariationalDriver.run" title="netket.driver.AbstractVariationalDriver.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method.</p>
+<p>This method will run the optimisation for the desired number of steps, while logging data to the
+desired output.</p>
+<p>The most important arguments are the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">run</span><span class="p">(</span><span class="n">n_iter</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">obs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul>
+<li><p>The first argument must be the number of iterations to perform.</p></li>
+<li><p>The <code class="code docutils literal notranslate"><span class="pre">out</span></code> argument is used to pass the output loggers to the optimiser. It can take several values:</p>
+<ul>
+<li><p><code class="code docutils literal notranslate"><span class="pre">None</span></code>: No output will be logged (default).</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">string</span></code>: A default Json logger will be created, serializing data to the specified filename.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">Logger</span></code>: a logger, or iterable of loggers, respecting the standard loging interface. The available loggers are listed <a class="reference internal" href="api.html#logging-api"><span class="std std-ref">here</span></a>.</p></li>
+<li><p>The <code class="code docutils literal notranslate"><span class="pre">callbacks</span></code> can be used to pass callbacks to the optimisation driver. Callbacks must be callables with the signature
+.. code:: python</p>
+<blockquote>
+<div><p>(step:int, logdata:dict, driver:AbstractVariationalDriver) -&gt; bool</p>
+</div></blockquote>
+</li>
+</ul>
+<p>The first argument is the step number, the second argument is the dictionary holding data that will be logged, and it can be modified by the callback, and the third is the driver itself, which can be used to access the current state or any other quantity.
+The output of the callback must be a boolean, which signals whever to continue the optimisation or not. When any one of the callbacks return <code class="code docutils literal notranslate"><span class="pre">False</span></code>, the optimisation will be stopped.
+Netket comes with a few built-in callbacks, listed <a class="reference internal" href="api.html#callbacks-api"><span class="std std-ref">in the API</span></a>, but you can also implement your own.</p>
+</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">step_size</span></code>: Data will be logged and callbacks will be called every <code class="code docutils literal notranslate"><span class="pre">step_size</span></code> optimisation steps. Useful if your callbacks have a high computational cost. If unspecified, logs at every step.</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="sr.html" class="btn btn-neutral float-left" title="Quantum Geometric Tensor and Stochastic Reconfiguration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="sharp-bits.html" class="btn btn-neutral float-right" title="🔪 The Sharp Bits 🔪" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019-2021, The Netket authors - All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+
+<script type="text/javascript">
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+      })
+</script>
+
+<!-- Temporary footer
+<div class="footer-wip">
+  <div class="footer-wip-content">
+    This documentation refers to an unreleased version of Netket.
+  </div>
+</div>
+-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118013987-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-118013987-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://www.netket.org",
+  "name": "NetKet",
+  "founder": "Giuseppe Carleo",
+  "foundingDate": "2018-04-24",
+  "foundingLocation" : "New York",
+  "logo": "https://www.netket.org/img/logo_small.jpg",
+  "sameAs": [
+    "https://twitter.com/NetKetOrg",
+    "https://github.com/NetKet/netket"
+  ],
+  "description" : "Netket is an open-source project delivering cutting-edge
+  methods for the study of many-body quantum systems with artificial neural
+  networks and machine learning techniques."
+}
+</script>
+
+
+</body>
+</html>
