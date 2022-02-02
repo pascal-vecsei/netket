@@ -568,6 +568,7 @@
 <h3>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Support for Python 3.10 <a class="reference external" href="https://github.com/netket/netket/pull/952">#952</a>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Lattice</span></code> supports specifying arbitrary edge content for each unit cell via the kwarg <code class="docutils literal notranslate"><span class="pre">custom_edges</span></code>. A generator for hexagonal lattices with coloured edges is implemented as <code class="docutils literal notranslate"><span class="pre">nk.graph.KitaevHoneycomb</span></code>. <code class="docutils literal notranslate"><span class="pre">nk.graph.Grid</span></code> again supports colouring edges by direction. <a class="reference external" href="https://github.com/netket/netket/pull/1074">#1074</a></p></li>
 </ul>
 </div>
 <div class="section" id="breaking-changes">
@@ -581,6 +582,7 @@
 <ul class="simple">
 <li><p>Allow <code class="docutils literal notranslate"><span class="pre">LazyOperator&#64;densevector</span></code> for operators such as lazy <code class="docutils literal notranslate"><span class="pre">Adjoint</span></code>, <code class="docutils literal notranslate"><span class="pre">Transpose</span></code> and <code class="docutils literal notranslate"><span class="pre">Squared</span></code>. <a class="reference external" href="https://github.com/netket/netket/pull/1068">#1068</a></p></li>
 <li><p>The gradient obtained with <code class="docutils literal notranslate"><span class="pre">VarState.expect_and_grad</span></code> for models with real-parameters was off by a factor of <span class="math notranslate nohighlight">\( 1/2 \)</span> from the correct value. This has now been corrected. As a consequence, the correct gradient for real-parameter models is equal to the old times 2. If your model had real parameters you might need to change the learning rate and halve it. <a class="reference external" href="https://github.com/netket/netket/pull/1069">#1069</a></p></li>
+<li><p>Support for coloured edges in <code class="docutils literal notranslate"><span class="pre">nk.graph.Grid</span></code>, removed in <a class="reference external" href="https://github.com/netket/netket/pull/724">#724</a>, is now restored. <a class="reference external" href="https://github.com/netket/netket/pull/1074">#1074</a></p></li>
 <li><p>The logic to update the progress bar in <code class="docutils literal notranslate"><span class="pre">nk.experimental.TDVP</span></code> has been improved, and it should now display updates even if there are very sparse <code class="docutils literal notranslate"><span class="pre">save_steps</span></code>. <a class="reference external" href="https://github.com/netket/netket/pull/1084">#1084</a></p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">nk.logging.TensorBoardLog</span></code> is now lazily initialized to better work in an MPI environment. <a class="reference external" href="https://github.com/netket/netket/pull/1086">#1086</a></p></li>
 </ul>

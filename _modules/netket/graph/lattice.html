@@ -97,7 +97,7 @@
     <div class="body col-md-12 content" role="main">
       
   <h1>Source code for netket.graph.lattice</h1><div class="highlight"><pre>
-<span></span><span class="c1"># Copyright 2020, 2021 The NetKet Authors - All rights reserved.</span>
+<span></span><span class="c1"># Copyright 2020-2022 The NetKet Authors - All rights reserved.</span>
 <span class="c1">#</span>
 <span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
 <span class="c1"># you may not use this file except in compliance with the License.</span>
@@ -120,8 +120,6 @@
 
 <span class="kn">import</span> <span class="nn">igraph</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">cKDTree</span>
-<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="kn">import</span> <span class="n">find</span><span class="p">,</span> <span class="n">triu</span>
 
 <span class="kn">from</span> <span class="nn">netket.utils.deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span> <span class="k">as</span> <span class="n">_deprecated</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">HashableArray</span>
@@ -129,6 +127,12 @@
 <span class="kn">from</span> <span class="nn">netket.utils.group</span> <span class="kn">import</span> <span class="n">PointGroup</span><span class="p">,</span> <span class="n">PermutationGroup</span><span class="p">,</span> <span class="n">trivial_point_group</span>
 
 <span class="kn">from</span> <span class="nn">.graph</span> <span class="kn">import</span> <span class="n">Graph</span>
+<span class="kn">from</span> <span class="nn">._lattice_edge_logic</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_nn_edges</span><span class="p">,</span>
+    <span class="n">get_custom_edges</span><span class="p">,</span>
+    <span class="n">create_site_positions</span><span class="p">,</span>
+    <span class="n">CustomEdgeT</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">.space_group</span> <span class="kn">import</span> <span class="n">SpaceGroupBuilder</span>
@@ -163,99 +167,15 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;LatticeSite(</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s2">)&quot;</span></div>
 
 
-<span class="k">def</span> <span class="nf">create_sites</span><span class="p">(</span>
-    <span class="n">basis_vectors</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">apositions</span><span class="p">,</span> <span class="n">pbc</span><span class="p">,</span> <span class="n">order</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">LatticeSite</span><span class="p">],</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
-    <span class="c1"># note: by modifying these, the number of shells can be tuned.</span>
-    <span class="n">shell_vec</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pbc</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">order</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="n">shift_vec</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pbc</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_create_sites</span><span class="p">(</span><span class="n">basis_vectors</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">site_offsets</span><span class="p">):</span>
+    <span class="n">basis_coords</span><span class="p">,</span> <span class="n">positions</span> <span class="o">=</span> <span class="n">create_site_positions</span><span class="p">(</span><span class="n">basis_vectors</span><span class="p">,</span> <span class="n">extent</span><span class="p">,</span> <span class="n">site_offsets</span><span class="p">)</span>
 
-    <span class="n">shell_min</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">shift_vec</span>
-    <span class="n">shell_max</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">extent</span><span class="p">)</span> <span class="o">+</span> <span class="n">shell_vec</span> <span class="o">-</span> <span class="n">shift_vec</span>
-    <span class="c1"># cell coordinates</span>
-    <span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span> <span class="k">for</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">shell_min</span><span class="p">,</span> <span class="n">shell_max</span><span class="p">)]</span>
-    <span class="c1"># site coordinate within unit cell</span>
-    <span class="n">ranges</span> <span class="o">+=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">apositions</span><span class="p">))]</span>
+    <span class="n">sites</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">LatticeSite</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span> <span class="n">basis_coord</span><span class="o">=</span><span class="n">coord</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">basis_coords</span><span class="p">,</span> <span class="n">positions</span><span class="p">))</span>
+    <span class="p">]</span>
 
-    <span class="n">basis_coords</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">_np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">_np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="n">ranges</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
-    <span class="n">site_coords</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">basis_coords</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="o">+</span> <span class="n">_np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">apositions</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">basis_coords</span><span class="p">)</span> <span class="o">//</span> <span class="nb">len</span><span class="p">(</span><span class="n">apositions</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
-    <span class="p">)</span>
-    <span class="n">positions</span> <span class="o">=</span> <span class="n">site_coords</span> <span class="o">@</span> <span class="n">basis_vectors</span>
-
-    <span class="n">sites</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">coord_to_site</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">basis_coords</span><span class="p">,</span> <span class="n">positions</span><span class="p">)):</span>
-        <span class="n">sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">LatticeSite</span><span class="p">(</span>
-                <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># to be set later, after sorting all sites</span>
-                <span class="n">basis_coord</span><span class="o">=</span><span class="n">coord</span><span class="p">,</span>
-                <span class="n">position</span><span class="o">=</span><span class="n">pos</span><span class="p">,</span>
-            <span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">coord_to_site</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">(</span><span class="n">coord</span><span class="p">)]</span> <span class="o">=</span> <span class="n">idx</span>
-    <span class="n">is_inside</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span>
-        <span class="n">_np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">basis_coords</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="o">|</span> <span class="n">_np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">basis_coords</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">extent</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">sites</span><span class="p">,</span> <span class="n">is_inside</span><span class="p">,</span> <span class="n">coord_to_site</span>
-
-
-<span class="k">def</span> <span class="nf">get_edges</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Given an array of spatial `positions`, returns a list `es`, so that</span>
-<span class="sd">    `es[k]` contains all pairs of (k + 1)-nearest neighbors up to `order`.</span>
-<span class="sd">    Only edges up to distance `cutoff` are considered.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">kdtree</span> <span class="o">=</span> <span class="n">cKDTree</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
-    <span class="n">dist_matrix</span> <span class="o">=</span> <span class="n">kdtree</span><span class="o">.</span><span class="n">sparse_distance_matrix</span><span class="p">(</span><span class="n">kdtree</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">)</span>
-    <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">dst</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">triu</span><span class="p">(</span><span class="n">dist_matrix</span><span class="p">))</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">comparable</span><span class="p">(</span><span class="n">dst</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">ii</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">[</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">ii</span> <span class="o">==</span> <span class="n">k</span><span class="p">],</span> <span class="n">col</span><span class="p">[</span><span class="n">ii</span> <span class="o">==</span> <span class="n">k</span><span class="p">])))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
-
-
-<span class="k">def</span> <span class="nf">get_true_edges</span><span class="p">(</span>
-    <span class="n">basis_vectors</span><span class="p">:</span> <span class="n">PositionT</span><span class="p">,</span>
-    <span class="n">sites</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">LatticeSite</span><span class="p">],</span>
-    <span class="n">inside</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span>
-    <span class="n">basis_coord_to_site</span><span class="p">,</span>
-    <span class="n">extent</span><span class="p">,</span>
-    <span class="n">distance_atol</span><span class="p">,</span>
-    <span class="n">order</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="n">positions</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">position</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sites</span><span class="p">])</span>
-    <span class="n">naive_edges_by_order</span> <span class="o">=</span> <span class="n">get_edges</span><span class="p">(</span>
-        <span class="n">positions</span><span class="p">,</span>
-        <span class="n">order</span> <span class="o">*</span> <span class="n">_np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">basis_vectors</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">distance_atol</span><span class="p">,</span>
-        <span class="n">order</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">true_edges_by_order</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">naive_edges</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">naive_edges_by_order</span><span class="p">):</span>
-        <span class="n">true_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">node1</span><span class="p">,</span> <span class="n">node2</span> <span class="ow">in</span> <span class="n">naive_edges</span><span class="p">:</span>
-            <span class="n">site1</span><span class="p">,</span> <span class="n">inside1</span> <span class="o">=</span> <span class="n">sites</span><span class="p">[</span><span class="n">node1</span><span class="p">],</span> <span class="n">inside</span><span class="p">[</span><span class="n">node1</span><span class="p">]</span>
-            <span class="n">site2</span><span class="p">,</span> <span class="n">inside2</span> <span class="o">=</span> <span class="n">sites</span><span class="p">[</span><span class="n">node2</span><span class="p">],</span> <span class="n">inside</span><span class="p">[</span><span class="n">node2</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">inside1</span> <span class="ow">and</span> <span class="n">inside2</span><span class="p">:</span>
-                <span class="n">true_edges</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">inside1</span> <span class="ow">or</span> <span class="n">inside2</span><span class="p">:</span>
-                <span class="n">cell1</span> <span class="o">=</span> <span class="n">site1</span><span class="o">.</span><span class="n">basis_coord</span>
-                <span class="n">cell2</span> <span class="o">=</span> <span class="n">site2</span><span class="o">.</span><span class="n">basis_coord</span>
-                <span class="n">cell1</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell1</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="n">extent</span>
-                <span class="n">cell2</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cell2</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="n">extent</span>
-                <span class="n">node1</span> <span class="o">=</span> <span class="n">basis_coord_to_site</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">(</span><span class="n">cell1</span><span class="p">)]</span>
-                <span class="n">node2</span> <span class="o">=</span> <span class="n">basis_coord_to_site</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">(</span><span class="n">cell2</span><span class="p">)]</span>
-                <span class="n">edge</span> <span class="o">=</span> <span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">edge</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">true_edges</span> <span class="ow">and</span> <span class="p">(</span><span class="n">node2</span><span class="p">,</span> <span class="n">node1</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">true_edges</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">node1</span> <span class="o">==</span> <span class="n">node2</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Lattice contains self-referential edge </span><span class="si">{</span><span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">)</span><span class="si">}</span><span class="s2"> of order </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span>
-                        <span class="p">)</span>
-                    <span class="n">true_edges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
-        <span class="n">true_edges_by_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">true_edges</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">true_edges_by_order</span>
+    <span class="k">return</span> <span class="n">sites</span><span class="p">,</span> <span class="n">basis_coords</span><span class="p">,</span> <span class="n">positions</span>
 
 
 <span class="k">def</span> <span class="nf">deprecated</span><span class="p">(</span><span class="n">alternative</span><span class="p">):</span>
@@ -335,7 +255,8 @@
         <span class="n">atoms_coord</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">distance_atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span>
         <span class="n">point_group</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PointGroup</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">max_neighbor_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">max_neighbor_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">custom_edges</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">CustomEdgeT</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructs a new ``Lattice`` given its side length and the features of the unit</span>
@@ -360,6 +281,17 @@
 <span class="sd">                to :math:`k`-nearest neighbor sites (measured by their Euclidean distance)</span>
 <span class="sd">                are included in the graph. The edges can be distiguished by their color,</span>
 <span class="sd">                which is set to :math:`k - 1` (so nearest-neighbor edges have color 0).</span>
+<span class="sd">                By default, nearest neighbours (:code:`max_neighbor_order=1`) are autogenerated</span>
+<span class="sd">                unless :code:`custom_edges` is passed.</span>
+<span class="sd">            custom_edges: (Optional) Lists all edges starting in one unit cell, which</span>
+<span class="sd">                are repeated in every unit cell of the constructed lattice.</span>
+<span class="sd">                Should be a list of tuples; each tuple should contain the following:</span>
+<span class="sd">                * index of the starting point in the unit cell</span>
+<span class="sd">                * index of the endpoint in the unit cell</span>
+<span class="sd">                * vector pointing from the former to the latter</span>
+<span class="sd">                * color of the edge (optional)</span>
+<span class="sd">                If colors are not supplied, they are assigned sequentially starting from 0.</span>
+<span class="sd">                Cannot be used together with `max_neighbor_order`.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">            Constructs a Kagome lattice with 3 × 3 unit cells:</span>
@@ -395,10 +327,29 @@
 <span class="sd">              [1.         0.8660254 ]</span>
 <span class="sd">              [0.75       1.29903811]</span>
 <span class="sd">              [1.25       1.29903811]]</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">max_neighbor_order</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max_neighbor_order must be &gt;= 1.&quot;</span><span class="p">)</span>
 
+<span class="sd">            Constructs a rectangular lattice with distinct horizontal and vertical edges:</span>
+
+<span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">            &gt;&gt;&gt; from netket.graph import Lattice</span>
+<span class="sd">            &gt;&gt;&gt; basis = np.array([</span>
+<span class="sd">            ...     [1.0,0.0],</span>
+<span class="sd">            ...     [0.0,0.5],</span>
+<span class="sd">            ... ])</span>
+<span class="sd">            &gt;&gt;&gt; custom_edges = [</span>
+<span class="sd">            ...     (0, 0, [1.0,0.0], 0),</span>
+<span class="sd">            ...     (0, 0, [0.0,0.5], 1),</span>
+<span class="sd">            ... ]</span>
+<span class="sd">            &gt;&gt;&gt; g = Lattice(basis_vectors=basis, pbc=False, extent=[4,6],</span>
+<span class="sd">            ...     custom_edges=custom_edges)</span>
+<span class="sd">            &gt;&gt;&gt; print(g.n_nodes)</span>
+<span class="sd">            24</span>
+<span class="sd">            &gt;&gt;&gt; print(len(g.edges(filter_color=0)))</span>
+<span class="sd">            18</span>
+<span class="sd">            &gt;&gt;&gt; print(len(g.edges(filter_color=1)))</span>
+<span class="sd">            20</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Clean input parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_basis_vectors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_basis</span><span class="p">(</span><span class="n">basis_vectors</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ndim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basis_vectors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
@@ -410,58 +361,51 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_pbc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean_pbc</span><span class="p">(</span><span class="n">pbc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndim</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_extent</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">extent</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extent</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_vectors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inv_dims</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_point_group</span> <span class="o">=</span> <span class="n">point_group</span>
 
-        <span class="n">sites</span><span class="p">,</span> <span class="n">inside</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basis_coord_to_site</span> <span class="o">=</span> <span class="n">create_sites</span><span class="p">(</span>
+        <span class="c1"># Generate sites</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basis_coords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_positions</span> <span class="o">=</span> <span class="n">_create_sites</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_basis_vectors</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_extent</span><span class="p">,</span>
-            <span class="n">site_pos_fractional</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pbc</span><span class="p">,</span>
-            <span class="n">max_neighbor_order</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_site_offsets</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">edges</span> <span class="o">=</span> <span class="n">get_true_edges</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_basis_vectors</span><span class="p">,</span>
-            <span class="n">sites</span><span class="p">,</span>
-            <span class="n">inside</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_basis_coord_to_site</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_extent</span><span class="p">,</span>
-            <span class="n">distance_atol</span><span class="p">,</span>
-            <span class="n">max_neighbor_order</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">old_nodes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="nb">set</span><span class="p">(</span><span class="n">node</span> <span class="k">for</span> <span class="n">edges_k</span> <span class="ow">in</span> <span class="n">edges</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges_k</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">edge</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">new_nodes</span> <span class="o">=</span> <span class="p">{</span><span class="n">old_node</span><span class="p">:</span> <span class="n">new_node</span> <span class="k">for</span> <span class="n">new_node</span><span class="p">,</span> <span class="n">old_node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">old_nodes</span><span class="p">)}</span>
-
-        <span class="n">edges_by_order</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">edges_k</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
-            <span class="n">graph</span> <span class="o">=</span> <span class="n">igraph</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
-            <span class="n">graph</span><span class="o">.</span><span class="n">add_vertices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">old_nodes</span><span class="p">))</span>
-            <span class="n">graph</span><span class="o">.</span><span class="n">add_edges</span><span class="p">(</span>
-                <span class="p">[(</span><span class="n">new_nodes</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">new_nodes</span><span class="p">[</span><span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges_k</span><span class="p">]</span>
-            <span class="p">)</span>
-            <span class="n">graph</span><span class="o">.</span><span class="n">simplify</span><span class="p">()</span>
-            <span class="n">edges_by_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">get_edgelist</span><span class="p">()))</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sites</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">site</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sites</span><span class="p">[</span><span class="n">old_node</span><span class="p">]</span> <span class="k">for</span> <span class="n">old_node</span> <span class="ow">in</span> <span class="n">old_nodes</span><span class="p">):</span>
-            <span class="n">site</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">i</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_sites</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_basis_coord_to_site</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">HashableArray</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">basis_coord</span><span class="p">):</span> <span class="n">p</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sites</span>
         <span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_positions</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">position</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sites</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_basis_coords</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">basis_coord</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sites</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extent</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_vectors</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inv_dims</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span><span class="p">)</span>
         <span class="n">int_positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_integer_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_positions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_int_position_to_site</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">HashableArray</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span> <span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">int_positions</span><span class="p">)</span>
         <span class="p">}</span>
 
-        <span class="n">colored_edges</span> <span class="o">=</span> <span class="p">[(</span><span class="o">*</span><span class="n">e</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">es</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">edges_by_order</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">es</span><span class="p">]</span>
+        <span class="c1"># Generate edges</span>
+        <span class="k">if</span> <span class="n">custom_edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">max_neighbor_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;custom_edges and max_neighbor_order cannot be specified at the same time&quot;</span>
+                <span class="p">)</span>
+            <span class="n">colored_edges</span> <span class="o">=</span> <span class="n">get_custom_edges</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_basis_vectors</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_extent</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_site_offsets</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pbc</span><span class="p">,</span>
+                <span class="n">distance_atol</span><span class="p">,</span>
+                <span class="n">custom_edges</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">max_neighbor_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">max_neighbor_order</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">colored_edges</span> <span class="o">=</span> <span class="n">get_nn_edges</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_basis_vectors</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_extent</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_site_offsets</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pbc</span><span class="p">,</span>
+                <span class="n">distance_atol</span><span class="p">,</span>
+                <span class="n">max_neighbor_order</span><span class="p">,</span>
+            <span class="p">)</span>
+
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">colored_edges</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sites</span><span class="p">))</span></div>
 
     <span class="nd">@staticmethod</span>
