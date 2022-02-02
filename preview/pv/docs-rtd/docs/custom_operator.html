@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Defining Custom Operators &mdash; netket v3.0 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing to NetKet" href="contributing.html" />
+    <link rel="prev" title="Defining Custom Preconditioners" href="custom_preconditioners.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> netket<img src="../_static/logonav.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/netket3.html">Ground-State Variational Search with NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/jax.html">Using JAX as a backend in NetKet - Feature Preview for v3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/G-CNN_Honeycomb.html">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/j1j2.html">Variational Monte Carlo with Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/Heisenberg1d.html">Learning the ground-state of a spin model with different Neural Networks available in NetKet</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="superop.html">The Lindblad Master Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hilbert.html">The Hilbert module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operator.html">The Operator module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="varstate.html">The Variational State Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drivers.html">The Drivers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sharp-bits.html">🔪 The Sharp Bits 🔪</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="custom_models.html">Defining Custom Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_expect.html">Overriding defaults in NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">Defining Custom Preconditioners</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Defining Custom Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#defining-a-custom-zero-operator">Defining a custom <em>zero</em> operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-an-operator-from-scratch">Defining an operator from scratch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-an-operator-the-easy-way">Defining an operator the easy way</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comparison-of-the-two-approaches">Comparison of the two approaches</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writing-tests.html">Writing Tests</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api-stability.html">API Stability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Public API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-experimental.html">Experimental API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">netket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Defining Custom Operators</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/docs/custom_operator.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="defining-custom-operators">
+<span id="custom-operator"></span><h1>Defining Custom Operators<a class="headerlink" href="#defining-custom-operators" title="Permalink to this headline"></a></h1>
+<p>In this page we will show how to define custom operators and the relevant methods used to compute expectation values and their gradients.
+This page assumes you have already read the <a class="reference internal" href="hilbert.html#hilbert"><span class="std std-ref">Hilbert module</span></a> and <a class="reference internal" href="operator.html#operator"><span class="std std-ref">Operator module</span></a> documentation and have a decent understanding of their class hierarchy.</p>
+<div class="section" id="defining-a-custom-zero-operator">
+<span id="defining-custom-zero"></span><h2>Defining a custom <em>zero</em> operator<a class="headerlink" href="#defining-a-custom-zero-operator" title="Permalink to this headline"></a></h2>
+<p>Let’s assume you want to define an operator that always returns 0.
+That’s a very useful operator!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">netket</span> <span class="k">as</span> <span class="nn">nk</span>
+<span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">AbstractOperator</span>
+
+<span class="k">class</span> <span class="nc">ZeroOperator</span><span class="p">(</span><span class="n">AbstractOperator</span><span class="p">):</span>
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">float</span>
+
+</pre></div>
+</div>
+<p>To define an operator we always need to define the <code class="docutils literal notranslate"><span class="pre">dtype</span></code> property, representing the dtype of the output.
+Moreover, since we did not define the <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> method, we inherit the <code class="docutils literal notranslate"><span class="pre">AbstractOperator</span></code> init method which
+requires an hilbert space to be specified.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">hi</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">Spin</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">Spin(s=1/2, N=2)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zero_op</span> <span class="o">=</span> <span class="n">ZeroOperator</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span>
+<span class="go">ZeroOperator(hilbert=Spin(s=1/2, N=2))</span>
+</pre></div>
+</div>
+<p>If we define a variational state on the same hilbert space, and we try to compute the expectation value on that space, an error will be thrown:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vs</span>  <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">MCState</span><span class="p">(</span><span class="n">nk</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">MetropolisLocal</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span> <span class="n">nk</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">RBM</span><span class="p">())</span>
+<span class="go">MCState(</span>
+<span class="go">  hilbert = Spin(s=1/2, N=2),</span>
+<span class="go">  sampler = MetropolisSampler(rule = LocalRule(), n_chains = 16, machine_power = 2, n_sweeps = 2, dtype = &lt;class &#39;numpy.float64&#39;&gt;),</span>
+<span class="go">  n_samples = 1008,</span>
+<span class="go">  n_discard_per_chain = 100,</span>
+<span class="go">  sampler_state = MetropolisSamplerState(rng state=[3684014404 2614644650]),</span>
+<span class="go">  n_parameters = 8)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vs</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">zero_op</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">&quot;/home/filippovicentini/Dropbox/Ricerca/Codes/Python/netket/netket/vqs/base.py&quot;</span>, line <span class="m">164</span>, in <span class="n">expect</span>
+    <span class="k">return</span> <span class="n">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">)</span>
+  File <span class="nb">&quot;plum/function.py&quot;</span>, line <span class="m">537</span>, in <span class="n">plum.function.Function.__call__</span>
+  File <span class="nb">&quot;/home/filippovicentini/Dropbox/Ricerca/Codes/Python/netket/netket/vqs/mc/mc_state/expect.py&quot;</span>, line <span class="m">96</span>, in <span class="n">expect</span>
+    <span class="n">σ</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">get_local_kernel_arguments</span><span class="p">(</span><span class="n">vstate</span><span class="p">,</span> <span class="n">Ô</span><span class="p">)</span>
+  File <span class="nb">&quot;plum/function.py&quot;</span>, line <span class="m">536</span>, in <span class="n">plum.function.Function.__call__</span>
+  File <span class="nb">&quot;plum/function.py&quot;</span>, line <span class="m">501</span>, in <span class="n">plum.function.Function.resolve_method</span>
+  File <span class="nb">&quot;plum/function.py&quot;</span>, line <span class="m">435</span>, in <span class="n">plum.function.Function.resolve_signature</span>
+<span class="gr">plum.function.NotFoundLookupError</span>: <span class="n">For function &quot;get_local_kernel_arguments&quot;, signature Signature(netket.vqs.mc.mc_state.state.MCState, __main__.ZeroOperator) could not be resolved.</span>
+</pre></div>
+</div>
+<p>This is because you defined a new operator, but you did not define how to compute an expectation value with it.
+The method to use to compute an expectation value is chosen from a list using multiple-dispatch, and it is defined both by the type of the variational state and by the type of the operator.</p>
+<p>To define the expect method you should do the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">expect</span><span class="o">.</span><span class="n">dispatch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="n">vstate</span><span class="p">:</span> <span class="n">nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">MCState</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">ZeroOperator</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And if we now call again the expect method of the variational state, it will work!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vs</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">zero_op</span><span class="p">)</span>
+<span class="go">array(0.)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="defining-an-operator-from-scratch">
+<span id="defining-custom-discrete-operator"></span><h2>Defining an operator from scratch<a class="headerlink" href="#defining-an-operator-from-scratch" title="Permalink to this headline"></a></h2>
+<p>Let’s try to reimplement an operator from scratch.
+I will take the <span class="math notranslate nohighlight">\(\hat{X} = \sum_i^N \hat{\sigma}^{(X)}_i \)</span> operator as a simple exapmle.</p>
+<p>In Variational Monte Carlo, we usually compute expectation values through the following expectation value:</p>
+<div class="math notranslate nohighlight">
+\[\langle \hat{X} \rangle = \langle \psi | \hat{X} | \psi \rangle = \sum_\sigma |\psi(\sigma)|^2 \sum_{\eta} \frac{\langle\sigma|\hat{X}|\eta\rangle\langle\eta|\psi\rangle}{\langle \sigma | \psi\rangle} = \mathbb{E}_{\sigma \approx |\psi(\sigma)|^2}\left[ E^{loc}(\sigma)\right]\]</div>
+<p>where <span class="math notranslate nohighlight">\( E^{loc}(\sigma) =  \sum_{\eta} \frac{\langle\sigma|\hat{X}|\eta\rangle\langle\eta|\psi\rangle}{\langle \sigma | \psi\rangle} \)</span> is called the local estimator.</p>
+<p>First we define the operator itself:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">XOperator</span><span class="p">(</span><span class="n">AbstractOperator</span><span class="p">):</span>
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">float</span>
+
+</pre></div>
+</div>
+<p>To then compute expectation values we need the following methods:</p>
+<ul class="simple">
+<li><p>A method to sample the probability distribution <span class="math notranslate nohighlight">\(|\psi(\sigma)|^2\)</span>. This is already provided by monte carlo variational state interface and samples can be retrieved simply by calling <a class="reference internal" href="_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState.samples" title="netket.vqs.MCState.samples"><code class="xref py py-attr docutils literal notranslate"><span class="pre">samples</span></code></a>.</p></li>
+<li><p>A method to take the samples <span class="math notranslate nohighlight">\( \sigma \)</span> and compute the connected elements <span class="math notranslate nohighlight">\( \eta \)</span> so that <span class="math notranslate nohighlight">\( \langle\sigma|\hat{X}|\eta\rangle \neq 0 \)</span>. This should also return those matrix elements.</p></li>
+<li><p>A method to compute the local energy given the matrix elements, the <span class="math notranslate nohighlight">\(\sigma\)</span> and <span class="math notranslate nohighlight">\( \eta \)</span> and the variational state.</p></li>
+<li><p>The statistical average of the local energies.</p></li>
+</ul>
+<p>First we implement a method returning all the connected elements.
+Given a bitstring <span class="math notranslate nohighlight">\( \sigma \)</span> for <span class="math notranslate nohighlight">\(N\)</span> spins, the connected elements are <span class="math notranslate nohighlight">\(N\)</span> bistrings of the same length, where each one has a flipped bit.
+The matrix element is always 1</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@jax</span><span class="o">.</span><span class="n">vmap</span>
+<span class="k">def</span> <span class="nf">get_conns_and_mels</span><span class="p">(</span><span class="n">sigma</span><span class="p">):</span>
+  <span class="c1"># get number of spins</span>
+  <span class="n">N</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+  <span class="c1"># repeat eta N times</span>
+  <span class="n">eta</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+  <span class="c1"># diagonal indices</span>
+  <span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag_indices</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+  <span class="c1"># flip those indices</span>
+  <span class="n">eta</span> <span class="o">=</span> <span class="n">eta</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="o">-</span><span class="n">eta</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+  <span class="k">return</span> <span class="n">eta</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">e_loc</span><span class="p">(</span><span class="n">logpsi</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">mels</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mels</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logpsi</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">eta</span><span class="p">)</span> <span class="o">-</span> <span class="n">logpsi</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">eta</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first function takes a single bitstring <span class="math notranslate nohighlight">\( \sigma \)</span>, a vector with <span class="math notranslate nohighlight">\(N\)</span> entries, and returns a batch of bitstrings <span class="math notranslate nohighlight">\( eta_i \)</span>, a matrix <span class="math notranslate nohighlight">\( N\cross N \)</span> where every element in the diagonal is flipped.
+We then used <code class="docutils literal notranslate"><span class="pre">jax.vmap</span></code> to make this function work with batches of inputs <span class="math notranslate nohighlight">\(\sigma\)</span> (we could have written it from the beginning to work on batches, but this way the meaning is very clear).</p>
+<p>The other function also takes a single <span class="math notranslate nohighlight">\( \sigma \)</span> and a batch of <span class="math notranslate nohighlight">\( \eta \)</span> and their matrix elements, and uses the formula above to compute the local energy.
+This function is also <code class="docutils literal notranslate"><span class="pre">jax.vmap</span></code>ped in order to work with batches of inputs. The argument <code class="docutils literal notranslate"><span class="pre">in_axes=(None,</span> <span class="pre">None,</span> <span class="pre">0,0,0)</span></code> means that the first 2 arguments do not change among batches, while the other three are batched along the first dimension.</p>
+<p>With those two functions written, we can write the expect method</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">expect</span><span class="o">.</span><span class="n">dispatch</span>
+<span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="n">vstate</span><span class="p">:</span> <span class="n">nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">MCState</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">XOperator</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">_expect</span><span class="p">(</span><span class="n">vstate</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span> <span class="n">vstate</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="n">vstate</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
+
+<span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_expect</span><span class="p">(</span><span class="n">logpsi</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+  <span class="n">n_chains</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+  <span class="n">N</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+  <span class="c1"># flatten all batches</span>
+  <span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span>
+
+  <span class="n">eta</span><span class="p">,</span> <span class="n">mels</span> <span class="o">=</span> <span class="n">get_conns_and_mels</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+
+  <span class="n">E_loc</span> <span class="o">=</span> <span class="n">e_loc</span><span class="p">(</span><span class="n">logpsi</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">eta</span><span class="p">,</span> <span class="n">mels</span><span class="p">)</span>
+
+  <span class="c1"># reshape back into chains to compute statistical informations</span>
+  <span class="n">E_loc</span> <span class="o">=</span> <span class="n">E_loc</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_chains</span><span class="p">)</span>
+
+  <span class="c1"># this function computes things like variance and convergence informations.</span>
+  <span class="k">return</span> <span class="n">nk</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">statistics</span><span class="p">(</span><span class="n">E_loc</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The dispatch rule is a thin layer that calls a jitted function, in order to have more speed.
+We cannot directly jit <code class="docutils literal notranslate"><span class="pre">expect</span></code> itself because it takes as input a <code class="docutils literal notranslate"><span class="pre">vstate</span></code>, which is not directly
+jit-compatible.</p>
+<p>The internal, jitted <code class="docutils literal notranslate"><span class="pre">_expect</span></code> takes as input the <code class="docutils literal notranslate"><span class="pre">vstate._apply_fun</span></code> function which is the one evaluating
+the neural quantum state, together with it’s inputs (<code class="docutils literal notranslate"><span class="pre">vstate.variables</span></code>).</p>
+<p>Note that if you want to make the <code class="docutils literal notranslate"><span class="pre">expect_and_grad</span></code> method work with this custom operator, you will also have to define the dispatch rule for <code class="docutils literal notranslate"><span class="pre">expect_and_grad</span></code>.</p>
+</div>
+<div class="section" id="defining-an-operator-the-easy-way">
+<span id="defining-custom-discrete-operator-easy"></span><h2>Defining an operator the easy way<a class="headerlink" href="#defining-an-operator-the-easy-way" title="Permalink to this headline"></a></h2>
+<p>Most operator that can be used efficiently with VMC approaches have the same structure as above, therefore, when defining new operators you will often find yourself redefining a similar function, where the only thing changing is the code to compute the connected elements, matrix elements, and the local kernel (in the case above computing E_loc).
+If you also want to define the gradient, the boilerplate becomes considerable.</p>
+<p>As such, to reduce the amount of boilerplate code that users must write when defining custom operators, NetKet will attempt by default to use a default expectation kernel.
+This kernel looks very similar to the <code class="docutils literal notranslate"><span class="pre">_expect</span></code> function above, and will call a function similar to <code class="docutils literal notranslate"><span class="pre">get_conns_and_mels</span></code> and a local kernel, selected using multiple dispatch.</p>
+<p>In the example below we show how to make use of this <em>lean</em> interface.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">XOperatorLean</span><span class="p">(</span><span class="n">AbstractOperator</span><span class="p">):</span>
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">float</span>
+
+<span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">e_loc</span><span class="p">(</span><span class="n">logpsi</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">extra_args</span><span class="p">):</span>
+  <span class="n">eta</span><span class="p">,</span> <span class="n">mels</span> <span class="o">=</span> <span class="n">extra_args</span>
+  <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mels</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">logpsi</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">eta</span><span class="p">)</span> <span class="o">-</span> <span class="n">logpsi</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">eta</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="nd">@nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">get_local_kernel</span><span class="o">.</span><span class="n">dispatch</span>
+<span class="k">def</span> <span class="nf">get_local_kernel</span><span class="p">(</span><span class="n">vstate</span><span class="p">:</span> <span class="n">nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">MCState</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">XOperatorLean</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">e_loc</span>
+
+<span class="nd">@nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">get_local_kernel_arguments</span><span class="o">.</span><span class="n">dispatch</span>
+<span class="k">def</span> <span class="nf">get_local_kernel_arguments</span><span class="p">(</span><span class="n">vstate</span><span class="p">:</span> <span class="n">nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">MCState</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">XOperatorLean</span><span class="p">):</span>
+  <span class="n">sigma</span> <span class="o">=</span> <span class="n">vstate</span><span class="o">.</span><span class="n">sigma</span>
+  <span class="n">extra_args</span> <span class="o">=</span> <span class="n">get_conns_and_mels</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">extra_args</span>
+</pre></div>
+</div>
+<p>The first function here is very similar to the <code class="docutils literal notranslate"><span class="pre">e_loc</span></code> we defined in the previous section, however instead of taking <code class="docutils literal notranslate"><span class="pre">eta</span></code> and <code class="docutils literal notranslate"><span class="pre">mels</span></code> as two different arguments, they are passed as a tuple named <code class="docutils literal notranslate"><span class="pre">extra_args</span></code>, and must be unpacked by the kernel.
+That’s because every operator has it’s own <code class="docutils literal notranslate"><span class="pre">get_local_kernel_arguments</span></code> which prepares those extra_args, and every different operator might be passing different objects to the kernel.</p>
+<p>Also do note that the kernel is jit-compiled, therefore it must make use of <code class="docutils literal notranslate"><span class="pre">jax.numpy</span></code> functions, while the <code class="docutils literal notranslate"><span class="pre">get_local_kernel_argument</span></code> function <em>is not jitted</em>, and it is executed before jitting.
+This is in order to allow extra flexibility: sometimes your operators need some pre-processing code that is not jax-jittable, but is only numba-jittable, for example (this is the case of most operators in NetKet).</p>
+<p>All operators and super-operators in netket define those two methods.
+If you want to see some examples of how it is used internally, look at the source code found in <a class="reference external" href="https://github.com/netket/netket/blob/master/netket/vqs/mc/MCState/expect.py">this folder</a>.
+An additional benefit of using this latter definition, is that is automatically enables <code class="docutils literal notranslate"><span class="pre">expect_and_grad</span></code> for your custom operator.</p>
+</div>
+<div class="section" id="comparison-of-the-two-approaches">
+<h2>Comparison of the two approaches<a class="headerlink" href="#comparison-of-the-two-approaches" title="Permalink to this headline"></a></h2>
+<p>Above you’ve seen two different ways to define <code class="docutils literal notranslate"><span class="pre">expect</span></code>, but it might be unclear which one you should use in your code.
+In general, you should prefer the second one: the <em>simple</em> interface is easier to use and enables by default gradients too.</p>
+<p>If you can express the expectation value of your operator in such a way that it can be estimated by simply averaging a single local-estimator the simple interface is best.
+We expect that you should be able to use this interface in the vast majority of cases.
+However in some cases you might want to try something particular, experiment, or your operator cannot be expressed in this form, or you want to try out some optimisations (such as chunking), or compute many operators at once.
+That’s why we also allow you to override the general <code class="docutils literal notranslate"><span class="pre">expect</span></code> method alltogether: it allows a lot of extra flexibility.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="custom_preconditioners.html" class="btn btn-neutral float-left" title="Defining Custom Preconditioners" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing to NetKet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019-2021, The Netket authors - All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+
+<script type="text/javascript">
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+      })
+</script>
+
+<!-- Temporary footer
+<div class="footer-wip">
+  <div class="footer-wip-content">
+    This documentation refers to an unreleased version of Netket.
+  </div>
+</div>
+-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118013987-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-118013987-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://www.netket.org",
+  "name": "NetKet",
+  "founder": "Giuseppe Carleo",
+  "foundingDate": "2018-04-24",
+  "foundingLocation" : "New York",
+  "logo": "https://www.netket.org/img/logo_small.jpg",
+  "sameAs": [
+    "https://twitter.com/NetKetOrg",
+    "https://github.com/NetKet/netket"
+  ],
+  "description" : "Netket is an open-source project delivering cutting-edge
+  methods for the study of many-body quantum systems with artificial neural
+  networks and machine learning techniques."
+}
+</script>
+
+
+</body>
+</html>

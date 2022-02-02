@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>netket.hilbert.DoubledHilbert &mdash; netket v3.0 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="netket.hilbert.Spin" href="netket.hilbert.Spin.html" />
+    <link rel="prev" title="netket.hilbert.TensorHilbert" href="netket.hilbert.TensorHilbert.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> netket<img src="../../../_static/logonav.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/netket3.html">Ground-State Variational Search with NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/jax.html">Using JAX as a backend in NetKet - Feature Preview for v3.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/G-CNN_Honeycomb.html">Using a group convolutional neural network to learn the ground-state of a symmetric spin model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/j1j2.html">Variational Monte Carlo with Neural Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/Heisenberg1d.html">Learning the ground-state of a spin model with different Neural Networks available in NetKet</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../superop.html">The Lindblad Master Equation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hilbert.html">The Hilbert module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../operator.html">The Operator module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../varstate.html">The Variational State Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../drivers.html">The Drivers API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sharp-bits.html">🔪 The Sharp Bits 🔪</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_models.html">Defining Custom Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_expect.html">Overriding defaults in NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_preconditioners.html">Defining Custom Preconditioners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_operator.html">Defining Custom Operators</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NetKet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../writing-tests.html">Writing Tests</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../api-stability.html">API Stability</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#graph">Graph</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../api.html#hilbert">Hilbert</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.AbstractHilbert.html">netket.hilbert.AbstractHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.ContinuousHilbert.html">netket.hilbert.ContinuousHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.DiscreteHilbert.html">netket.hilbert.DiscreteHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.HomogeneousHilbert.html">netket.hilbert.HomogeneousHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.CustomHilbert.html">netket.hilbert.CustomHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.TensorHilbert.html">netket.hilbert.TensorHilbert</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">netket.hilbert.DoubledHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.Spin.html">netket.hilbert.Spin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.Qubit.html">netket.hilbert.Qubit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.Fock.html">netket.hilbert.Fock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.hilbert.Particle.html">netket.hilbert.Particle</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#operators">Operators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#exact-solvers">Exact solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#sampler">Sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#pre-built-models">Pre-built models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#model-tools">Model tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#variational-state-interface">Variational State Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer-module">Optimizer Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimization-drivers">Optimization drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#logging-output">Logging output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#utils">Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#callbacks">Callbacks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-experimental.html">Experimental API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">netket</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../api.html">Public API</a> &raquo;</li>
+      <li>netket.hilbert.DoubledHilbert</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/docs/_generated/hilbert/netket.hilbert.DoubledHilbert.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="netket-hilbert-doubledhilbert">
+<h1>netket.hilbert.DoubledHilbert<a class="headerlink" href="#netket-hilbert-doubledhilbert" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt id="netket.hilbert.DoubledHilbert">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.hilbert.</span></code><code class="sig-name descname"><span class="pre">DoubledHilbert</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hilb</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.hilbert.DoubledHilbert" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">netket.hilbert.doubled_hilbert.DoubledHilbert</span></code></p>
+<p>Superoperatorial hilbert space for states living in the tensorised state
+<span class="math notranslate nohighlight">\(\hat{H}\otimes \hat{H}\)</span>, encoded according to Choi’s isomorphism.</p>
+<dl class="class-dl-groups">
+<dt>Inheritance</dt><dd><div class="graphviz"><img src="../../../_images/inheritance-a657f97ca58cf64d31c3e03000d1788f21d5c00c.png" alt="Inheritance diagram of netket.hilbert.DoubledHilbert" usemap="#inheritance22efab6f30" class="inheritance graphviz" /></div>
+<map id="inheritance22efab6f30" name="inheritance22efab6f30">
+<area shape="rect" id="node2" href="netket.hilbert.DiscreteHilbert.html#netket.hilbert.DiscreteHilbert" target="_top" title="Abstract class for an hilbert space defined on a lattice." alt="" coords="220,5,387,31"/>
+<area shape="rect" id="node3" href="netket.hilbert.AbstractHilbert.html#netket.hilbert.AbstractHilbert" target="_top" title="Abstract class for NetKet hilbert objects." alt="" coords="5,5,172,31"/>
+</map></dd>
+</dl>
+<dl class="py method">
+<dt id="netket.hilbert.DoubledHilbert.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hilb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/hilbert/doubled_hilbert.html#DoubledHilbert.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.hilbert.DoubledHilbert.__init__" title="Permalink to this definition"></a></dt>
+<dd><p>Superoperatorial hilbert space for states living in the tensorised
+state <span class="math notranslate nohighlight">\(\hat{H}\otimes \hat{H}\)</span>, encoded according to Choi’s
+isomorphism.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>hilb</strong> (<a class="reference internal" href="netket.hilbert.AbstractHilbert.html#netket.hilbert.AbstractHilbert" title="netket.hilbert.AbstractHilbert"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code></a>) – the Hilbert space H.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Simple superoperatorial hilbert space for few spins.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">netket</span> <span class="k">as</span> <span class="nn">nk</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">Hypercube</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">n_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hi</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">Spin</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hi2</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">DoubledHilbert</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">hi2</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class-dl-groups">
+<dt>Attributes</dt><dd><dl class="py attribute">
+<dt id="netket.hilbert.DoubledHilbert.is_finite">
+<code class="sig-name descname"><span class="pre">is_finite</span></code><a class="headerlink" href="#netket.hilbert.DoubledHilbert.is_finite" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.hilbert.DoubledHilbert.is_indexable">
+<code class="sig-name descname"><span class="pre">is_indexable</span></code><a class="headerlink" href="#netket.hilbert.DoubledHilbert.is_indexable" title="Permalink to this definition"></a></dt>
+<dd><p>Whever the space can be indexed with an integer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.hilbert.DoubledHilbert.local_size">
+<code class="sig-name descname"><span class="pre">local_size</span></code><a class="headerlink" href="#netket.hilbert.DoubledHilbert.local_size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.hilbert.DoubledHilbert.local_states">
+<code class="sig-name descname"><span class="pre">local_states</span></code><a class="headerlink" href="#netket.hilbert.DoubledHilbert.local_states" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.hilbert.DoubledHilbert.n_states">
+<code class="sig-name descname"><span class="pre">n_states</span></code><a class="headerlink" href="#netket.hilbert.DoubledHilbert.n_states" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.hilbert.DoubledHilbert.shape">
+<code class="sig-name descname"><span class="pre">shape</span></code><a class="headerlink" href="#netket.hilbert.DoubledHilbert.shape" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.hilbert.DoubledHilbert.size">
+<code class="sig-name descname"><span class="pre">size</span></code><a class="headerlink" href="#netket.hilbert.DoubledHilbert.size" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.hilbert.DoubledHilbert.size_physical">
+<code class="sig-name descname"><span class="pre">size_physical</span></code><a class="headerlink" href="#netket.hilbert.DoubledHilbert.size_physical" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd>
+</dl>
+<dl class="class-dl-groups">
+<dt>Methods</dt><dd><dl class="py method">
+<dt id="netket.hilbert.DoubledHilbert.all_states">
+<code class="sig-name descname"><span class="pre">all_states</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.hilbert.DoubledHilbert.all_states" title="Permalink to this definition"></a></dt>
+<dd><p>Returns all valid states of the Hilbert space.</p>
+<p>Throws an exception if the space is not indexable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>out</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]) – an optional pre-allocated output array</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A (n_states x size) batch of statess. this corresponds
+to the pre-allocated array if it was passed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.hilbert.DoubledHilbert.numbers_to_states">
+<code class="sig-name descname"><span class="pre">numbers_to_states</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">numbers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.hilbert.DoubledHilbert.numbers_to_states" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the quantum numbers corresponding to the n-th basis state
+for input n. n is an array of integer indices such that
+<code class="code docutils literal notranslate"><span class="pre">numbers[k]=Index(states[k])</span></code>.
+Throws an exception iff the space is not indexable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numbers</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.array</span></code>) – Batch of input numbers to be converted into arrays of
+quantum numbers.</p></li>
+<li><p><strong>out</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]) – Optional Array of quantum numbers corresponding to numbers.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.hilbert.DoubledHilbert.ptrace">
+<code class="sig-name descname"><span class="pre">ptrace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sites</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.hilbert.DoubledHilbert.ptrace" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the hilbert space without the selected sites.</p>
+<p>Not all hilbert spaces support this operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sites</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code></a>]) – a site or list of sites to trace away</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="netket.hilbert.AbstractHilbert.html#netket.hilbert.AbstractHilbert" title="netket.hilbert.AbstractHilbert"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The partially-traced hilbert space. The type of the resulting hilbert space
+might be different from the starting one.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.hilbert.DoubledHilbert.random_state">
+<code class="sig-name descname"><span class="pre">random_state</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">key=None</span></em>, <em class="sig-param"><span class="pre">size=None</span></em>, <em class="sig-param"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float32'&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.hilbert.DoubledHilbert.random_state" title="Permalink to this definition"></a></dt>
+<dd><p>Generates either a single or a batch of uniformly distributed random states.
+Runs as <code class="code docutils literal notranslate"><span class="pre">random_state(self,</span> <span class="pre">key,</span> <span class="pre">size=None,</span> <span class="pre">dtype=np.float32)</span></code> by default.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – rng state from a jax-style functional generator.</p></li>
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – If provided, returns a batch of configurations of the form
+<code class="code docutils literal notranslate"><span class="pre">(size,</span> <span class="pre">N)</span></code> if size is an integer or <code class="code docutils literal notranslate"><span class="pre">(*size,</span> <span class="pre">N)</span></code> if it is
+a tuple and where <span class="math notranslate nohighlight">\(N\)</span> is the Hilbert space size.
+By default, a single random configuration with shape
+<code class="code docutils literal notranslate"><span class="pre">(#,)</span></code> is returned.</p></li>
+<li><p><strong>dtype</strong> – DType of the resulting vector.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://jax.readthedocs.io/en/latest/_autosummary/jax.numpy.ndarray.html#jax.numpy.ndarray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A state or batch of states sampled from the uniform distribution on the
+hilbert space.</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">netket</span><span class="o">,</span> <span class="nn">jax</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hi</span> <span class="o">=</span> <span class="n">netket</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">Qubit</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">hi</span><span class="o">.</span><span class="n">random_state</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">k1</span><span class="p">))</span>
+<span class="go">[1. 0.]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">hi</span><span class="o">.</span><span class="n">random_state</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">k2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">[[0. 0.]</span>
+<span class="go"> [0. 1.]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.hilbert.DoubledHilbert.states">
+<code class="sig-name descname"><span class="pre">states</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#netket.hilbert.DoubledHilbert.states" title="Permalink to this definition"></a></dt>
+<dd><p>Returns an iterator over all valid configurations of the Hilbert space.
+Throws an exception iff the space is not indexable.
+Iterating over all states with this method is typically inefficient,
+and <code class="docutils literal notranslate"><span class="pre">`all_states`</span></code> should be prefered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.hilbert.DoubledHilbert.states_to_numbers">
+<code class="sig-name descname"><span class="pre">states_to_numbers</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.hilbert.DoubledHilbert.states_to_numbers" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the basis state number corresponding to given quantum states.
+The states are given in a batch, such that states[k] has shape (hilbert.size).
+Throws an exception iff the space is not indexable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>states</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>) – Batch of states to be converted into the corresponding integers.</p></li>
+<li><p><strong>out</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.22)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>]) – Array of integers such that out[k]=Index(states[k]).
+If None, memory is allocated.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Array of integers corresponding to out.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.darray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="netket.hilbert.TensorHilbert.html" class="btn btn-neutral float-left" title="netket.hilbert.TensorHilbert" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="netket.hilbert.Spin.html" class="btn btn-neutral float-right" title="netket.hilbert.Spin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2019-2021, The Netket authors - All rights reserved.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+ 
+
+<script type="text/javascript">
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+      })
+</script>
+
+<!-- Temporary footer
+<div class="footer-wip">
+  <div class="footer-wip-content">
+    This documentation refers to an unreleased version of Netket.
+  </div>
+</div>
+-->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-118013987-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-118013987-1');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://www.netket.org",
+  "name": "NetKet",
+  "founder": "Giuseppe Carleo",
+  "foundingDate": "2018-04-24",
+  "foundingLocation" : "New York",
+  "logo": "https://www.netket.org/img/logo_small.jpg",
+  "sameAs": [
+    "https://twitter.com/NetKetOrg",
+    "https://github.com/NetKet/netket"
+  ],
+  "description" : "Netket is an open-source project delivering cutting-edge
+  methods for the study of many-body quantum systems with artificial neural
+  networks and machine learning techniques."
+}
+</script>
+
+
+</body>
+</html>
