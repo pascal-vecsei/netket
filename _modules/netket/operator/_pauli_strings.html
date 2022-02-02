@@ -351,13 +351,7 @@
             <span class="c1"># no warning, just overwrite</span>
             <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">hilbert</span><span class="o">.</span><span class="n">size</span>
         <span class="k">if</span> <span class="n">n_qubits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># we always start counting from 0, so we only determine the maximum location</span>
-            <span class="n">n_qubits</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="nb">max</span><span class="p">(</span>
-                    <span class="nb">max</span><span class="p">(</span><span class="n">term</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">op</span><span class="p">)</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">of_qubit_operator</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-                <span class="p">)</span>
-                <span class="o">+</span> <span class="mi">1</span>
-            <span class="p">)</span>
+            <span class="n">n_qubits</span> <span class="o">=</span> <span class="n">_count_of_locations</span><span class="p">(</span><span class="n">of_qubit_operator</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">operator</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">of_qubit_operator</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># gives dict</span>
             <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;I&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">n_qubits</span>
             <span class="k">for</span> <span class="n">loc</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operator</span><span class="p">:</span>
@@ -590,6 +584,24 @@
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)(</span><span class="n">gccf_fun</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_count_of_locations</span><span class="p">(</span><span class="n">of_qubit_operator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Obtain the number of qubits in the openfermion QubitOperator. Openfermion builds operators from terms that store operators locations.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        of_qubit_operator (openfermion.QubitOperator, openfermion.FermionOperator)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        n_qubits (int): number of qubits in the operator, which we can use to create a suitable hilbert space</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># we always start counting from 0, so we only determine the maximum location</span>
+    <span class="k">def</span> <span class="nf">max_or_default</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># -1 is default</span>
+
+    <span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">max_or_default</span><span class="p">(</span>
+        <span class="n">max_or_default</span><span class="p">(</span><span class="n">term</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">op</span><span class="p">)</span> <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">of_qubit_operator</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">n_qubits</span>
 
 
 <span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
