@@ -26,6 +26,10 @@ import numpy as np
 
 from netket import jax as nkjax
 
+from rich.markdown import Text
+from rich.style import Style
+from netket.utils import printing
+
 from . import mean as _mean
 from . import var as _var
 from . import total_size as _total_size
@@ -49,7 +53,20 @@ def _format_decimal(value, std, var):
 
 _NaN = float("NaN")
 
+@jax.jit
+def _color_curve(R_hat, k=5):
+    """
+    Takes the value of R_hat and return a value between 0 and 1.
 
+    The k higher the k variable the faster the output will get to 1.
+    The value of 5 has been chosen empirically.
+    """
+    # center from 0...1...2 to 0...\inf
+    x = abs(1-R_hat)
+    # sigmoid
+    return jnp.exp(k*x)/(1+jnp.exp(k*x))
+
+@printing.rich_repr
 @struct.dataclass
 class Stats:
     """A dict-compatible class containing the result of the statistics function."""
@@ -73,13 +90,16 @@ class Stats:
     def to_compound(self):
         return "Mean", self.to_dict()
 
-    def __repr__(self):
+    def __rich__(self) -> str:
         mean, err, var = _format_decimal(self.mean, self.error_of_mean, self.variance)
+
+        txt = Text(f"{mean} ± {err} [σ²={var}")
         if not math.isnan(self.R_hat):
-            ext = ", R̂={:.4f}".format(self.R_hat)
-        else:
-            ext = ""
-        return "{} ± {} [σ²={}{}]".format(mean, err, var, ext)
+            txt.append(Text(", R̂="))
+            txt.append(Text("{:.4f}".format(self.R_hat), 
+                            style=Style(color=printing.color_good_bad(float(_color_curve(self.R_hat))))))
+        txt.append("]")
+        return txt
 
     # Alias accessors
     def __getattr__(self, name):
