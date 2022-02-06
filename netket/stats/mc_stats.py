@@ -94,7 +94,7 @@ class Stats:
         mean, err, var = _format_decimal(self.mean, self.error_of_mean, self.variance)
 
         txt = Text(f"{mean} ± {err} [σ²={var}")
-        if not math.isnan(self.R_hat):
+        if math.isfinite(self.R_hat):
             txt.append(Text(", R̂="))
             txt.append(Text("{:.4f}".format(self.R_hat), 
                             style=Style(color=printing.color_good_bad(float(_color_curve(self.R_hat))))))
