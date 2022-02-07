@@ -48,9 +48,10 @@ def __repr_from_rich__(self):
     default __repr__ that calls __rich__
     """
     console = rich.get_console()
-    segments = list(console.render(self, console.options))
-    text = console._render_buffer(segments)
-    return text
+    with console.capture() as capture:
+        console.print(self, end="")
+    return capture.get()
+
 
 def _repr_mimebundle_from_rich_(
     self, include: Iterable[str], exclude: Iterable[str], **kwargs: Any
