@@ -234,9 +234,9 @@
 <span class="sd">    The value of 5 has been chosen empirically.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># center from 0...1...2 to 0...\inf</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
     <span class="c1"># sigmoid</span>
-    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span>
 
 
 <span class="nd">@display</span><span class="o">.</span><span class="n">rich_repr</span>
@@ -310,7 +310,9 @@
         <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">mpi</span><span class="o">.</span><span class="n">mpi_sum_jax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_accepted_proc</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
 
-    <span class="k">def</span> <span class="nf">__rich_console__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="s2">&quot;Console&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;ConsoleOptions&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;RenderResult&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__rich_console__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="s2">&quot;Console&quot;</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="s2">&quot;ConsoleOptions&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;RenderResult&quot;</span><span class="p">:</span>
         <span class="n">txt</span> <span class="o">=</span> <span class="n">Text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
