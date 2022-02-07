@@ -575,7 +575,7 @@
 <div class="section" id="breaking-changes">
 <h3>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p>The gradient for models with real-parameter is now multiplied by 2. If your model had real parameters you might need to change the learning rate and halve it. <a class="reference external" href="https://github.com/netket/netket/pull/1009">#1009</a></p></li>
+<li><p>The gradient for models with real-parameter is now multiplied by 2. If your model had real parameters you might need to change the learning rate and halve it. Conceptually this is a bug-fix, as the value returned before was wrong (see Bug Fixes section below for additional details) <a class="reference external" href="https://github.com/netket/netket/pull/1069">#1069</a></p></li>
 </ul>
 </div>
 <div class="section" id="internal-changes">
