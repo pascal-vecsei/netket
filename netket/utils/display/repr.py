@@ -26,21 +26,22 @@ from rich.progress import ProgressColumn
 
 import colorsys
 
-def color_good_bad(value:float):
+
+def color_good_bad(value: float):
     """
-    Returns a rgb color interpolated between 
+    Returns a rgb color interpolated between
     green if value=0 and red if value=1
     """
     # hue: 0 -> red, 0.4->green
-    h = (1-value) * 0.4
+    h = (1 - value) * 0.4
     # luminance
     l = 0.9
     # saturation
     s = 0.9
 
-    r,g,b=colorsys.hsv_to_rgb(h, l, s)
+    r, g, b = colorsys.hsv_to_rgb(h, l, s)
     # hsb to rgb
-    return Color.from_rgb(r*255,g*255,b*255) 
+    return Color.from_rgb(r * 255, g * 255, b * 255)
 
 
 def __repr_from_rich__(self):

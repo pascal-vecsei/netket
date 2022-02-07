@@ -53,6 +53,7 @@ def _format_decimal(value, std, var):
 
 _NaN = float("NaN")
 
+
 @jax.jit
 def _color_curve(R_hat, k=5):
     """
@@ -62,9 +63,10 @@ def _color_curve(R_hat, k=5):
     The value of 5 has been chosen empirically.
     """
     # center from 0...1...2 to 0...\inf
-    x = abs(1-R_hat)
+    x = abs(1 - R_hat)
     # sigmoid
-    return 2*(jnp.exp(k*x)/(1+jnp.exp(k*x))-0.5)
+    return 2 * (jnp.exp(k * x) / (1 + jnp.exp(k * x)) - 0.5)
+
 
 @display.rich_repr
 @struct.dataclass
@@ -96,8 +98,14 @@ class Stats:
         txt = Text(f"{mean} ± {err} [σ²={var}")
         if math.isfinite(self.R_hat):
             txt.append(Text(", R̂="))
-            txt.append(Text("{:.4f}".format(self.R_hat), 
-                            style=Style(color=display.color_good_bad(float(_color_curve(self.R_hat))))))
+            txt.append(
+                Text(
+                    "{:.4f}".format(self.R_hat),
+                    style=Style(
+                        color=display.color_good_bad(float(_color_curve(self.R_hat)))
+                    ),
+                )
+            )
         txt.append("]")
         return txt
 

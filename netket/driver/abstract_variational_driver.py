@@ -41,6 +41,7 @@ def _to_iterable(maybe_iterable):
 
     return surely_iterable
 
+
 # Progress bar style for AbstractVariationalDriver
 from rich.progress import (
     BarColumn,
@@ -52,9 +53,7 @@ from rich.progress import (
 
 def _progress_bar(**kwargs):
     return Progress(
-        TextColumn("[bold blue]"
-                   "({task.percentage:>3.1f}%)",
-                   justify="right"),
+        TextColumn("[bold blue]" "({task.percentage:>3.1f}%)", justify="right"),
         BarColumn(bar_width=None),
         "{task.completed}/{task.total}",
         "[",
@@ -64,9 +63,8 @@ def _progress_bar(**kwargs):
         "•",
         display.StatsDisplayColumn(),
         "]",
-        **kwargs
+        **kwargs,
     )
-
 
 
 # Note: to implement a new Driver (see also _vmc.py for an example)
@@ -280,10 +278,9 @@ class AbstractVariationalDriver(abc.ABC):
             old_step = self.step_count
             first_step = True
 
-            task_id = progress.add_task("Optimizing", 
-                                        loss_name=self._loss_name,
-                                        start=True, 
-                                        total=n_iter)
+            task_id = progress.add_task(
+                "Optimizing", loss_name=self._loss_name, start=True, total=n_iter
+            )
 
             for step in self.iter(n_iter, step_size):
 
@@ -309,7 +306,9 @@ class AbstractVariationalDriver(abc.ABC):
                 # Reset the timing of tqdm after the first step, to ignore compilation time
                 if first_step:
                     first_step = False
-                    progress.reset(task_id, start=True, completed=self.step_count - old_step)
+                    progress.reset(
+                        task_id, start=True, completed=self.step_count - old_step
+                    )
                 else:
                     # Update the progress bar
                     progress.advance(task_id, self.step_count - old_step)

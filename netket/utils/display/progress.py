@@ -45,13 +45,13 @@ class TimerColumn(ProgressColumn):
         else:
             remaining_delta = timedelta(seconds=int(remaining))
 
-        elapsed_txt = Text(str(delta), style="progress.elapsed")        
+        elapsed_txt = Text(str(delta), style="progress.elapsed")
         reimaining_txt = Text(str(remaining_delta), style="progress.remaining")
 
         if not task.finished:
             elapsed_txt.append(">")
             elapsed_txt.append(reimaining_txt)
-        
+
         return elapsed_txt
 
 
@@ -67,8 +67,9 @@ class ProgressSpeedColumn(ProgressColumn):
         if speed >= 10:
             return Text(f"{speed:>3.1f}it/s", style="progress.data.speed")
         else:
-            speedm1 = speed**-1
+            speedm1 = speed ** -1
             return Text(f"{speedm1:>3.1f}s/it", style="progress.data.speed")
+
 
 class StatsDisplayColumn(ProgressColumn):
     """Renders human readable transfer speed."""

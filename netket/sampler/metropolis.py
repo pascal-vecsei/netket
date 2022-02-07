@@ -135,9 +135,9 @@ def _color_curve(x, k=3):
     The value of 5 has been chosen empirically.
     """
     # center from 0...1...2 to 0...\inf
-    x = abs(1-x)
+    x = abs(1 - x)
     # sigmoid
-    return jnp.exp(k*x)/(1+jnp.exp(k*x))
+    return jnp.exp(k * x) / (1 + jnp.exp(k * x))
 
 
 @display.rich_repr
@@ -211,7 +211,9 @@ class MetropolisSamplerState(SamplerState):
         res, _ = mpi.mpi_sum_jax(self.n_accepted_proc)
         return res
 
-    def __rich_console__(self, console: "Console", options: "ConsoleOptions") -> "RenderResult":
+    def __rich_console__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> "RenderResult":
         txt = Text(f"{type(self).__name__}(")
 
         if self.n_steps > 0:
