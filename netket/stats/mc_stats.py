@@ -28,7 +28,7 @@ from netket import jax as nkjax
 
 from rich.markdown import Text
 from rich.style import Style
-from netket.utils import printing
+from netket.utils import display
 
 from . import mean as _mean
 from . import var as _var
@@ -64,9 +64,9 @@ def _color_curve(R_hat, k=5):
     # center from 0...1...2 to 0...\inf
     x = abs(1-R_hat)
     # sigmoid
-    return jnp.exp(k*x)/(1+jnp.exp(k*x))
+    return 2*(jnp.exp(k*x)/(1+jnp.exp(k*x))-0.5)
 
-@printing.rich_repr
+@display.rich_repr
 @struct.dataclass
 class Stats:
     """A dict-compatible class containing the result of the statistics function."""
@@ -97,7 +97,7 @@ class Stats:
         if math.isfinite(self.R_hat):
             txt.append(Text(", R̂="))
             txt.append(Text("{:.4f}".format(self.R_hat), 
-                            style=Style(color=printing.color_good_bad(float(_color_curve(self.R_hat))))))
+                            style=Style(color=display.color_good_bad(float(_color_curve(self.R_hat))))))
         txt.append("]")
         return txt
 

@@ -30,7 +30,7 @@ from netket.utils import struct
 
 from rich.markdown import Text
 from rich.style import Style
-from netket.utils import printing
+from netket.utils import display
 
 from .base import Sampler, SamplerState
 
@@ -140,7 +140,7 @@ def _color_curve(x, k=3):
     return jnp.exp(k*x)/(1+jnp.exp(k*x))
 
 
-@printing.rich_repr
+@display.rich_repr
 @struct.dataclass
 class MetropolisSamplerState(SamplerState):
     """
@@ -216,7 +216,7 @@ class MetropolisSamplerState(SamplerState):
 
         if self.n_steps > 0:
             acc_ratio = self.acceptance
-            style = Style(color=printing.color_good_bad(float(_color_curve(acc_ratio))))
+            style = Style(color=display.color_good_bad(float(_color_curve(acc_ratio))))
             txt.append_text(Text(f"# accepted = "))
             txt.append_text(Text(f"{self.n_accepted}", style=style))
             txt.append_text(Text(f"/{self.n_steps} "))
