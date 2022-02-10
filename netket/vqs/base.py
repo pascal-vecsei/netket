@@ -209,11 +209,47 @@ class VariationalState(abc.ABC):
             An estimation of the quantum expectation value <O>.
             An estimation of the average gradient of the quantum expectation value <O>.
         """
+
         if mutable is None:
             mutable = self.mutable
 
         return expect_and_grad(self, Ô, use_covariance, mutable=mutable)
+    def expect_and_grad_distance(
+        self,
+        origState,
+        Ô: AbstractOperator,
+        *,
+        mutable: Optional[Any] = None,
+        use_covariance: Optional[bool] = None,
+    ) -> Tuple[Stats, PyTree]:
+        r"""Estimates both the gradient of the quantum expectation value of a given operator O.
 
+        Args:
+            Ô: the operator Ô for which we compute the expectation value and its
+                gradient
+            mutable: Can be bool, str, or list. Specifies which collections in the
+                `model_state` should be treated as  mutable: bool: all/no collections
+                are mutable. str: The name of a single mutable  collection. list: A list
+                of names of mutable collections. This is used to mutate the state of the
+                model while you train it (for example to implement BatchNorm. Consult
+                `Flax's Module.apply documentation <https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply>`_
+                for a more in-depth exaplanation).
+            use_covariance: whever to use the covariance formula, usually reserved for
+                hermitian operators, ⟨∂logψ Oˡᵒᶜ⟩ - ⟨∂logψ⟩⟨Oˡᵒᶜ⟩
+
+        Returns:
+            An estimation of the quantum expectation value <O>.
+            An estimation of the average gradient of the quantum expectation value <O>.
+        """
+        
+        if mutable is None:
+            mutable = self.mutable
+
+        return expect_and_grad_distance_impl(self, origState, Ô, use_covariance, mutable=mutable)
+        
+        
+        
+        
     # @abc.abstractmethod
     def quantum_geometric_tensor(self, qgt_type):
         r"""Computes an estimate of the quantum geometric tensor G_ij.
@@ -406,6 +442,6 @@ def expect_and_grad_distance(
     if mutable is None:
         mutable = vstate.mutable
 
-    return expect_and_grad_distance(
+    return expect_and_grad_distance_impl(
         vstate, origState, operator, use_covariance, *args, mutable=mutable, **kwargs
     )

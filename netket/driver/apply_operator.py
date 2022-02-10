@@ -134,7 +134,7 @@ class ApplyOperator(AbstractVariationalDriver):
 
         # Compute the local energy estimator and average Energy
         self._loss_stats, self._loss_grad = self.state.expect_and_grad_distance(self._origState, self._operator)
-
+        
         # if it's the identity it does
         self._dp = self._loss_grad
         #self._dp = self.preconditioner(self.state, self._loss_grad)

@@ -118,9 +118,8 @@ def local_distance_squared_kernel(logpsi: Callable, logpsi2: Callable, pars: PyT
     return jnp.abs(local_value_kernel(logpsi, logpsi2, pars, pars2, σ, args)) ** 2
 
 
-
 @dispatch
-def expect_and_grad_distance(  # noqa: F811
+def expect_and_grad_distance_impl(  
     vstate: MCState,
     origState: MCState,
     Ô: AbstractOperator,
