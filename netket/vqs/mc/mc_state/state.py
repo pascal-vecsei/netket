@@ -41,7 +41,7 @@ from netket.utils.types import PyTree, SeedT, NNInitFunc
 from netket.optimizer import LinearOperator
 from netket.optimizer.qgt import QGTAuto
 
-from netket.vqs.base import VariationalState, expect, expect_and_grad
+from netket.vqs.base import VariationalState, expect, expect_and_grad, expect_and_grad_distance
 
 
 def compute_chain_length(n_chains, n_samples):
@@ -595,6 +595,41 @@ class MCState(VariationalState):
         return expect_and_grad(
             self, Ô, use_covariance, self.chunk_size, mutable=mutable
         )
+    
+        # override to use chunks
+    def expect_and_grad_distance(
+        self,
+        origState,
+        Ô: AbstractOperator,
+        *,
+        mutable: Optional[Any] = None,
+        use_covariance: Optional[bool] = None,
+    ) -> Tuple[Stats, PyTree]:
+        ##r"""Estimates both the gradient of the quantum expectation value of a given operator O.
+
+        ##Args:
+            ##Ô: the operator Ô for which we compute the expectation value and it's gradient
+            ##mutable: Can be bool, str, or list. Specifies which collections in the model_state should
+                     ##be treated as  mutable: bool: all/no collections are mutable. str: The name of a
+                     ##single mutable  collection. list: A list of names of mutable collections.
+                     ##This is used to mutate the state of the model while you train it (for example
+                     ##to implement BatchNorm. Consult
+                     ##`Flax's Module.apply documentation <https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply>`_
+                     ##for a more in-depth exaplanation).
+            ##use_covariance: whever to use the covariance formula, usually reserved for
+                ##hermitian operators, ⟨∂logψ Oˡᵒᶜ⟩ - ⟨∂logψ⟩⟨Oˡᵒᶜ⟩
+
+        ##Returns:
+            ##An estimation of the quantum expectation value <O>.
+            ##An estimation of the average gradient of the quantum expectation value <O>.
+        ##"""
+        if mutable is None:
+            mutable = self.mutable
+
+        return expect_and_grad_distance(
+            self, origState, Ô, use_covariance, self.chunk_size, mutable=mutable
+        )
+    
 
     @deprecated("Use MCState.log_value(σ) instead.")
     def evaluate(self, σ: jnp.ndarray) -> jnp.ndarray:

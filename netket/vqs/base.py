@@ -381,3 +381,31 @@ def expect_and_grad(
     return expect_and_grad(
         vstate, operator, use_covariance, *args, mutable=mutable, **kwargs
     )
+
+
+@dispatch(precedence=10)
+def expect_and_grad_distance(
+    vstate: VariationalState,
+    origState: VariationalState,
+    operator: AbstractOperator,
+    use_covariance: Optional[bool],
+    *args,
+    mutable=None,
+    **kwargs,
+):
+
+    if isinstance(use_covariance, bool):
+        use_covariance = TrueT() if use_covariance else FalseT()
+
+    if use_covariance is None:
+        if isinstance(operator, Squared):
+            use_covariance = FalseT()
+        else:
+            use_covariance = TrueT() if operator.is_hermitian else FalseT()
+
+    if mutable is None:
+        mutable = vstate.mutable
+
+    return expect_and_grad_distance(
+        vstate, origState, operator, use_covariance, *args, mutable=mutable, **kwargs
+    )
