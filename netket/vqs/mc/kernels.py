@@ -65,6 +65,23 @@ def local_value_squared_kernel(logpsi: Callable, pars: PyTree, σ: Array, args: 
     """
     return jnp.abs(local_value_kernel(logpsi, pars, σ, args)) ** 2
 
+@batch_discrete_kernel
+def local_distance_kernel(logpsi: Callable, logpsi2: Callable, pars: PyTree, pars2: PyTree, σ: Array, args: PyTree): #logpsi: function that is fitted.
+    """
+    local_value kernel for MCState and generic operators
+    """
+    σp, mel = args
+    #return jnp.sum(mel * jnp.exp(logpsi(pars, σp) - logpsi(pars, σ)))
+
+    return jnp.exp(logpsi(pars, σ)) - jnp.sum(jnp.conj(mel) * jnp.exp(logpsi2(pars2, σp)))
+
+
+def local_distance_squared_kernel(logpsi: Callable, logpsi2: Callable, pars: PyTree, pars2: PyTree, σ: Array, args: PyTree):
+    """
+    local_value kernel for MCState and Squared (generic) operators
+    """
+    return jnp.abs(local_value_kernel(logpsi, logpsi2, pars, pars2, σ, args)) ** 2
+
 
 @batch_discrete_kernel
 def local_value_op_op_cost(logpsi: Callable, pars: PyTree, σ: Array, args: PyTree):

@@ -6,7 +6,7 @@
 
 
 from functools import partial
-from typing import Any, Callable, Tuple
+from typing import Any, Callable, Tuple, Optional
 
 import jax
 from jax import numpy as jnp
@@ -15,7 +15,7 @@ from netket import jax as nkjax
 from netket import config
 from netket.stats import Stats, statistics
 from netket.utils import mpi
-from netket.utils.types import PyTree
+from netket.utils.types import PyTree, Array
 from netket.utils.dispatch import dispatch, TrueT, FalseT
 
 from netket.operator import (
@@ -30,6 +30,10 @@ from netket.vqs.mc import (
 )
 
 from .state import MCState
+
+
+
+
 
 #@dispatch
 #def get_local_kernel_arguments(vstate: MCState, origState: MCState, Ô: DiscreteOperator):  # noqa: F811
@@ -99,23 +103,6 @@ def grad_expect_hermitian_for_distance(
     return Ō, jax.tree_map(lambda x: mpi.mpi_sum_jax(x)[0], Ō_grad), new_model_state
 
 
-
-@batch_discrete_kernel
-def local_distance_kernel(logpsi: Callable, logpsi2: Callable, pars: PyTree, pars2: PyTree, σ: Array, args: PyTree): #logpsi: function that is fitted.
-    """
-    local_value kernel for MCState and generic operators
-    """
-    σp, mel = args
-    #return jnp.sum(mel * jnp.exp(logpsi(pars, σp) - logpsi(pars, σ)))
-
-    return jnp.exp(logpsi(pars, σ)) - jnp.sum(jnp.conj(mel) * jnp.exp(logpsi2(pars2, σp)))
-
-
-def local_distance_squared_kernel(logpsi: Callable, logpsi2: Callable, pars: PyTree, pars2: PyTree, σ: Array, args: PyTree):
-    """
-    local_value kernel for MCState and Squared (generic) operators
-    """
-    return jnp.abs(local_value_kernel(logpsi, logpsi2, pars, pars2, σ, args)) ** 2
 
 
 @dispatch
