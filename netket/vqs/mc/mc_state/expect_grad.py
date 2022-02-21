@@ -34,6 +34,8 @@ from netket.operator import (
 from netket.vqs.mc import (
     get_local_kernel_arguments,
     get_local_kernel,
+    get_distance_kernel_arguments,
+    get_distance_kernel,
 )
 
 from .state import MCState

@@ -35,9 +35,24 @@ from netket.vqs.mc import (
     check_hilbert,
     get_local_kernel_arguments,
     get_local_kernel,
+    get_distance_kernel_arguments,
+    get_distance_kernel,
 )
 
 from .state import MCState
+
+@dispatch
+def get_distance_kernel_arguments(vstate: MCState, Ô: DiscreteOperator):
+    check_hilbert(vstate.hilbert, Ô.hilbert)
+
+    σ = vstate.samples
+    σp, mels = Ô.parent.get_conn_padded(σ)
+    return σ, (σp, mels)
+
+
+@dispatch
+def get_distance_kernel(vstate: MCState, Ô: DiscreteOperator):  
+    return kernels.local_distance_squared_kernel
 
 
 @dispatch

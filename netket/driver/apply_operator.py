@@ -23,6 +23,9 @@ from netket.utils.types import PyTree
 from netket.operator import AbstractOperator
 from netket.stats import Stats
 from netket.vqs import MCState
+
+from netket.vqs.mc.mc_state.expect_grad_metric_distance import expect_and_grad_distance_impl
+
 #from netket.vqs.mc.mc_state import expect_and_grad_distance
 from netket.optimizer import (
     identity_preconditioner,
@@ -133,7 +136,11 @@ class ApplyOperator(AbstractVariationalDriver):
         self.state.reset()
 
         # Compute the local energy estimator and average Energy
-        self._loss_stats, self._loss_grad = self.state.expect_and_grad_distance(self._origState, self._operator)
+        #self._loss_stats, self._loss_grad = self.state.expect_and_grad_distance(self._origState, self._operator)
+        
+        self._loss_stats, self._loss_grad = expect_and_grad_distance_impl(self.state, self._origState, self._operator, True, mutable = False)
+        
+        print(self._loss_stats.mean.item)
         
         # if it's the identity it does
         self._dp = self._loss_grad

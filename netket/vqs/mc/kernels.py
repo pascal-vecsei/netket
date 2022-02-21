@@ -49,6 +49,28 @@ def batch_discrete_kernel(kernel):
 
     return vmapped_kernel
 
+def batch_discrete_kernel_twoWaves(kernel):
+    """
+    Batch a kernel that only works with 1 sample so that it works with a
+    batch of samples.
+
+    Works only for discrete-kernels who take two args as inputs
+    """
+
+    def vmapped_kernel(logpsi, logpsi2, pars, pars2, σ, args):
+        """
+        local_value kernel for MCState and generic operators
+        """
+        σp, mels = args
+
+        if jnp.ndim(σp) != 3:
+            σp = σp.reshape((σ.shape[0], -1, σ.shape[-1]))
+            mels = mels.reshape(σp.shape[:-1])
+
+        vkernel = jax.vmap(kernel, in_axes=(None, None, None, None, 0, (0, 0)), out_axes=0)
+        return vkernel(logpsi, logpsi2, pars, pars2, σ, (σp, mels))
+
+    return vmapped_kernel
 
 @batch_discrete_kernel
 def local_value_kernel(logpsi: Callable, pars: PyTree, σ: Array, args: PyTree):
@@ -65,7 +87,7 @@ def local_value_squared_kernel(logpsi: Callable, pars: PyTree, σ: Array, args: 
     """
     return jnp.abs(local_value_kernel(logpsi, pars, σ, args)) ** 2
 
-@batch_discrete_kernel
+@batch_discrete_kernel_twoWaves
 def local_distance_kernel(logpsi: Callable, logpsi2: Callable, pars: PyTree, pars2: PyTree, σ: Array, args: PyTree): #logpsi: function that is fitted.
     """
     local_value kernel for MCState and generic operators
@@ -80,7 +102,7 @@ def local_distance_squared_kernel(logpsi: Callable, logpsi2: Callable, pars: PyT
     """
     local_value kernel for MCState and Squared (generic) operators
     """
-    return jnp.abs(local_value_kernel(logpsi, logpsi2, pars, pars2, σ, args)) ** 2
+    return jnp.abs(local_distance_kernel(logpsi, logpsi2, pars, pars2, σ, args)) ** 2
 
 
 @batch_discrete_kernel

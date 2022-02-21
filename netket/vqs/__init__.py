@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .base import VariationalState, VariationalMixedState, expect, expect_and_grad
+from .base import VariationalState, VariationalMixedState, expect, expect_and_grad, expect_and_grad_distance
 
-from .mc import MCState, MCMixedState, get_local_kernel_arguments, get_local_kernel
+from .mc import MCState, MCMixedState, get_local_kernel_arguments, get_local_kernel, get_distance_kernel_arguments, get_distance_kernel
 from .exact import ExactState
 
 # TODO: this is deprecated in favour of netket.experimental.vqs

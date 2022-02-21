@@ -56,3 +56,10 @@ def get_local_kernel(vstate: Any, Ô: Any):
     Returns:
         A callable accepting the output of `get_configs(vstate, O)`.
     """
+@dispatch.abstract
+def get_distance_kernel_arguments(vstate: Any, Ô: Any):
+    """  """
+
+@dispatch.abstract
+def get_distance_kernel(vstate: Any, Ô: Any):
+    """  """
