@@ -26,7 +26,6 @@ from . import spin, boson
 from ._local_operator import LocalOperator
 from ._graph_operator import GraphOperator
 from ._discrete_operator import DiscreteOperator
-from ._lazy import Squared
 
 
 class SpecialHamiltonian(DiscreteOperator):
@@ -91,16 +90,15 @@ class SpecialHamiltonian(DiscreteOperator):
         return self.to_local_operator().__rmul__(other)
 
     def _op__matmul__(self, other):
+        if hasattr(other, "to_local_operator"):
+            other = other.to_local_operator()
         return self.to_local_operator().__matmul__(other)
 
     def _op__rmatmul__(self, other):
-        if self == other and self.is_hermitian:
-            return Squared(self)
+        if hasattr(other, "to_local_operator"):
+            other = other.to_local_operator()
 
         return self.to_local_operator().__matmul__(other)
-
-    def _concrete_matmul_(self, other):
-        return self.to_local_operator() @ other
 
 
 class Ising(SpecialHamiltonian):

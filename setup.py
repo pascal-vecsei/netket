@@ -8,7 +8,7 @@ DEV_DEPENDENCIES = [
     "networkx~=2.4",
     "flaky>=3.7",
     "pre-commit",
-    "black==21.6b0",
+    "black==22.1.0",
     "flakehell>=0.9",
 ]
 MPI_DEPENDENCIES = ["mpi4py>=3.0.1, <4", "mpi4jax~=0.3.1"]
@@ -20,7 +20,7 @@ BASE_DEPENDENCIES = [
     "plum-dispatch~=1.5.1",
     "numba>=0.52, <0.56",
     "igraph~=0.9.8",
-    "jax>=0.2.23, <0.2.29",
+    "jax>=0.2.23, <0.4",
     "jaxlib>=0.1.69",
     "flax>=0.3.5, <0.5",
     "orjson~=3.4",

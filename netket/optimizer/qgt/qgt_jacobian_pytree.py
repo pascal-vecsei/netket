@@ -234,6 +234,8 @@ def _solve(
     # Real-imaginary split RHS in R→R and R→C modes
     if self.mode != "holomorphic":
         y, reassemble = nkjax.tree_to_real(y)
+        if x0 is not None:
+            x0, _ = nkjax.tree_to_real(x0)
 
     check_valid_vector_type(self.params, y)
 
@@ -269,6 +271,6 @@ def _to_dense(self: QGTJacobianPyTreeT) -> jnp.ndarray:
     else:
         scale, _ = nkjax.tree_ravel(self.scale)
         O = O * scale[jnp.newaxis, :]
-        diag = jnp.diag(scale ** 2)
+        diag = jnp.diag(scale**2)
 
     return mpi.mpi_sum_jax(O.T.conj() @ O)[0] + self.diag_shift * diag
