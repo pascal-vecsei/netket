@@ -10,6 +10,7 @@
 
 ### New features
 * `Lattice` supports specifying arbitrary edge content for each unit cell via the kwarg `custom_edges`. A generator for hexagonal lattices with coloured edges is implemented as `nk.graph.KitaevHoneycomb`. `nk.graph.Grid` again supports colouring edges by direction. [#1074](https://github.com/netket/netket/pull/1074)
+* Fermionic hilbert space (`nkx.hilbert.SpinOrbitalFermions`) and fermionic operators (`nkx.operator.fermion`) to treat systems with a finite number of Orbitals have been added to the experimental submodule. The operators are also integrated with [OpenFermion](https://quantumai.google/openfermion). Those functionalities are still in development and we would welcome feedback. [#1090](https://github.com/netket/netket/pull/1090)
 
 ### Breaking Changes
 * The gradient for models with real-parameter is now multiplied by 2. If your model had real parameters you might need to change the learning rate and halve it. Conceptually this is a bug-fix, as the value returned before was wrong (see Bug Fixes section below for additional details) [#1069](https://github.com/netket/netket/pull/1069)
@@ -19,7 +20,9 @@
 ### Bug Fixes
 * The gradient obtained with `VarState.expect_and_grad` for models with real-parameters was off by a factor of $ 1/2 $ from the correct value. This has now been corrected. As a consequence, the correct gradient for real-parameter models is equal to the old times 2. If your model had real parameters you might need to change the learning rate and halve it. [#1069](https://github.com/netket/netket/pull/1069)
 * Support for coloured edges in `nk.graph.Grid`, removed in [#724](https://github.com/netket/netket/pull/724), is now restored. [#1074](https://github.com/netket/netket/pull/1074)
-
+* Fixed bug that prevented calling `.quantum_geometric_tensor` on `netket.vqs.ExactState`. [#1108](https://github.com/netket/netket/pull/1108)
+* Fixed bug where the gradient of `C->C` models (complex parameters, complex output) was computed incorrectly with `nk.vqs.ExactState`. [#1110](https://github.com/netket/netket/pull/1110)
+* Fixed bug where `QGTJacobianDense.state` and `QGTJacobianPyTree.state` would not correctly transform the starting point `x0` if `holomorphic=False`. [#1115](https://github.com/netket/netket/pull/1115)
 
 ## NetKet 3.3.2 (🐛 Bug Fixes)
 
