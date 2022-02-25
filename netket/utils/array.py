@@ -32,6 +32,8 @@ class HashableArray:
     """The wrapped array. Note that this array is read-only."""
 
     def __pre_init__(self, wrapped):
+        if isinstance(wrapped, HashableArray):
+            return wrapped
         wrapped = wrapped.copy()
 
         if isinstance(wrapped, np.ndarray):
@@ -49,7 +51,6 @@ class HashableArray:
         if dtype is None:
             dtype = self.wrapped.dtype
         return self.wrapped.__array__(dtype)
-
     @property
     def shape(self) -> Shape:
         return self.wrapped.shape
