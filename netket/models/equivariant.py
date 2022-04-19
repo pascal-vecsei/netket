@@ -697,6 +697,8 @@ def GCNN(
 
     if characters is None:
         characters = HashableArray(np.ones(len(np.asarray(sg))))
+    elif isinstance(characters, HashableArray):
+        characters = characters
     else:
         if (
             not is_complex(characters)
